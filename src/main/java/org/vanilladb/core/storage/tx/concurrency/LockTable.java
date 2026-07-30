@@ -26,6 +26,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.vanilladb.core.server.VanillaDb;
 import org.vanilladb.core.server.task.Task;
+import org.vanilladb.core.storage.file.BlockId;
+import org.vanilladb.core.storage.record.RecordId;
+import org.vanilladb.core.storage.tx.concurrency.trace.LockTrace;
+import org.vanilladb.core.storage.tx.concurrency.trace.LockTraceEventType;
 import org.vanilladb.core.util.CoreProperties;
 
 /**
@@ -171,6 +175,8 @@ class LockTable {
 	 * 
 	 */
 	void sLock(Object obj, long txNum) {
+		trace(LockTraceEventType.LOCK_CALL, txNum, "sLock", "locktable.s.call",
+				obj, S_LOCK);
 		Object anchor = getAnchor(obj);
 		txWaitMap.put(txNum, anchor);
 		synchronized (anchor) {
@@ -184,6 +190,8 @@ class LockTable {
 				while (!sLockable(lks, txNum) && !waitingTooLong(timestamp)) {
 					avoidDeadlock(lks, txNum, S_LOCK);
 					lks.requestSet.add(txNum);
+					trace(LockTraceEventType.WAIT_BEGIN, txNum, "sLock",
+							"locktable.s.wait", obj, S_LOCK);
 
 					anchor.wait(MAX_TIME);
 					lks.requestSet.remove(txNum);
@@ -192,6 +200,8 @@ class LockTable {
 					throw new LockAbortException();
 				lks.sLockers.add(txNum);
 				getObjectSet(txNum).add(obj);
+				trace(LockTraceEventType.GRANT, txNum, "sLock",
+						"locktable.s.grant", obj, S_LOCK);
 			} catch (InterruptedException e) {
 				throw new LockAbortException("abort tx." + txNum + " by interrupted");
 			}
@@ -210,6 +220,8 @@ class LockTable {
 	 * 
 	 */
 	void xLock(Object obj, long txNum) {
+		trace(LockTraceEventType.LOCK_CALL, txNum, "xLock", "locktable.x.call",
+				obj, X_LOCK);
 		Object anchor = getAnchor(obj);
 		txWaitMap.put(txNum, anchor);
 		synchronized (anchor) {
@@ -223,6 +235,8 @@ class LockTable {
 				while (!xLockable(lks, txNum) && !waitingTooLong(timestamp)) {
 					avoidDeadlock(lks, txNum, X_LOCK);
 					lks.requestSet.add(txNum);
+					trace(LockTraceEventType.WAIT_BEGIN, txNum, "xLock",
+							"locktable.x.wait", obj, X_LOCK);
 
 					anchor.wait(MAX_TIME);
 					lks.requestSet.remove(txNum);
@@ -231,6 +245,8 @@ class LockTable {
 					throw new LockAbortException();
 				lks.xLocker = txNum;
 				getObjectSet(txNum).add(obj);
+				trace(LockTraceEventType.GRANT, txNum, "xLock",
+						"locktable.x.grant", obj, X_LOCK);
 			} catch (InterruptedException e) {
 				throw new LockAbortException();
 			}
@@ -249,6 +265,8 @@ class LockTable {
 	 * 
 	 */
 	void sixLock(Object obj, long txNum) {
+		trace(LockTraceEventType.LOCK_CALL, txNum, "sixLock",
+				"locktable.six.call", obj, SIX_LOCK);
 		Object anchor = getAnchor(obj);
 		txWaitMap.put(txNum, anchor);
 		synchronized (anchor) {
@@ -262,6 +280,8 @@ class LockTable {
 				while (!sixLockable(lks, txNum) && !waitingTooLong(timestamp)) {
 					avoidDeadlock(lks, txNum, SIX_LOCK);
 					lks.requestSet.add(txNum);
+					trace(LockTraceEventType.WAIT_BEGIN, txNum, "sixLock",
+							"locktable.six.wait", obj, SIX_LOCK);
 
 					anchor.wait(MAX_TIME);
 					lks.requestSet.remove(txNum);
@@ -270,6 +290,8 @@ class LockTable {
 					throw new LockAbortException();
 				lks.sixLocker = txNum;
 				getObjectSet(txNum).add(obj);
+				trace(LockTraceEventType.GRANT, txNum, "sixLock",
+						"locktable.six.grant", obj, SIX_LOCK);
 			} catch (InterruptedException e) {
 				throw new LockAbortException();
 			}
@@ -287,6 +309,8 @@ class LockTable {
 	 * @param txNum a transaction number
 	 */
 	void isLock(Object obj, long txNum) {
+		trace(LockTraceEventType.LOCK_CALL, txNum, "isLock",
+				"locktable.is.call", obj, IS_LOCK);
 		Object anchor = getAnchor(obj);
 		txWaitMap.put(txNum, anchor);
 		synchronized (anchor) {
@@ -298,6 +322,8 @@ class LockTable {
 				while (!isLockable(lks, txNum) && !waitingTooLong(timestamp)) {
 					avoidDeadlock(lks, txNum, IS_LOCK);
 					lks.requestSet.add(txNum);
+					trace(LockTraceEventType.WAIT_BEGIN, txNum, "isLock",
+							"locktable.is.wait", obj, IS_LOCK);
 
 					anchor.wait(MAX_TIME);
 					lks.requestSet.remove(txNum);
@@ -306,6 +332,8 @@ class LockTable {
 					throw new LockAbortException();
 				lks.isLockers.add(txNum);
 				getObjectSet(txNum).add(obj);
+				trace(LockTraceEventType.GRANT, txNum, "isLock",
+						"locktable.is.grant", obj, IS_LOCK);
 			} catch (InterruptedException e) {
 				throw new LockAbortException();
 			}
@@ -323,6 +351,8 @@ class LockTable {
 	 * @param txNum a transaction number
 	 */
 	void ixLock(Object obj, long txNum) {
+		trace(LockTraceEventType.LOCK_CALL, txNum, "ixLock",
+				"locktable.ix.call", obj, IX_LOCK);
 		Object anchor = getAnchor(obj);
 		txWaitMap.put(txNum, anchor);
 		synchronized (anchor) {
@@ -336,6 +366,8 @@ class LockTable {
 				while (!ixLockable(lks, txNum) && !waitingTooLong(timestamp)) {
 					avoidDeadlock(lks, txNum, IX_LOCK);
 					lks.requestSet.add(txNum);
+					trace(LockTraceEventType.WAIT_BEGIN, txNum, "ixLock",
+							"locktable.ix.wait", obj, IX_LOCK);
 
 					anchor.wait(MAX_TIME);
 					lks.requestSet.remove(txNum);
@@ -344,6 +376,8 @@ class LockTable {
 					throw new LockAbortException();
 				lks.ixLockers.add(txNum);
 				getObjectSet(txNum).add(obj);
+				trace(LockTraceEventType.GRANT, txNum, "ixLock",
+						"locktable.ix.grant", obj, IX_LOCK);
 			} catch (InterruptedException e) {
 				throw new LockAbortException();
 			}
@@ -369,7 +403,9 @@ class LockTable {
 			 * released.
 			 */
 			if (lks != null) {
-				releaseLock(lks, anchor, txNum, lockType);
+				if (releaseLock(lks, anchor, txNum, lockType))
+					trace(LockTraceEventType.RELEASE, txNum, "release",
+							"locktable.release." + lockMode(lockType), obj, lockType);
 
 				// Check if this transaction have any other lock on this object
 				if (!hasSLock(lks, txNum) && !hasXLock(lks, txNum) && !hasSixLock(lks, txNum) && !hasIsLock(lks, txNum)
@@ -404,19 +440,19 @@ class LockTable {
 				if (lks != null) {
 
 					if (hasSLock(lks, txNum))
-						releaseLock(lks, anchor, txNum, S_LOCK);
+						releaseAndTrace(lks, anchor, obj, txNum, S_LOCK);
 
 					if (hasXLock(lks, txNum) && !sLockOnly)
-						releaseLock(lks, anchor, txNum, X_LOCK);
+						releaseAndTrace(lks, anchor, obj, txNum, X_LOCK);
 
 					if (hasSixLock(lks, txNum))
-						releaseLock(lks, anchor, txNum, SIX_LOCK);
+						releaseAndTrace(lks, anchor, obj, txNum, SIX_LOCK);
 
 					while (hasIsLock(lks, txNum))
-						releaseLock(lks, anchor, txNum, IS_LOCK);
+						releaseAndTrace(lks, anchor, obj, txNum, IS_LOCK);
 
 					while (hasIxLock(lks, txNum) && !sLockOnly)
-						releaseLock(lks, anchor, txNum, IX_LOCK);
+						releaseAndTrace(lks, anchor, obj, txNum, IX_LOCK);
 
 					// Remove the locker, if there is no other transaction
 					// having it
@@ -429,11 +465,21 @@ class LockTable {
 		txWaitMap.remove(txNum);
 		txnsToBeAborted.remove(txNum);
 		lockByMap.remove(txNum);
+		trace(LockTraceEventType.TX_END, txNum, "releaseAll",
+				"locktable.releaseAll.txEnd", null, -1);
 	}
 
-	private void releaseLock(Lockers lks, Object anchor, long txNum, int lockType) {
+	private void releaseAndTrace(Lockers lks, Object anchor, Object obj,
+			long txNum, int lockType) {
+		if (releaseLock(lks, anchor, txNum, lockType))
+			trace(LockTraceEventType.RELEASE, txNum, "releaseAll",
+					"locktable.releaseAll." + lockMode(lockType), obj, lockType);
+	}
+
+	private boolean releaseLock(Lockers lks, Object anchor, long txNum,
+			int lockType) {
 		if (lks == null)
-			return;
+			return false;
 
 		// notify all waiting threads and let them check whether they are able to lock
 		anchor.notifyAll();
@@ -442,31 +488,76 @@ class LockTable {
 		case X_LOCK:
 			if (lks.xLocker == txNum) {
 				lks.xLocker = -1;
+				return true;
 			}
-			return;
+			return false;
 		case SIX_LOCK:
 			if (lks.sixLocker == txNum) {
 				lks.sixLocker = -1;
+				return true;
 			}
-			return;
+			return false;
 		case S_LOCK:
 			Set<Long> sl = lks.sLockers;
 			if (sl != null && sl.contains(txNum)) {
 				sl.remove((Long) txNum);
+				return true;
 			}
-			return;
+			return false;
 		case IS_LOCK:
 			Set<Long> isl = lks.isLockers;
 			if (isl != null && isl.contains(txNum)) {
 				isl.remove((Long) txNum);
+				return true;
 			}
-			return;
+			return false;
 		case IX_LOCK:
 			Set<Long> ixl = lks.ixLockers;
 			if (ixl != null && ixl.contains(txNum)) {
 				ixl.remove((Long) txNum);
+				return true;
 			}
+			return false;
+		default:
+			throw new IllegalArgumentException();
+		}
+	}
+
+	private void trace(LockTraceEventType eventType, long txNum,
+			String sourceMethod, String sourceSite, Object obj, int lockType) {
+		if (!LockTrace.isEnabled())
 			return;
+		LockTrace.record(eventType, txNum, sourceMethod, sourceSite,
+				resourceKind(obj), resourceId(obj),
+				lockType < 0 ? null : lockMode(lockType).toUpperCase());
+	}
+
+	private String resourceKind(Object obj) {
+		if (obj instanceof String)
+			return "FILE";
+		if (obj instanceof BlockId)
+			return "BLOCK";
+		if (obj instanceof RecordId)
+			return "RECORD";
+		return obj == null ? null : obj.getClass().getSimpleName().toUpperCase();
+	}
+
+	private String resourceId(Object obj) {
+		return obj == null ? null : String.valueOf(obj);
+	}
+
+	private String lockMode(int lockType) {
+		switch (lockType) {
+		case IS_LOCK:
+			return "is";
+		case IX_LOCK:
+			return "ix";
+		case S_LOCK:
+			return "s";
+		case SIX_LOCK:
+			return "six";
+		case X_LOCK:
+			return "x";
 		default:
 			throw new IllegalArgumentException();
 		}

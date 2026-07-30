@@ -11,13 +11,15 @@ public final class LockTraceEvent {
 	private final LockTraceEventType eventType;
 	private final String sourceMethod;
 	private final String sourceSite;
+	private final String resourceKind;
 	private final String resourceId;
 	private final String requestedMode;
 	private final long nanoTime;
 
 	LockTraceEvent(String runId, long eventId, long threadId, long threadSequence,
 			long transactionId, LockTraceEventType eventType, String sourceMethod,
-			String sourceSite, String resourceId, String requestedMode, long nanoTime) {
+			String sourceSite, String resourceKind, String resourceId,
+			String requestedMode, long nanoTime) {
 		this.runId = runId;
 		this.eventId = eventId;
 		this.threadId = threadId;
@@ -26,6 +28,7 @@ public final class LockTraceEvent {
 		this.eventType = eventType;
 		this.sourceMethod = sourceMethod;
 		this.sourceSite = sourceSite;
+		this.resourceKind = resourceKind;
 		this.resourceId = resourceId;
 		this.requestedMode = requestedMode;
 		this.nanoTime = nanoTime;
@@ -63,16 +66,40 @@ public final class LockTraceEvent {
 		return sourceMethod;
 	}
 
+	public String sourceClass() {
+		return "LockTable";
+	}
+
 	public String sourceSite() {
 		return sourceSite;
+	}
+
+	public String resourceKind() {
+		return resourceKind;
 	}
 
 	public String resourceId() {
 		return resourceId;
 	}
 
+	public String resourceRole() {
+		return "UNKNOWN";
+	}
+
+	public String parentResourceId() {
+		return null;
+	}
+
+	public String lockPurpose() {
+		return "UNKNOWN";
+	}
+
 	public String requestedMode() {
 		return requestedMode;
+	}
+
+	public String evidence() {
+		return "OBSERVED";
 	}
 
 	public long nanoTime() {

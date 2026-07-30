@@ -5,7 +5,7 @@
 | Step | Scope | Status | Evidence |
 | --- | --- | --- | --- |
 | 01 | Minimal event sink | Complete | [`step-01-event-sink.md`](step-01-event-sink.md) |
-| 02 | Five LockTable events | Pending | — |
+| 02 | Five LockTable events | Complete | [`step-02-five-events.md`](step-02-five-events.md) |
 | 03 | Direct LockTable harness | Pending | — |
 | 04 | Four deterministic scenarios | Pending | — |
 | 05 | Completeness and overhead | Pending | — |

@@ -27,9 +27,9 @@ public class BoundedLockTraceSinkTest {
 		LockTrace.install(sink);
 
 		LockTrace.record(LockTraceEventType.LOCK_CALL, 7, "sLock",
-				"lock.s.call", "resource-1", "S");
+				"lock.s.call", "STRING", "resource-1", "S");
 		LockTrace.record(LockTraceEventType.GRANT, 7, "sLock",
-				"lock.s.grant", "resource-1", "S");
+				"lock.s.grant", "STRING", "resource-1", "S");
 
 		LockTraceSnapshot snapshot = sink.snapshot();
 		assertTrue(snapshot.isComplete());
@@ -47,9 +47,9 @@ public class BoundedLockTraceSinkTest {
 	public void reportsCapacityLossExplicitly() {
 		BoundedLockTraceSink sink = new BoundedLockTraceSink("run-loss", 1);
 		sink.record(LockTraceEventType.LOCK_CALL, 1, "xLock", "lock.x.call",
-				"resource-1", "X");
+				"STRING", "resource-1", "X");
 		sink.record(LockTraceEventType.GRANT, 1, "xLock", "lock.x.grant",
-				"resource-1", "X");
+				"STRING", "resource-1", "X");
 
 		LockTraceSnapshot snapshot = sink.snapshot();
 		assertFalse(snapshot.isComplete());
@@ -72,7 +72,7 @@ public class BoundedLockTraceSinkTest {
 				start.await();
 				for (int event = 0; event < eventsPerWorker; event++) {
 					sink.record(LockTraceEventType.LOCK_CALL, transactionId,
-							"sLock", "lock.s.call", "resource-1", "S");
+							"sLock", "lock.s.call", "STRING", "resource-1", "S");
 				}
 				return null;
 			});

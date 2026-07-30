@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T01:37:21.6291167+08:00",
+  "repositoryCommit": "7d29383b79de8a0961873d96351c483f3fc0344e",
+  "traceSchemaVersion": "vc-locktrace-0",
+  "instrumentedClass": "org.vanilladb.core.storage.tx.concurrency.LockTable",
+  "eventTypes": [
+    "LOCK_CALL",
+    "WAIT_BEGIN",
+    "GRANT",
+    "RELEASE",
+    "TX_END"
+  ],
+  "semanticFixIncluded": false,
+  "tests": {
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

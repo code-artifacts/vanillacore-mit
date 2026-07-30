@@ -31,8 +31,8 @@ public final class BoundedLockTraceSink implements LockTraceSink {
 
 	@Override
 	public void record(LockTraceEventType eventType, long transactionId,
-			String sourceMethod, String sourceSite, String resourceId,
-			String requestedMode) {
+			String sourceMethod, String sourceSite, String resourceKind,
+			String resourceId, String requestedMode) {
 		if (eventType == null) {
 			throw new IllegalArgumentException("eventType must not be null");
 		}
@@ -40,7 +40,8 @@ public final class BoundedLockTraceSink implements LockTraceSink {
 		threadSequence.set(sequence);
 		LockTraceEvent event = new LockTraceEvent(runId, nextEventId.incrementAndGet(),
 				Thread.currentThread().getId(), sequence, transactionId, eventType,
-				sourceMethod, sourceSite, resourceId, requestedMode, System.nanoTime());
+				sourceMethod, sourceSite, resourceKind, resourceId, requestedMode,
+				System.nanoTime());
 		if (!events.offer(event)) {
 			droppedEvents.incrementAndGet();
 		}

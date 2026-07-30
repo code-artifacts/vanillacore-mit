@@ -6,8 +6,8 @@ public final class LockTrace {
 	private static final LockTraceSink OFF = new LockTraceSink() {
 		@Override
 		public void record(LockTraceEventType eventType, long transactionId,
-				String sourceMethod, String sourceSite, String resourceId,
-				String requestedMode) {
+				String sourceMethod, String sourceSite, String resourceKind,
+				String resourceId, String requestedMode) {
 		}
 	};
 	private static final AtomicReference<LockTraceSink> SINK =
@@ -34,9 +34,9 @@ public final class LockTrace {
 	}
 
 	public static void record(LockTraceEventType eventType, long transactionId,
-			String sourceMethod, String sourceSite, String resourceId,
-			String requestedMode) {
+			String sourceMethod, String sourceSite, String resourceKind,
+			String resourceId, String requestedMode) {
 		SINK.get().record(eventType, transactionId, sourceMethod, sourceSite,
-				resourceId, requestedMode);
+				resourceKind, resourceId, requestedMode);
 	}
 }
