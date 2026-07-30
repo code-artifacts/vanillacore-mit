@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T01:31:30.4471039+08:00",
+  "repositoryCommit": "c1ac0e4ecfda8311f2f5af9b94da2c7794e0db8a",
+  "traceSchemaVersion": "vc-locktrace-0",
+  "sink": {
+    "type": "bounded-in-memory",
+    "nonBlockingProducer": true,
+    "explicitLossCounter": true
+  },
+  "tests": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

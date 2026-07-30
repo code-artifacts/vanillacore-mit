@@ -1326,6 +1326,8 @@ PR #95 只用于：
 
 ### 第二周
 
+> 执行状态：进行中。逐步方法、结果和证据见 [`execution/week-02/README.md`](execution/week-02/README.md)。
+
 1. 实现最小 event sink；
 2. 只插 `LOCK_CALL/WAIT_BEGIN/GRANT/RELEASE/TX_END`；
 3. 实现 Direct LockTable harness；
