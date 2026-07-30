@@ -48,9 +48,9 @@ JDK 25.0.4 可安装并用于兼容性实验，但当前不能作为构建基线
 
 ## Repetition Gate
 
-进入模型实验前，还需完成：
+第一周重复性门已完成：
 
 1. 默认 suite 与补充测试各 fresh JVM ×20；
-2. 独立数据库目录与固定 CPU/timeout 参数；
-3. 原始基线和 [PR #95 参考补丁](evidence/patches/pr-95-fix-locktable.patch) 分离运行；
-4. 记录 [`experiments/README.md`](experiments/README.md) 定义的 manifest。
+2. 每次运行使用独立 DB/log storage root，禁用自动重跑；
+3. 原始基线和 [PR #95 参考补丁](evidence/patches/pr-95-fix-locktable.patch) 已分离 clean build；
+4. 结果见 [`execution/week-01/step-04-repetition.md`](execution/week-01/step-04-repetition.md)。

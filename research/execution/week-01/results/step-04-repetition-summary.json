@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T01:08:44.6116442+08:00",
+  "repositoryCommit": "7bbf09327a63de5c230f8bc29b67234ad9a209ee",
+  "jdk": {
+    "Home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot\\",
+    "Major": 17,
+    "Vendor": "Eclipse Adoptium",
+    "Version": "17.0.20",
+    "RuntimeVersion": "17.0.20+8"
+  },
+  "mavenVersion": "Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a1)",
+  "freshMavenProcesses": 40,
+  "forkCount": 1,
+  "reuseForks": false,
+  "rerunFailingTestsCount": 0,
+  "timeoutSeconds": 420,
+  "isolatedStorageRootPerRun": true,
+  "campaigns": [
+    {
+      "id": "default-suite",
+      "selector": "FullTestSuite",
+      "repetitionsRequested": 20,
+      "repetitionsCompleted": 20,
+      "passes": 20,
+      "failures": 0,
+      "expectedTestsPerRun": 110,
+      "durationSeconds": {
+        "min": 96.906,
+        "median": 104.702,
+        "max": 113.465
+      }
+    },
+    {
+      "id": "omitted-five",
+      "selector": "ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTest,BTreeIndexConcurrentTest",
+      "repetitionsRequested": 20,
+      "repetitionsCompleted": 20,
+      "passes": 20,
+      "failures": 0,
+      "expectedTestsPerRun": 10,
+      "durationSeconds": {
+        "min": 19.586,
+        "median": 22.195,
+        "max": 25.021
+      }
+    }
+  ]
+}

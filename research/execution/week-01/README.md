@@ -7,7 +7,7 @@
 | 1 | 固定 Temurin JDK 17；记录 JDK 25 限制 | Complete |
 | 2 | 固定仓库、上游与 PR #95 身份 | Complete |
 | 3 | 原始/PR #95 双基线 clean build | Complete |
-| 4 | fresh JVM ×20 与遗漏测试 | Pending |
+| 4 | fresh JVM ×20 与遗漏测试 | Complete |
 | 5 | deadlock TODO issue/test skeleton | Pending |
 | 6 | PR #95 两个最小失败见证 | Pending |
 
@@ -16,7 +16,8 @@
 - [`step-01-environment.md`](step-01-environment.md)
 - [`step-02-baselines.md`](step-02-baselines.md)
 - [`step-03-dual-build.md`](step-03-dual-build.md)
-- Step 04–06 文档在对应步骤实施时创建，避免预先搭建无内容文件。
+- [`step-04-repetition.md`](step-04-repetition.md)
+- Step 05–06 文档在对应步骤实施时创建，避免预先搭建无内容文件。
 
 ## Shared Commands
 
