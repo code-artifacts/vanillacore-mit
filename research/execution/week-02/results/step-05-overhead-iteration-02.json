@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "implementation": "AtomicReferenceArray all-five-event sink",
+  "offMedianDurationNanos": 142866000,
+  "lowMedianDurationNanos": 296895700,
+  "lowOverheadPercent": 107.814,
+  "samplesPerMode": 15,
+  "measuredLockOperationsPerMode": 1500000,
+  "droppedEvents": 0,
+  "pollutedSamples": 0,
+  "decision": "align low mode with the plan by retaining only grant, release, and transaction-end events"
+}

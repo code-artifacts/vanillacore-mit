@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "implementation": "ArrayBlockingQueue.offer",
+  "offMedianDurationNanos": 163834700,
+  "lowMedianDurationNanos": 326480500,
+  "lowOverheadPercent": 99.274,
+  "samplesPerMode": 15,
+  "measuredLockOperationsPerMode": 1500000,
+  "droppedEvents": 0,
+  "pollutedSamples": 0,
+  "decision": "replace contended queue with bounded atomic slots and remeasure"
+}

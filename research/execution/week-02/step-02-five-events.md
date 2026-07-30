@@ -14,7 +14,7 @@
 | `RELEASE` | owner 状态实际移除后 | no-op release 不发事件 |
 | `TX_END` | `releaseAll` 清理三个事务索引后 | Direct harness 的组件级终止代理 |
 
-source-site 使用 `locktable.<mode>.<transition>` 稳定 ID，不依赖行号。启用 sink 时只构造字符串身份和不可变事件，并以 `offer` 写入内存队列；没有磁盘 I/O。
+source-site 使用 `locktable.<mode>.<transition>` 稳定 ID，不依赖行号。启用 sink 时只构造字符串身份和不可变事件，并写入 event ID 对应的原子槽位；没有磁盘 I/O。
 
 ## Validation
 

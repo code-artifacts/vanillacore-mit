@@ -2,13 +2,16 @@ package org.vanilladb.core.storage.tx.concurrency.trace;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class BoundedLockTraceSink implements LockTraceSink {
 	private final String runId;
-	private final ArrayBlockingQueue<LockTraceEvent> events;
+	private final int capacity;
+	private final AtomicReferenceArray<LockTraceEvent> events;
+	private final EnumSet<LockTraceEventType> acceptedEventTypes;
 	private final AtomicLong nextEventId = new AtomicLong();
 	private final AtomicLong droppedEvents = new AtomicLong();
 	private final ThreadLocal<Long> threadSequence = new ThreadLocal<Long>() {
@@ -19,6 +22,17 @@ public final class BoundedLockTraceSink implements LockTraceSink {
 	};
 
 	public BoundedLockTraceSink(String runId, int capacity) {
+		this(runId, capacity, EnumSet.allOf(LockTraceEventType.class));
+	}
+
+	public static BoundedLockTraceSink low(String runId, int capacity) {
+		return new BoundedLockTraceSink(runId, capacity,
+				EnumSet.of(LockTraceEventType.GRANT, LockTraceEventType.RELEASE,
+						LockTraceEventType.TX_END));
+	}
+
+	private BoundedLockTraceSink(String runId, int capacity,
+			EnumSet<LockTraceEventType> acceptedEventTypes) {
 		if (runId == null || runId.isEmpty()) {
 			throw new IllegalArgumentException("runId must not be empty");
 		}
@@ -26,7 +40,9 @@ public final class BoundedLockTraceSink implements LockTraceSink {
 			throw new IllegalArgumentException("capacity must be positive");
 		}
 		this.runId = runId;
-		this.events = new ArrayBlockingQueue<LockTraceEvent>(capacity);
+		this.capacity = capacity;
+		this.events = new AtomicReferenceArray<LockTraceEvent>(capacity);
+		this.acceptedEventTypes = acceptedEventTypes;
 	}
 
 	@Override
@@ -36,20 +52,39 @@ public final class BoundedLockTraceSink implements LockTraceSink {
 		if (eventType == null) {
 			throw new IllegalArgumentException("eventType must not be null");
 		}
+		if (!acceptedEventTypes.contains(eventType))
+			return;
 		long sequence = threadSequence.get() + 1;
 		threadSequence.set(sequence);
-		LockTraceEvent event = new LockTraceEvent(runId, nextEventId.incrementAndGet(),
+		long eventId = nextEventId.incrementAndGet();
+		if (eventId > capacity) {
+			droppedEvents.incrementAndGet();
+			return;
+		}
+		LockTraceEvent event = new LockTraceEvent(runId, eventId,
 				Thread.currentThread().getId(), sequence, transactionId, eventType,
 				sourceMethod, sourceSite, resourceKind, resourceId, requestedMode,
 				System.nanoTime());
-		if (!events.offer(event)) {
-			droppedEvents.incrementAndGet();
-		}
+		events.set((int) eventId - 1, event);
 	}
 
 	public LockTraceSnapshot snapshot() {
-		List<LockTraceEvent> snapshot = new ArrayList<LockTraceEvent>(events);
+		int eventCount = (int) Math.min(nextEventId.get(), capacity);
+		List<LockTraceEvent> snapshot = new ArrayList<LockTraceEvent>(eventCount);
+		for (int index = 0; index < eventCount; index++) {
+			LockTraceEvent event = events.get(index);
+			if (event != null)
+				snapshot.add(event);
+		}
 		snapshot.sort(Comparator.comparingLong(LockTraceEvent::eventId));
 		return new LockTraceSnapshot(snapshot, droppedEvents.get());
+	}
+
+	public long recordedEvents() {
+		return nextEventId.get() - droppedEvents.get();
+	}
+
+	public long droppedEvents() {
+		return droppedEvents.get();
 	}
 }

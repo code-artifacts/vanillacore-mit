@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T02:00:07.7385513+08:00",
+  "repositoryCommit": "82ba3be8cc8a450ea8727081b5b5fd81a7f70e65",
+  "traceSchemaVersion": "vc-locktrace-0",
+  "completeness": {
+    "repetitionsPerScenario": 20,
+    "eventMetrics": [
+      {
+        "eventType": "LOCK_CALL",
+        "expected": 200,
+        "actual": 200,
+        "truePositive": 200,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "WAIT_BEGIN",
+        "expected": 60,
+        "actual": 60,
+        "truePositive": 60,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "GRANT",
+        "expected": 180,
+        "actual": 180,
+        "truePositive": 180,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "RELEASE",
+        "expected": 180,
+        "actual": 180,
+        "truePositive": 180,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "TX_END",
+        "expected": 160,
+        "actual": 160,
+        "truePositive": 160,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ],
+    "microPrecision": 1.0,
+    "microRecall": 1.0,
+    "traceLoss": 0,
+    "scope": "event-type multiplicity for four deterministic direct scenarios"
+  },
+  "overhead": {
+    "workload": "single-thread S acquire/release over 100 resources",
+    "lowEventTypes": [
+      "GRANT",
+      "RELEASE",
+      "TX_END"
+    ],
+    "operationsPerSample": 100000,
+    "samplesPerProcess": 5,
+    "warmupOperationsPerProcess": 20000,
+    "modes": {
+      "off": {
+        "processes": 3,
+        "samples": 15,
+        "measuredLockOperations": 1500000,
+        "medianDurationNanos": 146569500,
+        "medianThroughputOpsPerSecond": 682270.186,
+        "droppedEvents": 0,
+        "pollutedSamples": 0
+      },
+      "low": {
+        "processes": 3,
+        "samples": 15,
+        "measuredLockOperations": 1500000,
+        "medianDurationNanos": 231530000,
+        "medianThroughputOpsPerSecond": 431909.472,
+        "droppedEvents": 0,
+        "pollutedSamples": 0
+      }
+    },
+    "lowOverheadPercent": 57.966,
+    "targetPercent": 10,
+    "hardCeilingPercent": 25,
+    "withinTarget": false,
+    "withinHardCeiling": false
+  },
+  "baselineStress": {
+    "offModeLockOperations": 1500000,
+    "unexplainedPollutedSamples": 0
+  }
+}

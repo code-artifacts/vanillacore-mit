@@ -58,6 +58,30 @@ public class BoundedLockTraceSinkTest {
 	}
 
 	@Test
+	public void lowModeRetainsOnlyLifecycleStateChanges() {
+		BoundedLockTraceSink sink = BoundedLockTraceSink.low("run-low", 4);
+		sink.record(LockTraceEventType.LOCK_CALL, 1, "sLock", "lock.s.call",
+				"STRING", "resource-1", "S");
+		sink.record(LockTraceEventType.WAIT_BEGIN, 1, "sLock", "lock.s.wait",
+				"STRING", "resource-1", "S");
+		sink.record(LockTraceEventType.GRANT, 1, "sLock", "lock.s.grant",
+				"STRING", "resource-1", "S");
+		sink.record(LockTraceEventType.RELEASE, 1, "release", "lock.release.s",
+				"STRING", "resource-1", "S");
+		sink.record(LockTraceEventType.TX_END, 1, "releaseAll",
+				"lock.releaseAll.txEnd", null, null, null);
+
+		LockTraceSnapshot snapshot = sink.snapshot();
+		assertEquals(3, snapshot.events().size());
+		assertEquals(LockTraceEventType.GRANT,
+				snapshot.events().get(0).eventType());
+		assertEquals(LockTraceEventType.RELEASE,
+				snapshot.events().get(1).eventType());
+		assertEquals(LockTraceEventType.TX_END,
+				snapshot.events().get(2).eventType());
+	}
+
+	@Test
 	public void recordsConcurrentWritersWithoutDuplicateIds() throws Exception {
 		int workerCount = 4;
 		int eventsPerWorker = 100;

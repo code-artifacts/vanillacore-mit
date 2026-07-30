@@ -7,10 +7,11 @@
 ## Design
 
 - schema 固定为 `vc-locktrace-0`；
-- producer 使用 `ArrayBlockingQueue.offer`，容量耗尽时不等待；
+- producer 以递增 event ID 定位 `AtomicReferenceArray` 槽位，容量耗尽时不等待；
 - 每条事件保存 run、全局事件、线程内事件、事务、源码点、资源和模式身份；
 - snapshot 按全局事件号排序，并以 `droppedEvents` 显式报告 loss；
 - `LockTrace` 默认使用 no-op sink，且同一 JVM 只允许安装一个活动 sink。
+- full sink 接收五类事件；low sink 仅接收 `GRANT/RELEASE/TX_END`。
 
 本步骤不修改 `LockTable`，因而不会改变锁语义。事件类型仅声明第二周允许的 `LOCK_CALL/WAIT_BEGIN/GRANT/RELEASE/TX_END`。
 

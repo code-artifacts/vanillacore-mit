@@ -27,6 +27,18 @@ final class LockTableTestProbe {
 		return readMap(lockTable, "txWaitMap").containsKey(transactionNumber);
 	}
 
+	static int lockerCount(LockTable lockTable) {
+		return readMap(lockTable, "lockerMap").size();
+	}
+
+	static int transactionLockSetCount(LockTable lockTable) {
+		return readMap(lockTable, "lockByMap").size();
+	}
+
+	static int waitRegistrationCount(LockTable lockTable) {
+		return readMap(lockTable, "txWaitMap").size();
+	}
+
 	@SuppressWarnings("unchecked")
 	private static Map<Object, Object> readMap(LockTable lockTable, String fieldName) {
 		try {
