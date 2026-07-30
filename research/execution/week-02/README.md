@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | 01 | Minimal event sink | Complete | [`step-01-event-sink.md`](step-01-event-sink.md) |
 | 02 | Five LockTable events | Complete | [`step-02-five-events.md`](step-02-five-events.md) |
-| 03 | Direct LockTable harness | Pending | — |
+| 03 | Direct LockTable harness | Complete | [`step-03-direct-harness.md`](step-03-direct-harness.md) |
 | 04 | Four deterministic scenarios | Pending | — |
 | 05 | Completeness and overhead | Pending | — |
 | 06 | G0–G2 decision | Pending | — |

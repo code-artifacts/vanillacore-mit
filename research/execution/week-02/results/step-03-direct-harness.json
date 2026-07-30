@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T01:41:15.9470134+08:00",
+  "repositoryCommit": "df0bba673ad6a69d3fdbbef38f45d4056032b8e8",
+  "harness": "DirectLockTableHarness",
+  "capabilities": [
+    "direct-five-mode-lock",
+    "async-lock-request",
+    "event-conditioned-wait",
+    "specific-release",
+    "transaction-end",
+    "bounded-trace-snapshot",
+    "deterministic-cleanup"
+  ],
+  "tests": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}
