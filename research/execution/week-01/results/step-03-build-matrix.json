@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T00:13:44.8806426+08:00",
+  "upstreamCommit": "03e1f2df49bb9664c8bdae11cf911f56b74bbc57",
+  "patchSha256": "E3C79288D13A8C8706227879DC38DB93562DAE92C4E1CBB82B0E10B8FACAD145",
+  "jdk": {
+    "Home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot\\",
+    "Major": 17,
+    "Vendor": "Eclipse Adoptium",
+    "Version": "17.0.20",
+    "RuntimeVersion": "17.0.20+8"
+  },
+  "mavenVersion": "Apache Maven 3.9.12 (848fbb4bf2d427b72bdb2471c22fced7ebd9a7a1)",
+  "timeoutSeconds": 600,
+  "builds": [
+    {
+      "variant": "VC-HEAD-20230430",
+      "command": "mvn --batch-mode clean test",
+      "startedAt": "2026-07-31T00:09:02.1827033+08:00",
+      "durationSeconds": 153.762,
+      "timedOut": false,
+      "exitCode": 0,
+      "tests": {
+        "tests": 110,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lockTableSha256": "E6B9279097A72D952F7F2298A319E7AD7379E09C49FE9810EDD174C9C58FE457"
+    },
+    {
+      "variant": "VC-REF-95",
+      "command": "mvn --batch-mode clean test",
+      "startedAt": "2026-07-31T00:11:36.0344690+08:00",
+      "durationSeconds": 128.806,
+      "timedOut": false,
+      "exitCode": 0,
+      "tests": {
+        "tests": 110,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "lockTableSha256": "53D77D279F88062C11B81B4FAE80391EBB599832B0EE95DE3DB6E2B27DBDDB28"
+    }
+  ]
+}
