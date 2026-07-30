@@ -23,3 +23,20 @@ target/
 
 ### Others ###
 design
+
+### TLA+ model checking outputs ###
+tla/.toolbox/
+tla/states/
+tla/*.out
+tla/*.err
+tla/*.st
+tla/*.chkpt
+tla/*.fp
+tla/*.queue
+tla/*_TTrace_*.tla
+
+### Model-based testing experiment outputs ###
+research/experiments/raw/
+research/experiments/normalized/
+research/experiments/work/
+research/experiments/reports/generated/

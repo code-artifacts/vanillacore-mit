@@ -168,6 +168,10 @@ We have a series of educational slides to make the people who are not familiar w
 </dependency>
 ```
 
+## Model-Based Testing Research
+
+This fork hosts a TLA+-guided model-based testing study of VanillaCore's locking, transaction, recovery, and B-tree behavior. Start with the [research overview](research/README.md), then see the [TLA+ model layout](tla/README.md) and [local validation baseline](research/validation.md).
+
 ## Contributing
 
 To contribute to VanillaCore, please see [CONTRIBUTING](CONTRIBUTING.md).
