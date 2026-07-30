@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T02:05:58.3700064+08:00",
+  "repositoryCommit": "b7db6850079def2fab70352e83fb76edd01cbf86",
+  "decisionScope": "G0-G2 at the end of Week 2",
+  "gates": [
+    {
+      "id": "G0",
+      "name": "Build",
+      "status": "PASS",
+      "evidence": {
+        "dualBaselineBuilds": 2,
+        "freshProcessCampaigns": 2,
+        "currentFullSuite": {
+          "tests": 110,
+          "failures": 0,
+          "errors": 0
+        },
+        "currentMitFunctionalSuite": {
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    {
+      "id": "G1",
+      "name": "Baseline",
+      "status": "CONDITIONAL_PASS",
+      "evidence": {
+        "pr95DifferentialPassed": true,
+        "offModeLockOperations": 1500000,
+        "unexplainedPollutedSamples": 0
+      },
+      "limitations": [
+        "stress workload is single-thread S acquire/release",
+        "instrumented main source remains pristine rather than PR95 reference fix",
+        "conflicting 2/4/8/16-worker stress matrix remains open"
+      ]
+    },
+    {
+      "id": "G2",
+      "name": "Trace",
+      "status": "PASS_SCOPE_LIMITED",
+      "evidence": {
+        "microPrecision": 1.0,
+        "microRecall": 1.0,
+        "traceLoss": 0,
+        "scenarios": 4,
+        "repetitionsPerScenario": 20
+      },
+      "limitations": [
+        "precision and recall cover event-type multiplicity in Direct scenarios",
+        "resource role, parent, purpose, and owner/waiter snapshots are not validated",
+        "abort is an external Future outcome rather than a v0 trace event"
+      ]
+    }
+  ],
+  "performanceRisk": {
+    "status": "BLOCKS_G3",
+    "lowOverheadPercent": 57.966,
+    "hardCeilingPercent": 25
+  },
+  "overall": {
+    "decision": "CONDITIONAL_GO",
+    "allowedNext": [
+      "L1 TLA+ model",
+      "trace schema and mapping refinement",
+      "Direct harness correctness experiments"
+    ],
+    "blockedUntilResolved": [
+      "G3 replay or low-overhead claims",
+      "broad mutation campaign",
+      "production-performance claims"
+    ],
+    "mandatoryActions": [
+      "activate PR95 as a separate reference-fix patch set",
+      "run conflicting 2/4/8/16-worker million-operation stress",
+      "reduce low overhead to at most 25 percent and remeasure unchanged protocol",
+      "add explicit abort and trace-loss semantics before strong refinement verdicts"
+    ]
+  }
+}

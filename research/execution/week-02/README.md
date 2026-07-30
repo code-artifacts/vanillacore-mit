@@ -9,6 +9,6 @@
 | 03 | Direct LockTable harness | Complete | [`step-03-direct-harness.md`](step-03-direct-harness.md) |
 | 04 | Four deterministic scenarios | Complete | [`step-04-scenario-replay.md`](step-04-scenario-replay.md) |
 | 05 | Completeness and overhead | Complete | [`step-05-trace-quality.md`](step-05-trace-quality.md) |
-| 06 | G0–G2 decision | Pending | — |
+| 06 | G0–G2 decision | Complete | [`step-06-g0-g2-decision.md`](step-06-g0-g2-decision.md) |
 
 生成的原始 trace 与运行日志位于 `raw/`，由 Git 忽略；提交的 `results/` 只保存小型机器可读汇总。

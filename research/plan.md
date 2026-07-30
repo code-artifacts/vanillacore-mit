@@ -1326,7 +1326,7 @@ PR #95 只用于：
 
 ### 第二周
 
-> 执行状态：进行中。逐步方法、结果和证据见 [`execution/week-02/README.md`](execution/week-02/README.md)。
+> 执行状态：已完成。逐步方法、结果和证据见 [`execution/week-02/README.md`](execution/week-02/README.md)。G0=`PASS`、G1=`CONDITIONAL PASS`、G2=`PASS (scope limited)`；因 low overhead 超过硬线，整体为 conditional go，详见 [`execution/week-02/step-06-g0-g2-decision.md`](execution/week-02/step-06-g0-g2-decision.md)。
 
 1. 实现最小 event sink；
 2. 只插 `LOCK_CALL/WAIT_BEGIN/GRANT/RELEASE/TX_END`；
