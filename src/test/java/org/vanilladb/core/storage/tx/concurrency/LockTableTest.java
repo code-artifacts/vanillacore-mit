@@ -131,8 +131,6 @@ public class LockTableTest {
 		}
 	}
 	
-	// TODO: We need a deadlock avoidance test case
-
 	@Test
 	public void testMultiGranularityLocking() {
 		try {
