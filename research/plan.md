@@ -1315,6 +1315,8 @@ PR #95 只用于：
 
 ### 第一周
 
+> 执行状态：已完成。逐步方法、结果和证据见 [`execution/week-01/README.md`](execution/week-01/README.md)。
+
 1. 固定 Temurin JDK 17 构建环境，并记录 JDK 25 兼容性限制；
 2. 记录本仓库 commit、上游基线与 [PR #95 补丁](evidence/patches/pr-95-fix-locktable.patch) hash；
 3. 当前源码与 PR #95 参考修复双基线 clean build；

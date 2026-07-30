@@ -25,6 +25,8 @@
 - [`ReadCommittedConcurrencyMgr.java`](../../src/main/java/org/vanilladb/core/storage/tx/concurrency/ReadCommittedConcurrencyMgr.java) 与历史 index/leaf 修复形成 RC 回归假设；必须用动态 witness 证实或否证。
 - [`BTreeDir.java`](../../src/main/java/org/vanilladb/core/storage/index/btree/BTreeDir.java) 和 [`BTreeLeaf.java`](../../src/main/java/org/vanilladb/core/storage/index/btree/BTreeLeaf.java) 同时涉及结构同步与逻辑锁，事件 schema 必须显式区分二者。
 
+PR #95 的两个确定性差分见证已实现，见 [`witnesses/pr-95/README.md`](witnesses/pr-95/README.md)；外部影响仍未建立。
+
 ## Evidence Rules
 
 1. 历史 PR 只用于预注册 fault hypothesis，不作为隐藏 mutation。

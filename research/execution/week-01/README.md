@@ -9,7 +9,7 @@
 | 3 | 原始/PR #95 双基线 clean build | Complete |
 | 4 | fresh JVM ×20 与遗漏测试 | Complete |
 | 5 | deadlock TODO issue/test skeleton | Complete |
-| 6 | PR #95 两个最小失败见证 | Pending |
+| 6 | PR #95 两个最小失败见证 | Complete |
 
 ## Step Records
 
@@ -18,7 +18,7 @@
 - [`step-03-dual-build.md`](step-03-dual-build.md)
 - [`step-04-repetition.md`](step-04-repetition.md)
 - [`step-05-deadlock-skeleton.md`](step-05-deadlock-skeleton.md)
-- Step 06 文档在对应步骤实施时创建，避免预先搭建无内容文件。
+- [`step-06-pr95-witnesses.md`](step-06-pr95-witnesses.md)
 
 ## Shared Commands
 

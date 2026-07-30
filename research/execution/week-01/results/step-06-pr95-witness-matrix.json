@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T01:22:03.1870480+08:00",
+  "repositoryCommit": "93bfed3037806d044df9ab23707cf64e7756c3ae",
+  "upstreamCommit": "03e1f2df49bb9664c8bdae11cf911f56b74bbc57",
+  "productionSourceMatchesUpstream": true,
+  "patchSha256": "E3C79288D13A8C8706227879DC38DB93562DAE92C4E1CBB82B0E10B8FACAD145",
+  "jdk": {
+    "Home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot\\",
+    "Major": 17,
+    "Vendor": "Eclipse Adoptium",
+    "Version": "17.0.20",
+    "RuntimeVersion": "17.0.20+8"
+  },
+  "witnesses": [
+    "lockerRegistrySupportsUpdatesFromDistinctAnchors",
+    "reentrantGrantRemovesWaitRegistration"
+  ],
+  "expected": {
+    "pristineFailures": 2,
+    "referenceFixFailures": 0
+  },
+  "matrix": [
+    {
+      "variant": "VC-HEAD-20230430",
+      "startedAt": "2026-07-31T01:20:46.7431795+08:00",
+      "durationSeconds": 40.29,
+      "timedOut": false,
+      "exitCode": 1,
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "stdoutSha256": "17E8AE93DCA7AC3C03F31C5D496A324EC68B132E586A1DB1BEA9883FC3828E17",
+      "stderrSha256": "0F145F352FD29830C577B15C456B32F279615B83777049A25EAAD0B90E5B4920",
+      "lockTableSha256": "E6B9279097A72D952F7F2298A319E7AD7379E09C49FE9810EDD174C9C58FE457"
+    },
+    {
+      "variant": "VC-REF-95",
+      "startedAt": "2026-07-31T01:21:27.0866637+08:00",
+      "durationSeconds": 36.065,
+      "timedOut": false,
+      "exitCode": 0,
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "stdoutSha256": "CD2FAC7D9AACEC7C24E0D42967CEB01DEC7916C9510729454F1589573EAA3BAE",
+      "stderrSha256": "15950200C04CBFB1F1BAF6369916046008BCF737A7FD1334EAD03F967E8C9A9F",
+      "lockTableSha256": "53D77D279F88062C11B81B4FAE80391EBB599832B0EE95DE3DB6E2B27DBDDB28"
+    }
+  ],
+  "matrixPassed": true
+}
