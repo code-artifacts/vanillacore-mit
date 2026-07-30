@@ -9,6 +9,7 @@
 - [`references.md`](references.md)：本地源码地图、上游历史与工具/论文入口。
 - [`evidence/README.md`](evidence/README.md)：基线变体、已知风险与保留的 PR #95 补丁。
 - [`experiments/README.md`](experiments/README.md)：实验目录、命名、manifest 和生成物管理约定。
+- [`execution/README.md`](execution/README.md)：按周执行记录、自动化入口和可审计结果。
 - [`../tla/README.md`](../tla/README.md)：模型分层、命名和模型—源码映射规则。
 
 ## 仓库边界

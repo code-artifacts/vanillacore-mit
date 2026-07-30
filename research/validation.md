@@ -10,12 +10,11 @@
 | Maven | 3.9.12 |
 | Host | Windows 11, x86-64 |
 
-本机同时安装了 JDK 17 与 JDK 25。项目验证必须让 `JAVA_HOME` 和当前进程 `PATH` 明确指向 JDK 17；不要仅依据系统默认 `java`。运行前以 `mvn -version` 确认 Maven 实际使用的 Java。
+本机同时安装了 JDK 17 与 JDK 25。项目验证必须让 `JAVA_HOME` 和当前进程 `PATH` 明确指向 JDK 17；不要仅依据系统默认 `java`。研究脚本验证 Temurin runtime `17.0.20+8` 并自动启用 `mit-research` Maven profile；该 profile 同时限制 Java 主版本为 17、供应商为 Eclipse Adoptium，不改变普通上游构建的供应商策略。
 
 ```powershell
-$env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-17.0.20.8-hotspot'
-$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
-mvn -version
+.\scripts\research\Invoke-MavenJdk17.ps1 --version
+.\scripts\research\Invoke-MavenJdk17.ps1 --batch-mode clean test
 ```
 
 ## Validation Commands
@@ -38,6 +37,14 @@ mvn --batch-mode "-Dtest=ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTe
 JDK 25.0.4 可安装并用于兼容性实验，但当前不能作为构建基线。`net.smacke:jaydio:0.1` 传递依赖 `net.java.dev.jna:jna:4.0.0`；JDK 25 的 JAR 读取器拒绝该旧 JNA 文件并报告 `Invalid CEN header (invalid zip64 extra data field size)`，生产源码编译阶段即失败。JDK 17 能读取同一制品。
 
 在升级或替换 `jaydio`/JNA 前，所有正式实验、CI 与复现实验固定 JDK 17。依赖升级应单独评估，不能与并发控制 mutation 混入同一实验变体。
+
+可重复运行兼容性探针：
+
+```powershell
+.\scripts\research\Test-JdkCompatibility.ps1
+```
+
+探针、证据来源与当前结果见 [`execution/week-01/step-01-environment.md`](execution/week-01/step-01-environment.md)。
 
 ## Repetition Gate
 

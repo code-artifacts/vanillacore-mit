@@ -40,3 +40,4 @@ research/experiments/raw/
 research/experiments/normalized/
 research/experiments/work/
 research/experiments/reports/generated/
+research/execution/**/raw/

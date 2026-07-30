@@ -200,6 +200,41 @@
 	
 	
 	<profiles>
+		<profile>
+			<id>mit-research</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<version>3.6.3</version>
+						<executions>
+							<execution>
+								<id>enforce-research-jdk</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireJavaVersion>
+											<version>[17,18)</version>
+											<message>VanillaCore MIT experiments require Temurin JDK 17.</message>
+										</requireJavaVersion>
+										<requireJavaVendor>
+											<includes>
+												<include>Eclipse Adoptium</include>
+											</includes>
+											<message>VanillaCore MIT experiments require Eclipse Temurin.</message>
+										</requireJavaVendor>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<!-- Make sure release only happening when I need it
 			(To avoid error when others try to run 'mvn install', like Travis CI) -->
 		<profile>
