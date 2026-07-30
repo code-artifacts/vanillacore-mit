@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T00:06:26.4858709+08:00",
+  "variants": {
+    "pristine": "VC-HEAD-20230430",
+    "referenceFix": "VC-REF-95"
+  },
+  "repository": {
+    "commit": "f34edaa1240d5f8193fc9cae64cf39ec3edcd5cd",
+    "tree": "ff83e249026ce32e5905b6bb35831e53ce360f66",
+    "sourceTree": "bbf446ad20578959e91ef2b3dd8ed72bae838940",
+    "pomBlob": "d6068655dca754d80e61fd530c55f30992849d03",
+    "branch": "master",
+    "origin": "git@github.com:code-artifacts/vanillacore-mit.git"
+  },
+  "upstream": {
+    "commit": "03e1f2df49bb9664c8bdae11cf911f56b74bbc57",
+    "tree": "a72a2e06ad2fb2fe0d28ad7dfcc53e7cf3399f5f",
+    "sourceTree": "bbf446ad20578959e91ef2b3dd8ed72bae838940",
+    "pomBlob": "790e8be8d109c1c7af416fb10cb8f5f26b56516b",
+    "url": "https://github.com/vanilladb/vanillacore"
+  },
+  "patch": {
+    "path": "research/evidence/patches/pr-95-fix-locktable.patch",
+    "sha256": "E3C79288D13A8C8706227879DC38DB93562DAE92C4E1CBB82B0E10B8FACAD145",
+    "gitBlob": "e0121d2981bed97f9364f2229c0a30606e50ab68",
+    "mailCommitIds": [
+      "7b326e25508727a7f21ccbca13209dd7675d2cb0",
+      "e9d8174c6011750f1cd87613b5833c25ea7bf8af"
+    ],
+    "upstreamPullRequest": "https://github.com/vanilladb/vanillacore/pull/95",
+    "applyCheck": true
+  },
+  "checks": {
+    "repositorySourceMatchesUpstream": true,
+    "repositoryPomIntentionallyDiffers": true
+  }
+}

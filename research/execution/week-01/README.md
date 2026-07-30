@@ -5,7 +5,7 @@
 | Step | Deliverable | Status |
 | --- | --- | --- |
 | 1 | 固定 Temurin JDK 17；记录 JDK 25 限制 | Complete |
-| 2 | 固定仓库、上游与 PR #95 身份 | Pending |
+| 2 | 固定仓库、上游与 PR #95 身份 | Complete |
 | 3 | 原始/PR #95 双基线 clean build | Pending |
 | 4 | fresh JVM ×20 与遗漏测试 | Pending |
 | 5 | deadlock TODO issue/test skeleton | Pending |
@@ -14,7 +14,8 @@
 ## Step Records
 
 - [`step-01-environment.md`](step-01-environment.md)
-- Step 02–06 文档在对应步骤实施时创建，避免预先搭建无内容文件。
+- [`step-02-baselines.md`](step-02-baselines.md)
+- Step 03–06 文档在对应步骤实施时创建，避免预先搭建无内容文件。
 
 ## Shared Commands
 

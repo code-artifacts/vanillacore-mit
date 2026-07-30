@@ -15,6 +15,8 @@
 
 每次实验必须保存目标仓库 commit、上游 commit、补丁 hash、模型/映射/schema 版本、JDK/Maven/OS、timeout、数据库目录和 seed；格式见 [`../experiments/README.md`](../experiments/README.md)。
 
+第一周固定身份及 Git object 证据见 [`../execution/week-01/results/step-02-baselines.json`](../execution/week-01/results/step-02-baselines.json)。
+
 ## Known Research Leads
 
 - [`LockTable.java`](../../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java) 的 `lockerMap` 由不同资源 anchor 上的 monitor 访问，PR #95 将其改为并发 map；需构造跨 anchor 并发见证。
