@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-07-31T01:44:40.6150081+08:00",
+  "repositoryCommit": "fc79bb7464ee28ce1f46d66443ab1a6f4a382a54",
+  "traceSchemaVersion": "vc-locktrace-0",
+  "scheduler": "event-conditioned-v0",
+  "repetitionsPerScenario": 20,
+  "scenarios": [
+    {
+      "id": "s-s",
+      "repetitions": 20,
+      "events": 160,
+      "eventCounts": {
+        "LOCK_CALL": 40,
+        "WAIT_BEGIN": 0,
+        "GRANT": 40,
+        "RELEASE": 40,
+        "TX_END": 40
+      },
+      "traceSha256": "C04686FD7F54354566545D4711B9B029E679DAC6EEB6F098E09AE803CB17C210",
+      "traceLoss": 0
+    },
+    {
+      "id": "s-x",
+      "repetitions": 20,
+      "events": 180,
+      "eventCounts": {
+        "LOCK_CALL": 40,
+        "WAIT_BEGIN": 20,
+        "GRANT": 40,
+        "RELEASE": 40,
+        "TX_END": 40
+      },
+      "traceSha256": "859A66A2039C14EBD7E2747031E4EF095BF48290F4A89DC09E5B66387EB50BA9",
+      "traceLoss": 0
+    },
+    {
+      "id": "x-x",
+      "repetitions": 20,
+      "events": 180,
+      "eventCounts": {
+        "LOCK_CALL": 40,
+        "WAIT_BEGIN": 20,
+        "GRANT": 40,
+        "RELEASE": 40,
+        "TX_END": 40
+      },
+      "traceSha256": "27D126068055FEE8B5DCD12D9F57E569522D41C89731E169195FBA5B5C5545F3",
+      "traceLoss": 0
+    },
+    {
+      "id": "reverse-two-resource",
+      "repetitions": 20,
+      "events": 260,
+      "eventCounts": {
+        "LOCK_CALL": 80,
+        "WAIT_BEGIN": 20,
+        "GRANT": 60,
+        "RELEASE": 60,
+        "TX_END": 40
+      },
+      "traceSha256": "3B8392FD2C084DBFD26D2BE17C3F38F8A79EA055BF22371017C781DC1427EB76",
+      "traceLoss": 0
+    }
+  ],
+  "tests": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}
