@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "fixtureVersion": "week2-normalized-v0.1",
+  "traceSchemaVersion": "vc-locktrace-0",
+  "mappingVersion": "l1-mapping-v0.1",
+  "model": {
+    "path": "tla/l1/VC_L1_SX.tla",
+    "sha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C"
+  },
+  "mapping": {
+    "path": "tla/l1/mapping-v0.1.json",
+    "sha256": "AA56EE99565B958ACC04A3DB63944C7CAFBB2365F3FB8CC345D79DB54F3E5BCD",
+    "status": "PROVISIONAL"
+  },
+  "sources": {
+    "summary": {
+      "path": "research/execution/week-02/results/step-04-scenario-replay.json",
+      "sha256": "651E4833C5F71EC5C0EFAF3891AF5C60AA91AFED7573AA39FEA4BE91342B3083"
+    },
+    "scenarioSource": {
+      "path": "src/test/java/org/vanilladb/core/storage/tx/concurrency/LockTableReplayScenarioTest.java",
+      "sha256": "6FE4378DE65449A5775FDCF7BD89E7A45BAEAFA372954B1540816B9FA68C820E"
+    }
+  },
+  "constants": {
+    "transactions": ["t1", "t2"],
+    "resources": ["r1", "r2"],
+    "maxRequests": 8
+  },
+  "fixtures": [
+    {
+      "id": "week2-s-s",
+      "sourceScenario": "s-s",
+      "rawTraceSha256": "C04686FD7F54354566545D4711B9B029E679DAC6EEB6F098E09AE803CB17C210",
+      "expectedVerdict": "CONFIRMED",
+      "actions": [
+        {"action": "REQUEST_S", "tx": "t1", "resource": "r1", "mode": "S"},
+        {"action": "GRANT", "tx": "t1", "resource": "r1", "mode": "S"},
+        {"action": "REQUEST_S", "tx": "t2", "resource": "r1", "mode": "S"},
+        {"action": "GRANT", "tx": "t2", "resource": "r1", "mode": "S"},
+        {"action": "COMMIT", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "COMMIT", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"}
+      ],
+      "expectedFinal": {
+        "txState": {"t1": "COMMITTED", "t2": "COMMITTED"},
+        "requestCount": 2,
+        "terminalClean": true
+      }
+    },
+    {
+      "id": "week2-s-x",
+      "sourceScenario": "s-x",
+      "rawTraceSha256": "859A66A2039C14EBD7E2747031E4EF095BF48290F4A89DC09E5B66387EB50BA9",
+      "expectedVerdict": "CONFIRMED",
+      "actions": [
+        {"action": "REQUEST_S", "tx": "t1", "resource": "r1", "mode": "S"},
+        {"action": "GRANT", "tx": "t1", "resource": "r1", "mode": "S"},
+        {"action": "REQUEST_X", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "WAIT", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "COMMIT", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "WAKE", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "GRANT", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "COMMIT", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"}
+      ],
+      "expectedFinal": {
+        "txState": {"t1": "COMMITTED", "t2": "COMMITTED"},
+        "requestCount": 2,
+        "terminalClean": true
+      }
+    },
+    {
+      "id": "week2-x-x",
+      "sourceScenario": "x-x",
+      "rawTraceSha256": "27D126068055FEE8B5DCD12D9F57E569522D41C89731E169195FBA5B5C5545F3",
+      "expectedVerdict": "CONFIRMED",
+      "actions": [
+        {"action": "REQUEST_X", "tx": "t1", "resource": "r1", "mode": "X"},
+        {"action": "GRANT", "tx": "t1", "resource": "r1", "mode": "X"},
+        {"action": "REQUEST_X", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "WAIT", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "COMMIT", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "WAKE", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "GRANT", "tx": "t2", "resource": "r1", "mode": "X"},
+        {"action": "COMMIT", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"}
+      ],
+      "expectedFinal": {
+        "txState": {"t1": "COMMITTED", "t2": "COMMITTED"},
+        "requestCount": 2,
+        "terminalClean": true
+      }
+    },
+    {
+      "id": "week2-reverse-two-resource",
+      "sourceScenario": "reverse-two-resource",
+      "rawTraceSha256": "3B8392FD2C084DBFD26D2BE17C3F38F8A79EA055BF22371017C781DC1427EB76",
+      "expectedVerdict": "INCONCLUSIVE",
+      "inconclusiveReason": "The v0 trace has no abort event and TX_END cannot distinguish commit from rollback; the external Future outcome is not a strong mapping input.",
+      "actions": [
+        {"action": "REQUEST_X", "tx": "t1", "resource": "r1", "mode": "X"},
+        {"action": "GRANT", "tx": "t1", "resource": "r1", "mode": "X"},
+        {"action": "REQUEST_X", "tx": "t2", "resource": "r2", "mode": "X"},
+        {"action": "GRANT", "tx": "t2", "resource": "r2", "mode": "X"},
+        {"action": "REQUEST_X", "tx": "t1", "resource": "r2", "mode": "X"},
+        {"action": "WAIT", "tx": "t1", "resource": "r2", "mode": "X"},
+        {"action": "ROLLBACK", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t2", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "WAKE", "tx": "t1", "resource": "r2", "mode": "X"},
+        {"action": "GRANT", "tx": "t1", "resource": "r2", "mode": "X"},
+        {"action": "COMMIT", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"},
+        {"action": "RELEASE_ALL", "tx": "t1", "resource": "NO_RESOURCE", "mode": "NONE"}
+      ],
+      "expectedFinal": {
+        "txState": {"t1": "COMMITTED", "t2": "ABORTED"},
+        "requestCount": 3,
+        "terminalClean": true
+      }
+    }
+  ]
+}

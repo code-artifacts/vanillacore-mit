@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-05-model-self-tests",
+  "generatedAt": "2026-07-31T23:25:01.200068+08:00",
+  "gitCommit": "34b247513fdb76bda33a433c0c60504501a20e8b",
+  "status": "PASS",
+  "toolchain": {
+    "releaseTag": "v1.7.4",
+    "tlcVersion": "2.19 of 08 August 2024",
+    "toolSha256": "936A262061C914694DFD669A543BE24573C45D5AA0FF20A8B96B23D01E050E88",
+    "java": {
+      "Home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot",
+      "Major": 17,
+      "Vendor": "Eclipse Adoptium",
+      "Version": "17.0.20",
+      "RuntimeVersion": "17.0.20+8"
+    }
+  },
+  "legalCanonicalReplay": {
+    "corpus": "research/execution/week-03/results/step-04-canonical-traces.json",
+    "corpusSha256": "629B54B339319DF0B22DEBADEE823F26865865F40A6FAB021DEA62D300BC1C18",
+    "traceCount": 8,
+    "traces": [
+      {
+        "id": "shared-shared-compatible",
+        "actions": 4,
+        "status": "PASS"
+      },
+      {
+        "id": "shared-exclusive-conflict",
+        "actions": 4,
+        "status": "PASS"
+      },
+      {
+        "id": "exclusive-shared-conflict",
+        "actions": 4,
+        "status": "PASS"
+      },
+      {
+        "id": "exclusive-exclusive-conflict",
+        "actions": 4,
+        "status": "PASS"
+      },
+      {
+        "id": "single-upgrader",
+        "actions": 4,
+        "status": "PASS"
+      },
+      {
+        "id": "double-upgrader",
+        "actions": 8,
+        "status": "PASS"
+      },
+      {
+        "id": "writer-commit-reader-grant",
+        "actions": 8,
+        "status": "PASS"
+      },
+      {
+        "id": "writer-rollback-reader-grant",
+        "actions": 8,
+        "status": "PASS"
+      }
+    ]
+  },
+  "negativeInvariantTests": [
+    {
+      "id": "compatibility-negative",
+      "fault": "incompatible S/X owners",
+      "expectedInvariant": "MutualExclusion",
+      "observedInvariant": "MutualExclusion",
+      "exitCode": 12,
+      "durationSeconds": 1.547,
+      "module": "tla/l1/VC_L1_SX_SelfTest.tla",
+      "moduleSha256": "8932C3FF73FF0992C20D42C1B9F9E6403915B836FCC8AA794F31BB3A76130F21",
+      "config": "tla/l1/VC_L1_SX_compatibility_negative.cfg",
+      "configSha256": "C244DAA255ADA478FEA72A4BC2706018FF2B94CF597F8370E2950E6C0555EFFA",
+      "outputSha256": "AA1D7C049BCE29BC0887C3790A4577AC3D91B27963C1C2E757688BAF11CF4765",
+      "status": "PASS"
+    },
+    {
+      "id": "strictness-negative",
+      "fault": "released historical X before termination",
+      "expectedInvariant": "StrictXRetention",
+      "observedInvariant": "StrictXRetention",
+      "exitCode": 12,
+      "durationSeconds": 1.515,
+      "module": "tla/l1/VC_L1_SX_SelfTest.tla",
+      "moduleSha256": "8932C3FF73FF0992C20D42C1B9F9E6403915B836FCC8AA794F31BB3A76130F21",
+      "config": "tla/l1/VC_L1_SX_strictness_negative.cfg",
+      "configSha256": "E4AEE7B1E69B8BFE6CB8DFAAB812742D9225AED0D2E02277BC4866CAAB16D336",
+      "outputSha256": "93AEEFDAF76250CEB5DB60AB0823390FEA2D99D78294CC6AFC19EFCFBAB0EA37",
+      "status": "PASS"
+    },
+    {
+      "id": "cleanup-negative",
+      "fault": "terminal transaction retains S owner state",
+      "expectedInvariant": "TerminalClean",
+      "observedInvariant": "TerminalClean",
+      "exitCode": 12,
+      "durationSeconds": 1.688,
+      "module": "tla/l1/VC_L1_SX_SelfTest.tla",
+      "moduleSha256": "8932C3FF73FF0992C20D42C1B9F9E6403915B836FCC8AA794F31BB3A76130F21",
+      "config": "tla/l1/VC_L1_SX_cleanup_negative.cfg",
+      "configSha256": "664C6C7D445C154E3B50B84A28872C12B05A756F060AC53DDB6C4B9CE3BA79D3",
+      "outputSha256": "5835BD66CE3AE05EC865E1C79BE06A6E9CA2D16B34DA0730D40E5CC1F7F23C26",
+      "status": "PASS"
+    }
+  ],
+  "week2RegressionFixtures": {
+    "catalog": "tla/l1/fixtures/week2-v0.1.json",
+    "catalogSha256": "D26DF6C549D445392AA659940646B573AFF204266ADEA202E0913196129AC24D",
+    "fixtureCount": 4,
+    "confirmed": 3,
+    "inconclusive": 1,
+    "fixtures": [
+      {
+        "id": "week2-s-s",
+        "sourceScenario": "s-s",
+        "actions": 8,
+        "expectedVerdict": "CONFIRMED",
+        "status": "PASS"
+      },
+      {
+        "id": "week2-s-x",
+        "sourceScenario": "s-x",
+        "actions": 10,
+        "expectedVerdict": "CONFIRMED",
+        "status": "PASS"
+      },
+      {
+        "id": "week2-x-x",
+        "sourceScenario": "x-x",
+        "actions": 10,
+        "expectedVerdict": "CONFIRMED",
+        "status": "PASS"
+      },
+      {
+        "id": "week2-reverse-two-resource",
+        "sourceScenario": "reverse-two-resource",
+        "actions": 12,
+        "expectedVerdict": "INCONCLUSIVE",
+        "status": "PASS"
+      }
+    ]
+  },
+  "claimBoundary": "PASS means the current bounded canonical corpus replays, TLC catches the three injected initial-state faults, and all normalized Week 2 fixtures remain legal. It does not upgrade provisional mappings or turn the reverse-two-resource fixture into a strong verdict."
+}

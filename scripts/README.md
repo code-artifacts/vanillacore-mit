@@ -32,6 +32,7 @@ python -m scripts.research.bootstrap_tla_tools
 python -m scripts.research.check_l1_model
 python -m scripts.research.check_l1_mapping
 python -m scripts.research.export_l1_traces
+python -m scripts.research.check_l1_self_tests
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -56,6 +57,11 @@ eligibility rules.
 2×2 model with a fixed seed, hashes the ignored raw action-labelled state graph,
 and deterministically extracts the eight canonical L1 trace families with final
 states and full provenance.
+
+[`check_l1_self_tests.py`](research/check_l1_self_tests.py) replays all canonical
+traces, requires TLC to catch injected compatibility, strictness, and cleanup
+faults, and replays the four normalized Week 2 regression fixtures. Model,
+mapping, scenario-source, and summary hashes make stale fixtures fail closed.
 
 ## Documentation References
 

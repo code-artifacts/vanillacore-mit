@@ -29,6 +29,10 @@ class TlaToolingTest(unittest.TestCase):
         self.assertFalse(manifest["l1Models"][1]["completeWithinBound"])
         self.assertEqual("canonical-traces-2x2", manifest["traceModel"]["id"])
         self.assertEqual(20260731, manifest["traceModel"]["seed"])
+        self.assertEqual(
+            ["MutualExclusion", "StrictXRetention", "TerminalClean"],
+            [test["expectedInvariant"] for test in manifest["selfTestModels"]],
+        )
         self.assertTrue(str(configured_jar_path(root, manifest)).endswith("tla2tools.jar"))
 
     def test_parse_tlc_metrics(self) -> None:

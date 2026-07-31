@@ -55,6 +55,16 @@ python -m scripts.research.export_l1_traces
 
 The tracked [`canonical trace result`](../research/execution/week-03/results/step-04-canonical-traces.json) stores all eight families, final states, hashes, constants, and the fixed seed. The large raw DOT graph remains under the ignored [`.tools/`](../.gitignore) directory and is identified by its recorded SHA-256.
 
+## L1 Self-Tests
+
+[`VC_L1_SX_SelfTest.tla`](l1/VC_L1_SX_SelfTest.tla) injects isolated compatibility, strict-X-retention, and terminal-cleanup faults. The cross-platform [`check_l1_self_tests.py`](../scripts/research/check_l1_self_tests.py) requires TLC to report each target invariant, replays the eight canonical witnesses, and checks all [`Week 2 normalized fixtures`](l1/fixtures/week2-v0.1.json):
+
+```console
+python -m scripts.research.check_l1_self_tests
+```
+
+Fixture provenance is hash-pinned. A model, mapping, Week 2 summary, or scenario-source change therefore fails the check until the fixtures are explicitly reviewed and replayed.
+
 ## Mapping Discipline
 
 每个模型动作必须记录实现事件、资源抽象、前置条件、允许的 stutter 和不可观测字段。结构锁与逻辑锁使用不同 event kind；无法由 trace 证明的结果为 [`inconclusive`](../research/plan.md#L378)，而不是 violation。映射变更需递增 [`mapping_version`](#mapping-discipline)，并重放旧反例。
