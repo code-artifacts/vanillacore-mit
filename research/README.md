@@ -21,4 +21,4 @@
 
 ## 当前优先级
 
-先完成 `L0/L1`：固定 JDK 17 基线、复现 PR #95 风险、建立 `S/X + strict 2PL` 模型、Direct `LockTable` harness、确定性调度和三值 verdict。通过 [`plan.md`](plan.md) 中 G0–G2 闸门后，再扩展意向锁、deadlock/abort、恢复与 B-tree。
+先完成 [`L0/L1`](#当前优先级)：固定 JDK 17 基线、复现 PR #95 风险、建立 [`S/X + strict 2PL`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 模型、Direct [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) harness、确定性调度和三值 verdict。通过 [`plan.md`](plan.md) 中 G0–G2 闸门后，再扩展意向锁、deadlock/abort、恢复与 B-tree。

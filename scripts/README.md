@@ -1,17 +1,17 @@
 # Cross-Platform Research Scripts
 
-`scripts.research` provides the reproducible Week 1 and Week 2 workflows on
+[`scripts.research`](research/__init__.py#L1) provides the reproducible Week 1 and Week 2 workflows on
 Windows, Linux, and macOS. The implementation uses only the Python standard
-library and discovers platform-specific `java`, `jar`, Maven, temporary
+library and discovers platform-specific [`java`](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html), [`jar`](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jar.html), Maven, temporary
 directories, process groups, paths, and Git worktrees at runtime.
 
 ## Requirements
 
-- Python 3.10 or newer (`python3` may replace `python` on Unix systems).
-- Git and Maven available on `PATH`.
-- Eclipse Temurin JDK `17.0.20+8`; set `VANILLADB_JDK17_HOME` when discovery is
+- Python 3.10 or newer ([`python3`](https://docs.python.org/3/using/cmdline.html) may replace [`python`](https://docs.python.org/3/using/cmdline.html) on Unix systems).
+- Git and Maven available on [`PATH`](research/common/tooling.py#L238).
+- Eclipse Temurin JDK [`17.0.20+8`](../research/execution/week-01/results/step-01-environment.json#L13); set [`VANILLADB_JDK17_HOME`](research/common/tooling.py#L186) when discovery is
   ambiguous. The compatibility probe additionally needs JDK 25 through
-  `VANILLADB_JDK25_HOME`.
+  [`VANILLADB_JDK25_HOME`](research/common/tooling.py#L186).
 
 Run modules from the repository root:
 
@@ -30,8 +30,18 @@ python -m scripts.research.measure_week02_trace_quality
 python -m scripts.research.new_week02_gate_decision
 ```
 
-Use `--help` on an evidence command for output and workload overrides. Evidence
+Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
 schemas and default paths remain compatible with the original workflows.
+
+## Documentation References
+
+Run [`check_document_links.py`](research/check_document_links.py) from the
+repository root to verify that tracked documents use navigable local links for
+repository files, source lines, and sections:
+
+```console
+python -m scripts.research.check_document_links
+```
 
 ## Tests
 

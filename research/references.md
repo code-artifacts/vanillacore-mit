@@ -22,10 +22,10 @@
 
 ## Historical Evidence
 
-- [PR #95](https://github.com/vanilladb/vanillacore/pull/95)：`lockerMap` 并发访问与 `txWaitMap` 清理；仓库保留[原始补丁](evidence/patches/pr-95-fix-locktable.patch)。
+- [PR #95](https://github.com/vanilladb/vanillacore/pull/95)：[`lockerMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L102) 并发访问与 [`txWaitMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L105) 清理；仓库保留[原始补丁](evidence/patches/pr-95-fix-locktable.patch)。
 - [PR #32](https://github.com/vanilladb/vanillacore/pull/32)：rollback 与锁释放/恢复交互。
 - [PR #34](https://github.com/vanilladb/vanillacore/pull/34)、[PR #37](https://github.com/vanilladb/vanillacore/pull/37)、[PR #44](https://github.com/vanilladb/vanillacore/pull/44)、[PR #50](https://github.com/vanilladb/vanillacore/pull/50)、[PR #80](https://github.com/vanilladb/vanillacore/pull/80)：索引、锁与事务回归线索。
-- 本仓库 Git 历史可直接审查已合并修复，例如 `git show feb5c38`、`git show a83acf5`、`git show 3ef8dc0`、`git show 09c353f`。
+- 本仓库 Git 历史可直接审查已合并修复，例如 [`git show feb5c38`](#historical-evidence)、[`git show a83acf5`](#historical-evidence)、[`git show 3ef8dc0`](#historical-evidence)、[`git show 09c353f`](#historical-evidence)。
 
 历史材料用于生成假设和 regression witness，不能直接充当模型正确性的 oracle。基线解释见 [`evidence/README.md`](evidence/README.md)。
 

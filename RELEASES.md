@@ -6,7 +6,7 @@
 
 - VanillaDB initialization flag is declared volatile. ([#96])
 - New work stealing pool for better hand-over latency. ([#96])
-- Index blocks and record blocks no longer block each other. ([#96])
+- [`Index`](src/main/java/org/vanilladb/core/storage/index/Index.java#L28) blocks and record blocks no longer block each other. ([#96])
 - File header pages acquire reentrant latches instead of exclusive locks. ([#96])
 - Append no longer performs I/O. ([#96])
 
@@ -16,10 +16,10 @@
 
 ### Enhancements
 
-- Update `TransactionProfiler`. ([#72][#75][#76])
+- Update [`TransactionProfiler`](src/main/java/org/vanilladb/core/util/TransactionProfiler.java#L27). ([#72][#75][#76])
 - Add author. ([#74])
 - Optimize buffer & index. ([#78])
-- Reduce the call of synchronized block in BufferMgr.unpin. ([#79])
+- Reduce the call of synchronized block in [`BufferMgr`](src/main/java/org/vanilladb/core/storage/buffer/BufferMgr.java#L52).unpin. ([#79])
 
 
 [#72]: https://github.com/vanilladb/vanillacore/pull/72
@@ -54,25 +54,25 @@
 
 ### Enhancements
 
-- Improve `TimerStatistics`. ([#55])
+- Improve [`TimerStatistics`](src/main/java/org/vanilladb/core/util/TimerStatistics.java#L25). ([#55])
 - Update JUnit to 4.13.2. ([#55])
 
 ### Optimizations
 
 - Improve the buffer replacement strategy. ([#55])
 	- Add a reference bit to every buffer so that the clock replacement strategy provides more stable performance.
-- Remove the cached string from `BlockId`. ([#55])
-	- Since `toString` of `BlockId` is rarely called, pre-computing the string not only does not help but also wastes resources.
+- Remove the cached string from [`BlockId`](src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23). ([#55])
+	- Since [`toString`](src/main/java/org/vanilladb/core/storage/file/BlockId.java#L91) of [`BlockId`](src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23) is rarely called, pre-computing the string not only does not help but also wastes resources.
 
 ### Code Refactor
 
-- Refactor duplicated code in `LockTable`. ([#50])
+- Refactor duplicated code in [`LockTable`](src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48). ([#50])
 
 ### Bug Fixes
 
-- Correct the author name in the `pom.xml`. ([#48])
+- Correct the author name in the [`pom.xml`](pom.xml). ([#48])
 - Resolve #49: bad verification while using aggregation fields after an order by clause. ([#54])
-- Improve `IndexUpdatePlannerTest`. ([#55])
+- Improve [`IndexUpdatePlannerTest`](src/test/java/org/vanilladb/core/query/planner/index/IndexUpdatePlannerTest.java#L51). ([#55])
 	- The name of the indices in the test case might be accidently treated as removable temp files.
 - Remove an unstable test case. ([#55])
 
@@ -87,21 +87,21 @@ API changes for stored procedures and bug fixes for B-Tree and recovery. ([#44])
 
 ### Stored Procedures
 
-- Ensure that `SpResultSet` saves commit status
+- Ensure that [`SpResultSet`](src/main/java/org/vanilladb/core/remote/storedprocedure/SpResultSet.java#L23) saves commit status
 - Add missing generic parameters for stored procedures
-- Fix the `toString` of `SpResultRecord`
-- Update the visibility of the methods of `StoredProcedureParamHelper`
+- Fix the [`toString`](src/main/java/org/vanilladb/core/sql/storedprocedure/SpResultRecord.java#L50) of [`SpResultRecord`](src/main/java/org/vanilladb/core/sql/storedprocedure/SpResultRecord.java#L31)
+- Update the visibility of the methods of [`StoredProcedureParamHelper`](#stored-procedures)
 - Refactor the design and APIs of stored procedures
 - Add a method to manually abort in a stored procedure
 
 ### BTree
 
-- Add `BTreeIndexRecoveryTest` for the recovery of B-Tree
-- Add `BTreeIndexConcurrentTest` for the concurrency of B-Tree
-- Implement `toString` for `BTreePage`
-- Fix the bug of searching an entry in `BTreeDir`
-- Fix the bug of inserting an entry in `BTreeDir`
-- Add a size check in `BTreePage`
+- Add [`BTreeIndexRecoveryTest`](src/test/java/org/vanilladb/core/storage/tx/recovery/BTreeIndexRecoveryTest.java#L23) for the recovery of B-Tree
+- Add [`BTreeIndexConcurrentTest`](src/test/java/org/vanilladb/core/storage/index/btree/BTreeIndexConcurrentTest.java#L30) for the concurrency of B-Tree
+- Implement [`toString`](src/main/java/org/vanilladb/core/storage/index/btree/BTreePage.java#L382) for [`BTreePage`](src/main/java/org/vanilladb/core/storage/index/btree/BTreePage.java#L46)
+- Fix the bug of searching an entry in [`BTreeDir`](src/main/java/org/vanilladb/core/storage/index/btree/BTreeDir.java#L41)
+- Fix the bug of inserting an entry in [`BTreeDir`](src/main/java/org/vanilladb/core/storage/index/btree/BTreeDir.java#L41)
+- Add a size check in [`BTreePage`](src/main/java/org/vanilladb/core/storage/index/btree/BTreePage.java#L46)
 - Fix a bug that causes overflow while rolling back in BTree
 
 [#44]: https://github.com/vanilladb/vanillacore/pull/44
@@ -120,12 +120,12 @@ All the following changes were merged in [#40].
 - Made the waiting time in the test cases shorter
 - Added more messages for starting up the system
 - Reduced memory footprint in Buffers
-- Added a new API to TransactionMgr
-- Added an error check to IndexMgr
+- Added a new API to [`TransactionMgr`](src/main/java/org/vanilladb/core/storage/tx/TransactionMgr.java#L42)
+- Added an error check to [`IndexMgr`](src/main/java/org/vanilladb/core/storage/metadata/index/IndexMgr.java#L45)
 
 ### Bug Fixes
 
-- Corrected the implementation of ConcurrencyMgr
+- Corrected the implementation of [`ConcurrencyMgr`](src/main/java/org/vanilladb/core/storage/tx/concurrency/ConcurrencyMgr.java#L30)
 
 [#40]: https://github.com/vanilladb/vanillacore/pull/40
 
@@ -159,18 +159,18 @@ All the following changes were merged in [#40].
 
 ### Code-level Improvements
 
-- Implemented `Comparable` for `RecordId` and `BlockId` ([#18])
+- Implemented [`Comparable`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html) for [`RecordId`](src/main/java/org/vanilladb/core/storage/record/RecordId.java#L24) and [`BlockId`](src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23) ([#18])
 
 ### Bug Fixes
 
-- Fixed `NullPointerException` caused by `GROUP BY` query ([#16])
+- Fixed [`NullPointerException`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/NullPointerException.html) caused by [`GROUP BY`](#bug-fixes) query ([#16])
 - Fixed duplicate-postfix problem of B-tree indexes during logging ([#20])
 - Fixed the bug that uses too many threads caused by test cases ([#26])
 
 ### Others
 
-- Added `CONTRIBUTING.md` for the newcomers to know how to contribute ([#22])
-- Removed `develop` branch and updated the corresponding configuration in `.travis.yml` ([#22])
+- Added [`CONTRIBUTING.md`](CONTRIBUTING.md) for the newcomers to know how to contribute ([#22])
+- Removed [`develop`](#others) branch and updated the corresponding configuration in [`.travis.yml`](#others) ([#22])
 
 [#15]: https://github.com/vanilladb/vanillacore/pull/15
 [#16]: https://github.com/vanilladb/vanillacore/pull/16
@@ -186,16 +186,16 @@ All the following changes were merged in [#40].
 
 ### Refactoring
 
-- Removed the old interface for initializing VanillaDb ([#9])
-- Maked VanillaDb accept a StoredProcedureFactory as a parameter during initialization ([#9], [#10])
+- Removed the old interface for initializing [`VanillaDb`](src/main/java/org/vanilladb/core/server/VanillaDb.java#L56) ([#9])
+- Maked [`VanillaDb`](src/main/java/org/vanilladb/core/server/VanillaDb.java#L56) accept a [`StoredProcedureFactory`](src/main/java/org/vanilladb/core/sql/storedprocedure/StoredProcedureFactory.java#L18) as a parameter during initialization ([#9], [#10])
 
 ### Enhancements
 
-- Added a debug tool, `org.vanilladb.core.util.Timer`, in order to record the running time in given components for a thread ([#9])
+- Added a debug tool, [`org.vanilladb.core.util.Timer`](#enhancements), in order to record the running time in given components for a thread ([#9])
 
 ### Bug Fixes
 
-- Maked `SQLIntepretor` case insensitive to `SELECT` and `EXPLAIN` ([#8])
+- Maked [`SQLIntepretor`](#bug-fixes) case insensitive to [`SELECT`](#bug-fixes) and [`EXPLAIN`](#bug-fixes) ([#8])
 
 [#8]: https://github.com/vanilladb/vanillacore/pull/8
 [#9]: https://github.com/vanilladb/vanillacore/pull/9

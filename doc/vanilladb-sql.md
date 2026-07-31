@@ -13,7 +13,7 @@ Views can be created, but a view definition can be at most 100 characters.
 Because there are no renaming, all field names in a query must be disjoint.
 
 Other restrictions:
-- The `*` abbreviation in the select clause is not supported.
+- The [`*`](#restrictions) abbreviation in the select clause is not supported.
 - There are no null values.
 - There are no explicit joins or outer joins in the from clause.
 - The union and except keywords are not supported.

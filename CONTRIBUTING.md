@@ -39,11 +39,11 @@ In order to let us reproduce the bug, we recommend to use our template:
 
 Pull requests are the primary mechanism we use to change VanillaCore. GitHub itself has some [great documentation][3] on using the Pull Request feature. We use the **fork and pull** model described there.
 
-Please test your code before opening pull requests and make pull requests against the `master` branch.
+Please test your code before opening pull requests and make pull requests against the [`master`](research/execution/week-01/results/step-02-baselines.json#L13) branch.
 
 VanillaCore has a few JUnit test cases to check if all of the modules work properly. We recommend to use Maven to run the tests. Or, another way we usually use is to use JUnit plugin in Eclipse to run.
 
-If you use Maven with command: `mvn test`, here is a result of passing all of the tests:
+If you use Maven with command: [`mvn test`](https://maven.apache.org/surefire/maven-surefire-plugin/), here is a result of passing all of the tests:
 
 ```
 Results :
@@ -59,9 +59,9 @@ Tests run: 65, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 ```
 
-If you run use Eclipse, please right click on `StorageEnglineTestSuite` in `org.vanilladb.core`, then select `Run As` > `JUnit Test`. Here is a screenshot of passing all of the tests:
+If you run use Eclipse, please right click on [`StorageEnglineTestSuite`](#pull-requests) in [`org.vanilladb.core`](src/test/java/org/vanilladb/core/), then select [`Run As`](#pull-requests) > [`JUnit Test`](#pull-requests). Here is a screenshot of passing all of the tests:
 
-<img src="doc/eclipse-test-passed.png" />
+![Passing Eclipse test suite](doc/eclipse-test-passed.png)
 
 [1]: https://github.com/vanilladb/vanillacore/issues
 [2]: https://github.com/vanilladb/vanillacore/issues?utf8=%E2%9C%93&q=

@@ -15,8 +15,8 @@
 本计划把 VanillaCore 定位为本项目的**第一受控、可插桩、可变异 SUT（System Under Test）**，用于建立“TLA+ 抽象模型 → 事务与锁操作模板 → 可控并发调度 → 内部事件轨迹 → 分层 oracle → 最小反例”的完整研究闭环。它的价值不在于代表现代生产数据库的全部复杂性，而在于：
 
 1. 提供完整而规模适中的 Java 数据库实现，而不是待补全的课程骨架；
-2. 同时包含 `IS/IX/S/SIX/X`、文件/块/记录层次、事务生命周期、回滚恢复、索引并发和 phantom 路径；
-3. 核心 `LockTable` 约 585 行，适合精确插桩、确定性 gate、系统 mutation 与源码级归因；
+2. 同时包含 [`IS/IX/S/SIX/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、文件/块/记录层次、事务生命周期、回滚恢复、索引并发和 phantom 路径；
+3. 核心 [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 约 585 行，适合精确插桩、确定性 gate、系统 mutation 与源码级归因；
 4. 存在可利用的历史缺陷、未合并修复和测试空白，可用于验证方法是否超越上游单元测试与 history-only checker；
 5. 能作为 Apache Derby 和 MySQL/InnoDB 之间的模型校准起点。
 
@@ -34,7 +34,7 @@ VanillaCore 对本项目具有**高方法学价值、中等外部有效性、高
 | 可观察性 | 高 | Java 源码集中，可在锁表、并发管理器、事务与恢复边界发事件 |
 | 可控制性 | 高 | 可在源码事件前后放置 scheduler gate，不依赖 SQL 轮询 |
 | 可变异性 | 高 | 兼容、owner/waiter、upgrade、release、abort、timeout 等 fault 可局部注入 |
-| 可复现性 | 中高 | Maven、Apache-2.0、0.7.0 发布物可固定；`master` 需 JDK 17 |
+| 可复现性 | 中高 | Maven、Apache-2.0、0.7.0 发布物可固定；[`master`](execution/week-01/results/step-02-baselines.json#L13) 需 JDK 17 |
 | 基线可信度 | 中 | 上游测试可运行，但 PR #95 和历史 patch 表明不能把原始实现当正确 oracle |
 | 生产代表性 | 低至中 | 无 InnoDB 式 gap/next-key、复杂 latch/lock 分层、长历史兼容约束 |
 | 论文角色 | 强校准对象 | 适合回答“方法是否工作”，不单独回答“生产系统是否普适” |
@@ -74,8 +74,8 @@ VanillaCore 上的成功只能支撑以下主张：
 
 1. 立即执行 L0/L1 spike；
 2. 原始基线、PR #95 参考修复、插桩版和 mutation 版分离；
-3. 先做 Serializable + record `S/X`，再做意向锁、deadlock/abort、恢复；
-4. B-tree crabbing 独立为 `P-Struct`，不和逻辑 2PL 混合；
+3. 先做 Serializable + record [`S/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)，再做意向锁、deadlock/abort、恢复；
+4. B-tree crabbing 独立为 [`P-Struct`](#13-go-conditional-go-no-go)，不和逻辑 2PL 混合；
 5. 只有隐藏 mutation 与历史缺陷实验显示内部模型 oracle 有独立增益，才进入 Derby/MySQL transfer。
 
 ## 2. 研究问题、假设与可证伪条件
@@ -101,7 +101,7 @@ VanillaCore 上的成功只能支撑以下主张：
 | H1 分层建模优于一次性全模型 | L1 在小时级完成探索；每升一层仍能保留旧 trace 回放 | L1 已不可搜索或层间 contract 反复破坏旧结论 |
 | H2 模型调度提高 fault 检出 | 在等 CPU/运行预算下，独立 fault family 检出率或 TTF 显著优于 random/handwritten | 95% CI 覆盖零增益，或优势只来自硬编码已知 bug |
 | H3 内部 oracle 有独立价值 | 检出一组 history-only 无法判定、但有完整内部证据的 fault | 所有检出都能被更简单 history checker 同等或更快发现 |
-| H4 证据化三值判定减少误报 | `contradicted` 的人工复核 precision ≥ 0.95 | 大量误报来自丢事件、错误资源映射或结构锁混淆 |
+| H4 证据化三值判定减少误报 | [`contradicted`](#22-研究假设) 的人工复核 precision ≥ 0.95 | 大量误报来自丢事件、错误资源映射或结构锁混淆 |
 | H5 schedule 可低扰动重放 | 至少 90% 反例在低插桩模式重放成功 | 反例只在 gate/高日志开销下出现 |
 | H6 抽象可以 transfer | Derby 锁实验复用多数 invariant/event 字段 | 需要重写核心状态机才能表达 Derby 基本语义 |
 
@@ -109,12 +109,12 @@ VanillaCore 上的成功只能支撑以下主张：
 
 研究必须主动尝试支持以下零假设：
 
-- `H0-A`：VanillaCore 太小，任何模型方法都只是在匹配手工 mutation；
-- `H0-B`：随机压力或少量人工 litmus 已足以发现同样错误；
-- `H0-C`：内部插桩改变了调度，所谓反例是 measurement artifact；
-- `H0-D`：模型与 checker 共用同一错误假设，导致“自证正确”；
-- `H0-E`：换到 Derby 后需要重写 invariant，VanillaCore 资产不可迁移；
-- `H0-F`：上游原始缺陷导致基线不稳定，实验结果不可解释。
+- [`H0-A`](#23-首要零假设)：VanillaCore 太小，任何模型方法都只是在匹配手工 mutation；
+- [`H0-B`](#23-首要零假设)：随机压力或少量人工 litmus 已足以发现同样错误；
+- [`H0-C`](#23-首要零假设)：内部插桩改变了调度，所谓反例是 measurement artifact；
+- [`H0-D`](#23-首要零假设)：模型与 checker 共用同一错误假设，导致“自证正确”；
+- [`H0-E`](#23-首要零假设)：换到 Derby 后需要重写 invariant，VanillaCore 资产不可迁移；
+- [`H0-F`](#23-首要零假设)：上游原始缺陷导致基线不稳定，实验结果不可解释。
 
 ## 3. 对象身份、版本与环境
 
@@ -122,11 +122,11 @@ VanillaCore 上的成功只能支撑以下主张：
 
 | ID | VanillaCore | JDK | 用途 |
 | --- | --- | --- | --- |
-| `VC-REL-070` | `577c66ad369098b1676ca579a4eac7e4fcecc4f8` | Temurin JDK 17.0.20 | 历史稳定基线，仅用于跨版本比较 |
-| `VC-HEAD-20230430` | 本仓库上游基线 `03e1f2df49bb9664c8bdae11cf911f56b74bbc57` | JDK 17 | 当前源码基线 |
-| `VC-REF-95` | 当前源码 + 审查后的 [PR #95 补丁](evidence/patches/pr-95-fix-locktable.patch) | 同基线 | 修复参考，不称官方版本 |
-| `VC-INST-*` | `VC-REF-95` + instrumentation | 同基线 | 主实验 |
-| `VC-MUT-*` | `VC-INST-*` + 单 mutation | 同基线 | fault 检测实验 |
+| [`VC-REL-070`](#31-固定版本) | [`577c66ad369098b1676ca579a4eac7e4fcecc4f8`](#31-固定版本) | Temurin JDK 17.0.20 | 历史稳定基线，仅用于跨版本比较 |
+| [`VC-HEAD-20230430`](execution/week-01/results/step-02-baselines.json#L5) | 本仓库上游基线 [`03e1f2df49bb9664c8bdae11cf911f56b74bbc57`](execution/week-01/results/step-02-baselines.json#L17) | JDK 17 | 当前源码基线 |
+| [`VC-REF-95`](execution/week-01/results/step-02-baselines.json#L6) | 当前源码 + 审查后的 [PR #95 补丁](evidence/patches/pr-95-fix-locktable.patch) | 同基线 | 修复参考，不称官方版本 |
+| [`VC-INST-*`](#31-固定版本) | [`VC-REF-95`](execution/week-01/results/step-02-baselines.json#L6) + instrumentation | 同基线 | 主实验 |
+| [`VC-MUT-*`](#31-固定版本) | [`VC-INST-*`](#31-固定版本) + 单 mutation | 同基线 | fault 检测实验 |
 
 当前 VanillaCore 源码直接位于本仓库 [`src/`](../src/)，不再维护重复源码归档、Maven 发布物或 PDF 副本；历史修复证据见 [`evidence/`](evidence/)，外部资料见 [`references.md`](references.md)。每个实验结果必须记录：
 
@@ -151,7 +151,7 @@ seed
 
 ### 3.2 当前构建事实
 
-本机在当前仓库对 `VC-HEAD-20230430` 执行默认与补充测试：
+本机在当前仓库对 [`VC-HEAD-20230430`](execution/week-01/results/step-02-baselines.json#L5) 执行默认与补充测试：
 
 ```console
 mvn --batch-mode test
@@ -202,7 +202,7 @@ vanillacore-mit/
 | SIX | ✓ | ✗ | ✗ | ✗ | ✗ |
 | X | ✗ | ✗ | ✗ | ✗ | ✗ |
 
-但“矩阵正确”不等于“多粒度协议正确”。`LockTable` 接收资源与模式，不统一检查父子层次；文件/块/记录的先后与组合主要由 `ConcurrencyMgr` 子类实现。因此必须分开测试：
+但“矩阵正确”不等于“多粒度协议正确”。[`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 接收资源与模式，不统一检查父子层次；文件/块/记录的先后与组合主要由 [`ConcurrencyMgr`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/ConcurrencyMgr.java#L30) 子类实现。因此必须分开测试：
 
 1. 单资源兼容和 upgrade；
 2. owner/waiter 状态维护；
@@ -216,9 +216,9 @@ VanillaCore 中可进入锁表的对象至少包括：
 
 | 具体对象 | 模型投影 | 可能角色 |
 | --- | --- | --- |
-| `String` 文件名 | `File(name)` | 数据文件、索引文件、目录 |
-| `BlockId` | `Block(file, number)` | 数据块、B-tree directory、B-tree leaf |
-| `RecordId` | `Record(block, slot)` | 数据记录 |
+| [`String`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html) 文件名 | [`File(name)`](#42-资源域) | 数据文件、索引文件、目录 |
+| [`BlockId`](../src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23) | [`Block(file, number)`](#42-资源域) | 数据块、B-tree directory、B-tree leaf |
+| [`RecordId`](../src/main/java/org/vanilladb/core/storage/record/RecordId.java#L24) | [`Record(block, slot)`](#42-资源域) | 数据记录 |
 
 事件必须保留：
 
@@ -232,7 +232,7 @@ lock_purpose = LOGICAL_DATA | PHANTOM_GUARD | STRUCTURAL_CRAB | RECOVERY | UNKNO
 source_method
 ```
 
-若 `resource_role` 无法唯一推断，只能输出 `UNKNOWN` 并降低证据等级；不得凭 `BlockId` 就把结构锁当逻辑块锁。
+若 [`resource_role`](#42-资源域) 无法唯一推断，只能输出 [`UNKNOWN`](#42-资源域) 并降低证据等级；不得凭 [`BlockId`](../src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23) 就把结构锁当逻辑块锁。
 
 ### 4.3 等待与唤醒
 
@@ -240,7 +240,7 @@ source_method
 
 - 每个资源维护请求集合；
 - 资源经固定 anchor 数组散列到 monitor；
-- 唤醒采用 `notifyAll`，不保证 FIFO；
+- 唤醒采用 [`notifyAll`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L91)，不保证 FIFO；
 - 存在全局通知队列和物理 timeout；
 - 多 anchor 间没有可直接假定的全局原子快照。
 
@@ -248,7 +248,7 @@ source_method
 
 - L1 不假定公平队列；
 - 进展属性采用 bounded liveness 或实验环境假设；
-- raw trace 的 `event_seq` 仅表示日志写入顺序，不代表跨 anchor 的完整 happens-before；
+- raw trace 的 [`event_seq`](#43-等待与唤醒) 仅表示日志写入顺序，不代表跨 anchor 的完整 happens-before；
 - 对齐器使用线程 program order、monitor 临界区、gate、事务生命周期和资源依赖构造 partial order。
 
 ### 4.4 死锁与 abort 语义
@@ -257,7 +257,7 @@ source_method
 
 1. 较小事务号代表更老事务；
 2. 较老请求者遇到较年轻冲突持有者时，标记后者待中止；
-3. 被标记者在后续进入锁操作时协作观察标记并抛出 `LockAbortException`；
+3. 被标记者在后续进入锁操作时协作观察标记并抛出 [`LockAbortException`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockAbortException.java#L23)；
 4. 若没有及时观察，以 timeout 作为兜底。
 
 这不同于：
@@ -268,15 +268,15 @@ source_method
 
 本计划同时维护两个规范：
 
-- `Spec-Impl`：忠实表达固定源码实际策略；
-- `Spec-Doc`：表达课程/文档声称的策略。
+- [`Spec-Impl`](#44-死锁与-abort-语义)：忠实表达固定源码实际策略；
+- [`Spec-Doc`](#44-死锁与-abort-语义)：表达课程/文档声称的策略。
 
-若两者不同，输出 `document-semantic mismatch`，而不是自动把实现或文档判为 bug。只有外部 contract、历史修复、维护者确认或隔离性/安全性反例能升级判定。
+若两者不同，输出 [`document-semantic mismatch`](#44-死锁与-abort-语义)，而不是自动把实现或文档判为 bug。只有外部 contract、历史修复、维护者确认或隔离性/安全性反例能升级判定。
 
 ### 4.5 strictness、语句结束与恢复
 
 - Serializable 的逻辑 S/X 预期保持到事务结束；
-- Read Committed/Repeatable Read 存在 `endStatement` 释放；
+- Read Committed/Repeatable Read 存在 [`endStatement`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L129) 释放；
 - commit/rollback 中 recovery、concurrency、buffer listener 的顺序会影响“日志/undo 完成前是否释锁”；
 - lock abort 可能由调用方触发 rollback，历史 PR #32 表明双 rollback 值得单独验证。
 
@@ -296,10 +296,10 @@ VanillaCore 没有 MySQL 的 record/gap/next-key/insert-intention 完整语义�
 
 因此：
 
-- `L4-VC` 只研究 coarse file/leaf phantom protection；
-- `L4-MySQL` 另建 interval、gap、next-key 模型；
-- `P-Struct` 单独研究 B-tree crabbing、split/merge、页角色和 latch/lock 进展；
-- VanillaCore 的 `L4-VC` 成功不作为 MySQL `L4-MySQL` 正确性证据。
+- [`L4-VC`](#46-phantom-与-b-tree) 只研究 coarse file/leaf phantom protection；
+- [`L4-MySQL`](#46-phantom-与-b-tree) 另建 interval、gap、next-key 模型；
+- [`P-Struct`](#46-phantom-与-b-tree) 单独研究 B-tree crabbing、split/merge、页角色和 latch/lock 进展；
+- VanillaCore 的 [`L4-VC`](#46-phantom-与-b-tree) 成功不作为 MySQL [`L4-MySQL`](#46-phantom-与-b-tree) 正确性证据。
 
 ## 5. 理论研究计划
 
@@ -318,7 +318,7 @@ L0 不建业务协议，先形式化实验设施：
 
 退出条件：构建稳定、最小事件流完整、无明显插桩死锁。
 
-#### L1：单层 `S/X` + strict 2PL
+#### L1：单层 [`S/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) + strict 2PL
 
 状态：
 
@@ -354,14 +354,14 @@ ReleaseAll
 - waiter 不是 owner，或 conversion 状态有显式表示；
 - release 后 owner map、lock-by-tx map 和 wait map 一致。
 
-退出条件：2–3 事务、1–3 资源模型可穷举，能生成 `S/S`、`S/X`、`X/X`、upgrade、commit、rollback 轨迹。
+退出条件：2–3 事务、1–3 资源模型可穷举，能生成 [`S/S`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、[`S/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、[`X/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、upgrade、commit、rollback 轨迹。
 
 #### L2：多粒度与 upgrade
 
 新增：
 
-- `IS/IX/S/SIX/X`；
-- `Parent(resource)`；
+- [`IS/IX/S/SIX/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)；
+- [`Parent(resource)`](#l2多粒度与-upgrade)；
 - 文件—块—记录层次；
 - upgrade/conversion；
 - isolation-level policy。
@@ -371,11 +371,11 @@ invariant：
 - 子资源锁前满足所需父意向锁；
 - mode conversion 不产生瞬时双 owner 冲突；
 - 同一事务重复请求幂等；
-- `SIX` 与 `S+IX` 的归一化规则一致；
+- [`SIX`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 与 [`S+IX`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 的归一化规则一致；
 - release 顺序不留下孤儿子锁；
-- `lockByMap` 与 owner map 双向一致。
+- [`lockByMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L103) 与 owner map 双向一致。
 
-限制：只在受控 harness 明确记录父子调用时，才把 parent invariant 用于 `contradicted`；对无法证明角色的 SQL 路径输出 `inconclusive`。
+限制：只在受控 harness 明确记录父子调用时，才把 parent invariant 用于 [`contradicted`](#l2多粒度与-upgrade)；对无法证明角色的 SQL 路径输出 [`inconclusive`](#l2多粒度与-upgrade)。
 
 #### L3：等待、age-based abort、timeout 与恢复
 
@@ -384,7 +384,7 @@ invariant：
 - waiter/request set；
 - anchor/notification 抽象；
 - transaction age；
-- `AbortMarked`；
+- [`AbortMarked`](#l3等待age-based-aborttimeout-与恢复)；
 - timeout clock 的有界抽象；
 - rollback/undo/release 顺序。
 
@@ -446,7 +446,7 @@ invariant：
 - 跨 monitor 事件只有偏序；
 - 某些资源角色只能推断；
 - polling/日志 flush 引入 interval；
-- `notifyAll` 后哪个线程先重新竞争不是确定语义。
+- [`notifyAll`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L91) 后哪个线程先重新竞争不是确定语义。
 
 判定：
 
@@ -463,7 +463,7 @@ inconclusive:
   ∨ mapping admits both legal and illegal executions
 ```
 
-任何 `UNKNOWN`、event loss 或 unresolved role 默认不能单独触发 `contradicted`。
+任何 [`UNKNOWN`](#52-抽象函数)、event loss 或 unresolved role 默认不能单独触发 [`contradicted`](#52-抽象函数)。
 
 ### 5.3 Refinement ledger
 
@@ -471,18 +471,18 @@ inconclusive:
 
 | 字段 | 含义 |
 | --- | --- |
-| `rule_id` | 稳定编号 |
-| `layer` | L1/L2/L3/L4/P-Struct |
-| `statement` | TLA+ invariant/action |
-| `source_type` | protocol / official doc / source / experiment / maintainer |
-| `source_uri` | 一手来源 |
-| `mapping_assumption` | 具体到事件字段 |
-| `counterexamples` | 受影响反例 |
-| `confidence` | high/medium/low |
-| `changed_at` | 模型 commit |
-| `reviewer` | 非原作者复核 |
+| [`rule_id`](#53-refinement-ledger) | 稳定编号 |
+| [`layer`](#53-refinement-ledger) | L1/L2/L3/L4/P-Struct |
+| [`statement`](#53-refinement-ledger) | TLA+ invariant/action |
+| [`source_type`](#53-refinement-ledger) | protocol / official doc / source / experiment / maintainer |
+| [`source_uri`](#53-refinement-ledger) | 一手来源 |
+| [`mapping_assumption`](#53-refinement-ledger) | 具体到事件字段 |
+| [`counterexamples`](#53-refinement-ledger) | 受影响反例 |
+| [`confidence`](#53-refinement-ledger) | high/medium/low |
+| [`changed_at`](#53-refinement-ledger) | 模型 commit |
+| [`reviewer`](#53-refinement-ledger) | 非原作者复核 |
 
-模型每次精化都必须重放旧 trace。若为解释单一失败而修改规则，同时导致多个历史 trace 从 `confirmed` 变 `inconclusive`，应视为模型过拟合警报。
+模型每次精化都必须重放旧 trace。若为解释单一失败而修改规则，同时导致多个历史 trace 从 [`confirmed`](#53-refinement-ledger) 变 [`inconclusive`](#53-refinement-ledger)，应视为模型过拟合警报。
 
 ### 5.4 状态空间控制
 
@@ -499,9 +499,9 @@ inconclusive:
 
 ### 6.1 三层 harness
 
-#### Harness A：Direct LockTable
+#### Harness A：Direct [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48)
 
-与 `LockTable` 放在同一 Java package，通过受控线程直接请求资源和模式。
+与 [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 放在同一 Java package，通过受控线程直接请求资源和模式。
 
 用途：
 
@@ -517,9 +517,9 @@ inconclusive:
 
 限制：绕过父子调用、SQL、恢复和真实事务生命周期，只能用于组件结论。
 
-#### Harness B：Native Transaction / ConcurrencyMgr
+#### Harness B：Native [`Transaction`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L33) / [`ConcurrencyMgr`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/ConcurrencyMgr.java#L30)
 
-通过 `TransactionMgr`、`Transaction`、`SerializableConcurrencyMgr` 等原生入口操作 file/block/record。
+通过 [`TransactionMgr`](../src/main/java/org/vanilladb/core/storage/tx/TransactionMgr.java#L42)、[`Transaction`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L33)、[`SerializableConcurrencyMgr`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/SerializableConcurrencyMgr.java#L22) 等原生入口操作 file/block/record。
 
 用途：
 
@@ -529,7 +529,7 @@ inconclusive:
 - recovery 与 release 顺序；
 - record/index 操作。
 
-#### Harness C：SQL / StoredProcedure
+#### Harness C：SQL / [`StoredProcedure`](../src/main/java/org/vanilladb/core/sql/storedprocedure/StoredProcedure.java#L31)
 
 通过 VanillaCore server/VanillaBench 兼容入口执行受控事务。
 
@@ -602,18 +602,18 @@ HARNESS_BARRIER
 
 事件分级：
 
-- `OBSERVED`：直接在状态变更点读取；
-- `DERIVED`：由多个 observed event 计算；
-- `INFERRED`：由调用语义推断；
-- `UNKNOWN`：无法可靠确定。
+- [`OBSERVED`](#62-事件模式)：直接在状态变更点读取；
+- [`DERIVED`](#62-事件模式)：由多个 observed event 计算；
+- [`INFERRED`](#62-事件模式)：由调用语义推断；
+- [`UNKNOWN`](#62-事件模式)：无法可靠确定。
 
-只有 `OBSERVED` 和经过验证规则生成的 `DERIVED` 可触发强 contradiction。
+只有 [`OBSERVED`](#62-事件模式) 和经过验证规则生成的 [`DERIVED`](#62-事件模式) 可触发强 contradiction。
 
 ### 6.3 插桩约束
 
 1. 在 anchor 临界区内复制最小快照；
 2. JSON 序列化、磁盘 I/O、压缩在临界区外完成；
-3. event sink 使用有界 ring buffer，并显式发 `TRACE_LOSS`；
+3. event sink 使用有界 ring buffer，并显式发 [`TRACE_LOSS`](#L599)；
 4. gate 不能在持有 monitor 时等待外部 scheduler，除非该点专门用于验证 monitor 内语义且经过死锁审查；
 5. instrumentation patch 与语义修复 patch 分开；
 6. source site 使用稳定 ID，不依赖行号；
@@ -676,7 +676,7 @@ raw JSONL
 
 对齐不能把 wall-clock/nanotime 当跨线程真序。优先关系来自：
 
-1. 同线程 `thread_seq`；
+1. 同线程 [`thread_seq`](#65-轨迹归一化与对齐)；
 2. 同一 monitor 临界区观测；
 3. scheduler gate；
 4. grant/release 与 owner 状态；
@@ -716,7 +716,7 @@ raw JSONL
 8. 将 SQL workload 下沉为 native 或 direct harness；
 9. 输出最小源码事件切片与对应 TLA+ state transition。
 
-缩减器的目标不是只得到最短 SQL，而是得到最小的 `(workload, partial order, model assumptions, evidence)`。
+缩减器的目标不是只得到最短 SQL，而是得到最小的 [`(workload, partial order, model assumptions, evidence)`](#67-失败缩减)。
 
 ## 7. 代码实验计划
 
@@ -724,14 +724,14 @@ raw JSONL
 
 **E0.1 双版本构建**
 
-- `VC-REL-070`：当前 Temurin JDK 17.0.20；
-- `VC-HEAD-20230430`：JDK 17；
+- [`VC-REL-070`](#71-l0-构建与稳定性实验)：当前 Temurin JDK 17.0.20；
+- [`VC-HEAD-20230430`](execution/week-01/results/step-02-baselines.json#L5)：JDK 17；
 - 记录依赖、warning、测试数量、运行时长；
 - 容器镜像固定 digest。
 
 **E0.2 原始测试重复性**
 
-- `LockTableTest`、`ConcurrencyTest` 各 fresh JVM 重复 20 次；
+- [`LockTableTest`](../src/test/java/org/vanilladb/core/storage/tx/concurrency/LockTableTest.java#L31)、[`ConcurrencyTest`](../src/test/java/org/vanilladb/core/storage/tx/concurrency/ConcurrencyTest.java#L37) 各 fresh JVM 重复 20 次；
 - 默认 suite 重复至少 10 次；
 - 显式补跑默认入口遗漏的 5 个类、10 项测试；
 - B-tree 并发与 Phantom 测试显式单独运行；
@@ -741,8 +741,8 @@ raw JSONL
 
 针对两个候选问题分别写最小测试：
 
-1. 跨 anchor 并发访问 `lockerMap`；
-2. 早返回或异常路径后 `txWaitMap` 清理。
+1. 跨 anchor 并发访问 [`lockerMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L102)；
+2. 早返回或异常路径后 [`txWaitMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L105) 清理。
 
 执行原始与参考修复差分，禁止先把 patch 合入主基线后忘记原始行为。
 
@@ -751,7 +751,7 @@ raw JSONL
 - 2/4/8/16 worker；
 - 1、10、100 个资源；
 - 兼容与冲突混合；
-- 至少累计 `10^6` lock operations；
+- 至少累计 [`10^6`](#71-l0-构建与稳定性实验) lock operations；
 - 检查异常、hang、遗留 owner/waiter、内存增长。
 
 ### 7.2 L1 组件与事务实验
@@ -765,17 +765,17 @@ raw JSONL
 
 **E1.2 strict-2PL litmus**
 
-1. `S/S` 并行成功；
-2. `S/X` 阻塞；
-3. `X/S` 阻塞；
-4. `X/X` 阻塞；
+1. [`S/S`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 并行成功；
+2. [`S/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 阻塞；
+3. [`X/S`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 阻塞；
+4. [`X/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 阻塞；
 5. writer commit 后 reader grant；
 6. writer rollback/undo 后 reader grant 且读不到脏值；
 7. 事务结束后无 owner/waiter。
 
 **E1.3 upgrade**
 
-- `S→X` 单 upgrader；
+- [`S→X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 单 upgrader；
 - 两个 S owner 同时 upgrade；
 - upgrader 与新 reader 竞争；
 - conversion 失败/abort 后旧锁是否正确保留或释放；
@@ -795,8 +795,8 @@ raw JSONL
 
 Direct harness 故意绕过 parent；Native harness 走正常路径。比较：
 
-- `LockTable` 是否仅执行局部 contract；
-- `ConcurrencyMgr` 是否完成全局层次 contract；
+- [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 是否仅执行局部 contract；
+- [`ConcurrencyMgr`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/ConcurrencyMgr.java#L30) 是否完成全局层次 contract；
 - checker 是否能把“组件不负责”与“调用方违反”区分开。
 
 **E2.3 隔离级别**
@@ -804,7 +804,7 @@ Direct harness 故意绕过 parent；Native harness 走正常路径。比较：
 - Serializable；
 - Repeatable Read；
 - Read Committed；
-- `endStatement` 前后锁集合；
+- [`endStatement`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L129) 前后锁集合；
 - 同一 workload 在不同 isolation 下允许行为差异。
 
 ### 7.4 L3 deadlock/abort/timeout/恢复实验
@@ -837,7 +837,7 @@ T2: X(B) ... X(A)
 - timeout 前释放；
 - timeout 竞争点释放；
 - timeout 后 cleanup；
-- `MAX_TIME`/`EPSILON` 参数化；
+- [`MAX_TIME`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L49)/[`EPSILON`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L50) 参数化；
 - 禁止把物理毫秒精确值写入抽象规范。
 
 **E3.4 恢复顺序**
@@ -846,7 +846,7 @@ T2: X(B) ... X(A)
 - rollback undo、release、survivor read；
 - lock abort 触发单次 rollback；
 - recovery exception 路径清理；
-- `VC-REL-070` 与 `VC-HEAD-20230430` 差分。
+- [`VC-REL-070`](#74-l3-deadlockaborttimeout恢复实验) 与 [`VC-HEAD-20230430`](execution/week-01/results/step-02-baselines.json#L5) 差分。
 
 ### 7.5 L4-VC phantom 与索引实验
 
@@ -861,17 +861,17 @@ T2: X(B) ... X(A)
 
 - 读叶、写叶、split；
 - logical leaf guard 与 structural crab 事件分离；
-- `BTreeIndexConcurrentTest` 纳入独立 suite；
-- `PhantomTest` 加强线程结果、异常传播和 barrier。
+- [`BTreeIndexConcurrentTest`](../src/test/java/org/vanilladb/core/storage/index/btree/BTreeIndexConcurrentTest.java#L30) 纳入独立 suite；
+- [`PhantomTest`](../src/test/java/org/vanilladb/core/integration/PhantomTest.java#L39) 加强线程结果、异常传播和 barrier。
 
 **E4.3 Read Committed 叶块回归假设**
 
-围绕 `ReadCommittedConcurrencyMgr.readLeafBlock()` 设计动态见证：
+围绕 [`ReadCommittedConcurrencyMgr.readLeafBlock()`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/ReadCommittedConcurrencyMgr.java#L129) 设计动态见证：
 
 - 是否实际调用 S lock；
 - release list 是否只记录不加锁；
 - statement 结束后 list 是否清空；
-- 2018 `a83acf5`、2019 `feb5c38` 前后差分；
+- 2018 [`a83acf5`](#75-l4-vc-phantom-与索引实验)、2019 [`feb5c38`](#75-l4-vc-phantom-与索引实验) 前后差分；
 - 只有动态结果确认后才登记 bug。
 
 ### 7.6 instrumentation 自验证
@@ -903,11 +903,11 @@ T2: X(B) ... X(A)
 
 | Family | Mutation 示例 | 预期 oracle |
 | --- | --- | --- |
-| Compatibility | 允许 `S/X`、错误拒绝 `IS/S`、`SIX` 矩阵错误 | O1，部分 O2 |
+| Compatibility | 允许 [`S/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、错误拒绝 [`IS/S`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、[`SIX`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 矩阵错误 | O1，部分 O2 |
 | Ownership | grant 不登记、重复 owner、错误 tx ID | O1 |
-| Reverse index | `lockByMap` 漏记/多记 | O1、cleanup |
-| Waiter | 漏 enqueue、stale `txWaitMap`、请求集未删 | O1、O4 |
-| Notify | 漏 `notifyAll`、错误资源通知 | O4 |
+| Reverse index | [`lockByMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L103) 漏记/多记 | O1、cleanup |
+| Waiter | 漏 enqueue、stale [`txWaitMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L105)、请求集未删 | O1、O4 |
+| Notify | 漏 [`notifyAll`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L91)、错误资源通知 | O4 |
 | Upgrade | 非原子 conversion、双 upgrader、旧锁过早释放 | O1、O2 |
 | Hierarchy | 漏 parent intention、错误 parent mode | O1 |
 | Age | 年龄比较反转、相等处理错误 | O1、O4 |
@@ -916,7 +916,7 @@ T2: X(B) ... X(A)
 | Lifecycle | commit/rollback 前释锁、重复 rollback | O1、O2、O3 |
 | Recovery | undo 未完成即 grant、异常清理错误 | O2、O3 |
 | Isolation | RC/RR statement release 错误 | O1、O2 |
-| Index/leaf | read leaf 漏锁、粗 phantom guard 漏加 | O1、O2/O3 |
+| [`Index`](../src/main/java/org/vanilladb/core/storage/index/Index.java#L28)/leaf | read leaf 漏锁、粗 phantom guard 漏加 | O1、O2/O3 |
 | Structural role | 把 crab 当 logical，或反之 | mapping/oracle robustness |
 
 ### 8.2 Mutation 独立性
@@ -994,7 +994,7 @@ T2: X(B) ... X(A)
 
 **质量**
 
-- `confirmed/inconclusive/contradicted` 比例；
+- [`confirmed/inconclusive/contradicted`](#93-指标) 比例；
 - trace alignment precision/recall；
 - 低插桩重放率；
 - 最小反例事务数、操作数、约束数；
@@ -1011,7 +1011,7 @@ T2: X(B) ... X(A)
 
 - Derby 复用的 invariant、事件字段、workload、reducer 比例；
 - 必须重写的规则数量；
-- transfer 中新出现的 `inconclusive` 类型。
+- transfer 中新出现的 [`inconclusive`](#93-指标) 类型。
 
 ### 9.4 统计方案
 
@@ -1031,7 +1031,7 @@ T2: X(B) ... X(A)
 2. trace 关键事件 precision/recall ≥ 0.95；
 3. low 模式开销目标 ≤ 10%、硬上限 25%；
 4. 低插桩反例重放率 ≥ 90%；
-5. `inconclusive` ≤ 10%，且来源可分类；
+5. [`inconclusive`](#95-主成功标准) ≤ 10%，且来源可分类；
 6. 至少 30 个隐藏 mutation + 5 个历史 fault witness；
 7. 对至少两个非 compatibility fault family，M1/M2 相对最强基线有 ≥ 20 个百分点检出率增益或 ≥ 2× TTF 改善，CI 不跨零增益；
 8. 至少一个 fault 仅由内部轨迹 oracle 提前或独立确认；
@@ -1081,7 +1081,7 @@ T2: X(B) ... X(A)
 
 任务：
 
-- `IS/IX/S/SIX/X`；
+- [`IS/IX/S/SIX/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)；
 - hierarchy/upgrade；
 - Serializable/RR/RC；
 - hidden mutation 第一批；
@@ -1098,7 +1098,7 @@ T2: X(B) ... X(A)
 
 任务：
 
-- `Spec-Impl` 与 `Spec-Doc`；
+- [`Spec-Impl`](#phase-3l3-deadlocktimeout恢复第-1116-周) 与 [`Spec-Doc`](#phase-3l3-deadlocktimeout恢复第-1116-周)；
 - age-based abort；
 - timeout；
 - commit/rollback/undo/release；
@@ -1151,10 +1151,10 @@ T2: X(B) ... X(A)
 | Gate | 目标 | 通过条件 | 失败处理 |
 | --- | --- | --- | --- |
 | G0 Build | 双版本可运行 | 2 天内解决环境；关键测试重复通过 | 只保留 0.7.0 或转 Derby |
-| G1 Baseline | 原始状态可解释 | PR #95见证明确；`10^6` 锁操作无不可解释污染 | 建修复参考基线；仍不稳则停止 |
+| G1 Baseline | 原始状态可解释 | PR #95见证明确；[`10^6`](#11-闸门与停止条件) 锁操作无不可解释污染 | 建修复参考基线；仍不稳则停止 |
 | G2 Trace | 事件可信 | 关键事件 P/R ≥ 0.95，无静默 loss | 调整插桩，不进入 oracle 结果 |
 | G3 Replay | 反例非插桩伪影 | 30 次重放；low ≥ 90%；overhead ≤ 25% | 优化 gate/日志；低于 80% 停止 |
-| G4 Verdict | 判定可用 | `inconclusive` ≤ 10%，误报 ≤ 5% | 最多两轮 mapping 修订 |
+| G4 Verdict | 判定可用 | [`inconclusive`](#11-闸门与停止条件) ≤ 10%，误报 ≤ 5% | 最多两轮 mapping 修订 |
 | G5 Value | 有独立增益 | hidden/historical fault 上有显著 effect | 若无增益，缩小或终止主张 |
 | G6 Transfer | 不过拟合 | 6–8 周内 Derby 复用核心 invariant | 若需重写核心，停止外推 |
 
@@ -1162,8 +1162,8 @@ T2: X(B) ... X(A)
 
 - baseline 经两轮修复仍随机遗留 owner/waiter；
 - 无法区分 logical data lock 与 structural crab；
-- 两轮 schema/mapping 修订后 `inconclusive > 20%`；
-- 低插桩重放率持续 `< 80%`；
+- 两轮 schema/mapping 修订后 [`inconclusive > 20%`](#11-闸门与停止条件)；
+- 低插桩重放率持续 [`< 80%`](#11-闸门与停止条件)；
 - 所有“发现”只在 high gate 模式出现；
 - 相对 random/handwritten/history-only 无可重复增益；
 - 只能发现已知 PR 或模型导出的手工 mutation；
@@ -1204,9 +1204,9 @@ T2: X(B) ... X(A)
 
 ### 12.6 B-tree 结构锁误报
 
-风险：相同 `BlockId` 和 `LockTable` API 掩盖不同目的。
+风险：相同 [`BlockId`](../src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23) 和 [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) API 掩盖不同目的。
 
-应对：`resource_role`、`lock_purpose`、source-site 映射；P-Struct 独立。
+应对：[`resource_role`](#126-b-tree-结构锁误报)、[`lock_purpose`](#126-b-tree-结构锁误报)、source-site 映射；P-Struct 独立。
 
 ### 12.7 mutation validity
 
@@ -1238,9 +1238,9 @@ T2: X(B) ... X(A)
 | 时间 | 事件 | 对本项目的意义 |
 | --- | --- | --- |
 | 2016 前后 | VanillaDB 家族用于教学/研究，T-Part 等工作出现 | 说明系统不只是单个课程作业 |
-| 2018 | index locking / dirty-read 相关 PR 与 `a83acf5` | 提供真实 index 并发历史 |
-| 2019 | `feb5c38` 修改 RC statement/leaf lock 路径 | 形成 RC 叶块高优先级回归假设 |
-| 2022-04 | PR #95 提出 LockTable 并发与 cleanup 问题 | 当前最直接 baseline gate |
+| 2018 | index locking / dirty-read 相关 PR 与 [`a83acf5`](#14-年表与研究上下文) | 提供真实 index 并发历史 |
+| 2019 | [`feb5c38`](#14-年表与研究上下文) 修改 RC statement/leaf lock 路径 | 形成 RC 叶块高优先级回归假设 |
+| 2022-04 | PR #95 提出 [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 并发与 cleanup 问题 | 当前最直接 baseline gate |
 | 2022-09 | 0.7.0 发布到 Maven Central | 第一可复现实验基线 |
 | 2023-04 | 默认分支固定 HEAD，转向 JDK 17 | 第二版本与工具链差异 |
 | 2026 | NTHU 课程仍使用 VanillaCore，讲义术语与源码需核对 | 文档—实现差异研究入口 |
@@ -1251,7 +1251,7 @@ T2: X(B) ... X(A)
 
 该批评成立一半。VanillaCore 只作为校准和 mutation ground truth。论文必须把生产外部有效性留给 MySQL，把 Derby 作为 transfer gate；若没有 transfer，结论标题和摘要不得使用普适数据库措辞。
 
-### 15.2 “LockTable 太小，TLA+ 是过度工程”
+### 15.2 “[`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 太小，TLA+ 是过度工程”
 
 若人工 10–20 个 litmus 与随机压力在同预算下达到相同 fault family 检出率、TTF 和诊断质量，则该批评成立。故 B2/B3 是强基线，不能只和上游测试比较。
 
@@ -1275,7 +1275,7 @@ PR #95 只用于：
 
 ### 15.6 “文档写 wait-die，代码不同，直接报 bug 即可”
 
-术语差异不自动等于行为错误。必须分别建 `Spec-Doc` 和 `Spec-Impl`，确定文档的 normative 程度，并寻找安全性、进展性或维护者 contract 证据。
+术语差异不自动等于行为错误。必须分别建 [`Spec-Doc`](#156-文档写-wait-die代码不同直接报-bug-即可) 和 [`Spec-Impl`](#156-文档写-wait-die代码不同直接报-bug-即可)，确定文档的 normative 程度，并寻找安全性、进展性或维护者 contract 证据。
 
 ### 15.7 “为何不直接从 MySQL 开始”
 
@@ -1290,12 +1290,12 @@ PR #95 只用于：
 - 每个 invariant 是否有协议/文档/源码/实验来源；
 - 实现观察是否被错误提升为规范；
 - 文档术语是否与实际动作混淆；
-- `BlockId` 角色是否明确；
+- [`BlockId`](../src/main/java/org/vanilladb/core/storage/file/BlockId.java#L23) 角色是否明确；
 - timeout/fairness 是否超出 contract；
 - 引用是否固定到 commit；
 - 未合并 PR 是否标记为候选。
 
-输出：`evidence-audit.md` 与 refinement ledger 变更。
+输出：[`evidence-audit.md`](#161-第一轮证据与语义审计) 与 refinement ledger 变更。
 
 ### 16.2 第二轮：可证伪性与过拟合审计
 
@@ -1321,17 +1321,17 @@ PR #95 只用于：
 2. 记录本仓库 commit、上游基线与 [PR #95 补丁](evidence/patches/pr-95-fix-locktable.patch) hash；
 3. 当前源码与 PR #95 参考修复双基线 clean build；
 4. 关键测试 fresh JVM ×20，并显式补跑默认 suite 遗漏的 5 个测试类；
-5. 为 `LockTableTest` 的 deadlock TODO 建 issue/test skeleton；
+5. 为 [`LockTableTest`](../src/test/java/org/vanilladb/core/storage/tx/concurrency/LockTableTest.java#L31) 的 deadlock TODO 建 issue/test skeleton；
 6. 写 PR #95 两个最小失败见证。
 
 ### 第二周
 
-> 执行状态：已完成。逐步方法、结果和证据见 [`execution/week-02/README.md`](execution/week-02/README.md)。G0=`PASS`、G1=`CONDITIONAL PASS`、G2=`PASS (scope limited)`；因 low overhead 超过硬线，整体为 conditional go，详见 [`execution/week-02/step-06-g0-g2-decision.md`](execution/week-02/step-06-g0-g2-decision.md)。
+> 执行状态：已完成。逐步方法、结果和证据见 [`execution/week-02/README.md`](execution/week-02/README.md)。G0=[`PASS`](execution/week-02/results/step-06-g0-g2-decision.json#L10)、G1=[`CONDITIONAL PASS`](execution/week-02/results/step-06-g0-g2-decision.json#L30)、G2=[`PASS (scope limited)`](execution/week-02/results/step-06-g0-g2-decision.json#L45)；因 low overhead 超过硬线，整体为 conditional go，详见 [`execution/week-02/step-06-g0-g2-decision.md`](execution/week-02/step-06-g0-g2-decision.md)。
 
 1. 实现最小 event sink；
-2. 只插 `LOCK_CALL/WAIT_BEGIN/GRANT/RELEASE/TX_END`；
-3. 实现 Direct LockTable harness；
-4. 重放 `S/S`、`S/X`、`X/X` 和反序双资源；
+2. 只插 [`LOCK_CALL/WAIT_BEGIN/GRANT/RELEASE/TX_END`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEventType.java#L4)；
+3. 实现 Direct [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) harness；
+4. 重放 [`S/S`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、[`S/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51)、[`X/X`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L51) 和反序双资源；
 5. 计算事件完整性与 overhead；
 6. 作 G0–G2 决策。
 
@@ -1340,7 +1340,7 @@ PR #95 只用于：
 1. L1 TLA+；
 2. 导出模型 trace；
 3. strict/partial-order scheduler；
-4. Native Transaction harness；
+4. Native [`Transaction`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L33) harness；
 5. 三值 verdict；
 6. 8 类 visible mutation；
 7. reducer v0；
@@ -1391,7 +1391,7 @@ PR #95 只用于：
 
 ### 19.2 历史缺陷
 
-- [PR #95 本地补丁](evidence/patches/pr-95-fix-locktable.patch)（[上游讨论](https://github.com/vanilladb/vanillacore/pull/95)）：指出 `lockerMap` 并发访问与 `txWaitMap` 清理候选问题，使“原始基线即正确实现”的假设不可接受。
+- [PR #95 本地补丁](evidence/patches/pr-95-fix-locktable.patch)（[上游讨论](https://github.com/vanilladb/vanillacore/pull/95)）：指出 [`lockerMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L102) 并发访问与 [`txWaitMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L105) 清理候选问题，使“原始基线即正确实现”的假设不可接受。
 - [PR #32](https://github.com/vanilladb/vanillacore/pull/32)：双 rollback 历史使 lock abort—recovery 交互成为 L3 必测项。
 - [PR #37](https://github.com/vanilladb/vanillacore/pull/37)、[`a83acf5`](https://github.com/vanilladb/vanillacore/commit/a83acf5)、[`feb5c38`](https://github.com/vanilladb/vanillacore/commit/feb5c38)：共同构成 index/leaf/RC 的回归研究线。
 
@@ -1410,7 +1410,7 @@ PR #95 只用于：
 | VanillaCore 适合第一受控 SUT | 高 | 完整源码、五模式、事务/恢复/索引、易插桩 | 尚未完成完整 spike |
 | 0.7.0 可作为历史比较基线 | 中高 | Temurin JDK 17 下 clean 默认 107 项及遗漏 10 项测试通过、Maven 发布物固定 | 不在本仓库维护重复源码 |
 | 本仓库上游基线可作为主基线 | 中高 | Temurin JDK 17 下 clean 默认 110 项及遗漏 10 项测试通过 | 缺重复/容器与插桩验证 |
-| 原始 LockTable 需参考修复基线 | 高 | PR #95 源码级问题陈述与 patch | 尚未动态复现 |
+| 原始 [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 需参考修复基线 | 高 | PR #95 源码级问题陈述与 patch | 尚未动态复现 |
 | age-based 策略非标准 wait-die | 中高 | 源码控制流与 abort mark | 需运行时见证、维护者 contract |
 | RC leaf 路径可能回归 | 中 | 当前方法与历史 patch 差分可疑 | 尚无动态错误见证 |
 | 内部模型 oracle 优于 history-only | 待验证 | 理论上能观察 owner/waiter 内部 fault | 正是主实验，不可预设 |
@@ -1419,9 +1419,9 @@ PR #95 只用于：
 ### 20.2 未解决问题
 
 1. PR #95 在固定版本上能否稳定复现；
-2. `lockerMap` 跨 anchor 风险在 JDK/负载下的实际表现；
+2. [`lockerMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L102) 跨 anchor 风险在 JDK/负载下的实际表现；
 3. notifier 队列容量与 event sink 的交互；
-4. `MAX_TIME`/`EPSILON` 在 CI 上的稳定区间；
+4. [`MAX_TIME`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L49)/[`EPSILON`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L50) 在 CI 上的稳定区间；
 5. 事务 listener 的实际 commit/rollback 事件顺序；
 6. RC leaf 是否构成可观察 dirty/non-repeatable read；
 7. coarse phantom 的正式 contract；

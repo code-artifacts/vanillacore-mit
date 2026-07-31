@@ -10,12 +10,12 @@
 
 | Campaign | Selector | Repetitions | Expected per run |
 | --- | --- | ---: | ---: |
-| `default-suite` | `FullTestSuite` | 20 | 110 |
-| `omitted-five` | `ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTest,BTreeIndexConcurrentTest` | 20 | 10 |
+| [`default-suite`](results/step-04-repetition-summary.json#L21) | [`FullTestSuite`](../../../src/test/java/org/vanilladb/core/FullTestSuite.java#L41) | 20 | 110 |
+| [`omitted-five`](results/step-04-repetition-summary.json#L35) | [`ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTest,BTreeIndexConcurrentTest`](results/step-04-repetition-summary.json#L36) | 20 | 10 |
 
-每个 repetition 都启动新的 Maven 进程，使用 `forkCount=1`、`reuseForks=false`、`rerunFailingTestsCount=0`，并生成独立 VanillaCore storage root 和配置文件。Surefire 的 `test` 用户属性会选择指定类；fork 语义依据 [Surefire 2.22.2 test mojo](https://maven.apache.org/components/surefire-archives/surefire-2.22.2/maven-surefire-plugin/test-mojo.html) 与 [fork options](https://maven.apache.org/surefire-archives/surefire-2.22.2/maven-surefire-plugin/examples/fork-options-and-parallel-execution.html)。
+每个 repetition 都启动新的 Maven 进程，使用 [`forkCount=1`](../../../scripts/research/week1.py#L380)、[`reuseForks=false`](../../../scripts/research/week1.py#L381)、[`rerunFailingTestsCount=0`](../../../scripts/research/week1.py#L382)，并生成独立 VanillaCore storage root 和配置文件。Surefire 的 [`test`](https://maven.apache.org/components/surefire-archives/surefire-2.22.2/maven-surefire-plugin/test-mojo.html#test) 用户属性会选择指定类；fork 语义依据 [Surefire 2.22.2 test mojo](https://maven.apache.org/components/surefire-archives/surefire-2.22.2/maven-surefire-plugin/test-mojo.html) 与 [fork options](https://maven.apache.org/surefire-archives/surefire-2.22.2/maven-surefire-plugin/examples/fork-options-and-parallel-execution.html)。
 
-当前 [`FileMgr.java`](../../../src/main/java/org/vanilladb/core/storage/file/FileMgr.java) 只创建 DB 目录，不单独创建 log 目录；因此同一 repetition 的 `DB_FILES_DIR` 与 `LOG_FILES_DIR` 指向同一个隔离 storage root。不同 repetition 仍完全分离，且不会回退到 `user.home`。
+当前 [`FileMgr.java`](../../../src/main/java/org/vanilladb/core/storage/file/FileMgr.java) 只创建 DB 目录，不单独创建 log 目录；因此同一 repetition 的 [`DB_FILES_DIR`](../../../src/main/java/org/vanilladb/core/storage/file/FileMgr.java#L52) 与 [`LOG_FILES_DIR`](../../../src/main/java/org/vanilladb/core/storage/file/FileMgr.java#L52) 指向同一个隔离 storage root。不同 repetition 仍完全分离，且不会回退到 [`user.home`](../../../src/main/java/org/vanilladb/core/storage/file/FileMgr.java#L65)。
 
 ```console
 python -m scripts.research.invoke_repetition_campaign --repetitions 20
@@ -38,7 +38,7 @@ python -m scripts.research.invoke_repetition_campaign --repetitions 20
 ## Interpretation
 
 - **Confirmed:** 当前主分支在固定 Temurin JDK 17 下通过第一周重复性门槛。
-- **Confirmed:** `BTreeIndexConcurrentTest` 等五类确实不应依赖默认 suite 间接覆盖，现已显式重复执行。
+- **Confirmed:** [`BTreeIndexConcurrentTest`](../../../src/test/java/org/vanilladb/core/storage/index/btree/BTreeIndexConcurrentTest.java#L30) 等五类确实不应依赖默认 suite 间接覆盖，现已显式重复执行。
 - **Not established:** 测试通过不证明 PR #95 风险不存在；现有 suite 缺少相关内部状态 oracle。
 - **Not established:** 本轮为单机顺序运行，不代表不同 CPU、Linux 或容器中的稳定性。
 

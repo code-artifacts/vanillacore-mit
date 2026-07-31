@@ -4,13 +4,13 @@
 
 | Item | Value |
 | --- | --- |
-| Upstream source baseline | `03e1f2df49bb9664c8bdae11cf911f56b74bbc57` |
-| Project compiler release | Java 17（见 [`pom.xml`](../pom.xml)） |
+| Upstream source baseline | [`03e1f2df49bb9664c8bdae11cf911f56b74bbc57`](execution/week-01/results/step-02-baselines.json#L17) |
+| Project compiler release | Java 17（见 [`pom.xml`](../pom.xml#L124)） |
 | Validated JDK | Eclipse Temurin 17.0.20+8 |
 | Maven | 3.9.12 |
 | Host | Windows 11, x86-64 |
 
-本机同时安装了 JDK 17 与 JDK 25。项目验证必须让 `JAVA_HOME` 和当前进程 `PATH` 明确指向 JDK 17；不要仅依据系统默认 `java`。研究脚本验证 Temurin runtime `17.0.20+8` 并自动启用 `mit-research` Maven profile；该 profile 同时限制 Java 主版本为 17、供应商为 Eclipse Adoptium，不改变普通上游构建的供应商策略。
+本机同时安装了 JDK 17 与 JDK 25。项目验证必须让 [`JAVA_HOME`](../scripts/research/common/tooling.py#L228) 和当前进程 [`PATH`](../scripts/research/common/tooling.py#L229) 明确指向 JDK 17；不要仅依据系统默认 [`java`](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html)。研究脚本验证 Temurin runtime [`17.0.20+8`](execution/week-01/results/step-01-environment.json#L13) 并自动启用 [`mit-research`](../pom.xml#L204) Maven profile；该 profile 同时限制 Java 主版本为 17、供应商为 Eclipse Adoptium，不改变普通上游构建的供应商策略。
 
 ```console
 python -m scripts.research.invoke_maven_jdk17 --version
@@ -34,9 +34,9 @@ mvn --batch-mode "-Dtest=ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTe
 
 ## JDK 25 Limitation
 
-JDK 25.0.4 可安装并用于兼容性实验，但当前不能作为构建基线。`net.smacke:jaydio:0.1` 传递依赖 `net.java.dev.jna:jna:4.0.0`；JDK 25 的 JAR 读取器拒绝该旧 JNA 文件并报告 `Invalid CEN header (invalid zip64 extra data field size)`，生产源码编译阶段即失败。JDK 17 能读取同一制品。
+JDK 25.0.4 可安装并用于兼容性实验，但当前不能作为构建基线。[`net.smacke:jaydio:0.1`](../pom.xml#L99) 传递依赖 [`net.java.dev.jna:jna:4.0.0`](execution/week-01/results/step-01-environment.json#L23)；JDK 25 的 JAR 读取器拒绝该旧 JNA 文件并报告 [`Invalid CEN header (invalid zip64 extra data field size)`](execution/week-01/results/step-01-environment.json#L30)，生产源码编译阶段即失败。JDK 17 能读取同一制品。
 
-在升级或替换 `jaydio`/JNA 前，所有正式实验、CI 与复现实验固定 JDK 17。依赖升级应单独评估，不能与并发控制 mutation 混入同一实验变体。
+在升级或替换 [`jaydio`](#jdk-25-limitation)/JNA 前，所有正式实验、CI 与复现实验固定 JDK 17。依赖升级应单独评估，不能与并发控制 mutation 混入同一实验变体。
 
 可重复运行兼容性探针：
 

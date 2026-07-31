@@ -4,4 +4,4 @@
 
 | ID | Topic | Status |
 | --- | --- | --- |
-| [`VCMIT-001`](VCMIT-001-locktable-deadlock-avoidance.md) | LockTable deadlock-avoidance deterministic test | Skeleton |
+| [`VCMIT-001`](VCMIT-001-locktable-deadlock-avoidance.md) | [`LockTable`](../../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) deadlock-avoidance deterministic test | Skeleton |

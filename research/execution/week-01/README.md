@@ -1,6 +1,6 @@
 # Week 01 Execution
 
-目标：关闭 [`../../plan.md`](../../plan.md) 第 17 节第一周的六项可行性前置条件。每项完成后独立提交并推送。
+目标：关闭 [`第 17 节`](../../plan.md#17-立即执行清单) 第一周的六项可行性前置条件。每项完成后独立提交并推送。
 
 | Step | Deliverable | Status |
 | --- | --- | --- |
@@ -27,4 +27,4 @@ python -m scripts.research.invoke_maven_jdk17 --version
 python -m scripts.research.test_jdk_compatibility
 ```
 
-原始运行日志写入 `raw/`，不进入 Git；经过人工核对的小型结果写入 [`results/`](results/)。
+原始运行日志写入 [`.gitignore` 所定义的 `raw/`](../../../.gitignore#L44)，不进入 Git；经过人工核对的小型结果写入 [`results/`](results/)。

@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 CLI_MODULES = (
+    "check_document_links",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

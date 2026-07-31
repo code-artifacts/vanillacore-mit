@@ -33,26 +33,26 @@ Running the test cases may take very long time (about 3 minutes in our case). If
 > mvn package -Dmaven.test.skip=true
 ```
 
-The jar file will be named as `core-0.7.0.jar` and in the `target` folder of the project.
+The jar file will be named as [`core-0.7.0.jar`](#compiling-the-source-and-package-them-to-a-jar) and in the [`target`](#compiling-the-source-and-package-them-to-a-jar) folder of the project.
 
 ### Starting up a VanillaCore server
 
 To start up a VanillaCore server, use the following command:
 
-(Please replace `{DB Name}` with **your database name**, which will be the name of the folder of your database files)
+(Please replace [`{DB Name}`](#starting-up-a-vanillacore-server) with **your database name**, which will be the name of the folder of your database files)
 
 ```
 > java -classpath core-0.7.0.jar org.vanilladb.core.server.StartUp {DB Name}
 ```
 
-If it works correctly, you should see `database server ready` like this:
+If it works correctly, you should see [`database server ready`](#starting-up-a-vanillacore-server) like this:
 
 ```
 Aug 09, 2016 3:27:55 PM org.vanilladb.core.server.StartUp main
 INFO: database server ready
 ```
 
-After starting up, VanillaCore creates a directory named as `{DB Name}` for the databases under your home directory (which is `C:/Users/{Your Username}` in Windows, `/home/{Your Username}` in Mac or most Linux distribution).
+After starting up, VanillaCore creates a directory named as [`{DB Name}`](#starting-up-a-vanillacore-server) for the databases under your home directory (which is [`C:/Users/{Your Username}`](#starting-up-a-vanillacore-server) in Windows, [`/home/{Your Username}`](#starting-up-a-vanillacore-server) in Mac or most Linux distribution).
 
 ### Using SQL Interpreter
 
@@ -76,7 +76,7 @@ After you enter the SQL console, you may start to give some SQL commands for int
 
 ## System Configurations
 
-VanillaCore provides some configurable settings. These settings can be found in properties file `vanilladb.properties` which located in `src\main\resources\org\vanilladb\core`. After you compile and package the classes using Maven, the properties file will be copied to `target\properties\org\vanilladb\core`. When a VanillaCore server starts up, it will search the properties file in `properties\org\vanilladb\core` under the same directory. Therefore, if you want to adjust the settings after packaging the classes, you have to modify the one in the `target\properties\org\vanilladb\core`.
+VanillaCore provides some configurable settings. These settings can be found in properties file [`vanilladb.properties`](#system-configurations) which located in [`src\main\resources\org\vanilladb\core`](#system-configurations). After you compile and package the classes using Maven, the properties file will be copied to [`target\properties\org\vanilladb\core`](#system-configurations). When a VanillaCore server starts up, it will search the properties file in [`properties\org\vanilladb\core`](#system-configurations) under the same directory. Therefore, if you want to adjust the settings after packaging the classes, you have to modify the one in the [`target\properties\org\vanilladb\core`](#system-configurations).
 
 We assume that the jar file and the properties files are always in the same directory. If they are not, VanillaCore will use the default values for all settings.
 
@@ -86,11 +86,11 @@ You can also put the properties file at other location. To make VanillaCore know
 > java -Dorg.vanilladb.core.config.file={path to vanilladb.properties} -classpath core-0.7.0.jar org.vanilladb.core.server.StartUp {DB Name}
 ```
 
-Remember to replace `{path to vanilladb.properties}` to **the path of the file**.
+Remember to replace [`{path to vanilladb.properties}`](#system-configurations) to **the path of the file**.
 
 ### Modifying Configurations
 
-First, find an editor to open properties file `vanilladb.properties`. Each line in the file is a key-value pair for a configuration. To modify a configuration, just update the value behind `=`.
+First, find an editor to open properties file [`vanilladb.properties`](#modifying-configurations). Each line in the file is a key-value pair for a configuration. To modify a configuration, just update the value behind [`=`](#modifying-configurations).
 
 ### Commonly Used Configurations
 
@@ -120,7 +120,7 @@ To enable the periodically checkpointing (default: true):
 org.vanilladb.core.server.VanillaDb.DO_CHECKPOINT=true
 ```
 
-You can find more available configurations and corresponding descriptions in `vanilladb.properties`.
+You can find more available configurations and corresponding descriptions in [`vanilladb.properties`](#commonly-used-configurations).
 
 ## Supported Syntax
 
@@ -146,7 +146,7 @@ We have a series of educational slides to make the people who are not familiar w
 		- Buffering user data, write-ahead-logging (WAL), log caching, etc.
 	- [Record](http://www.vanilladb.org/slides/core/Record_Management.pdf) and [metadata management](http://www.vanilladb.org/slides/core/Metadata_Management.pdf)
 		- Physical schema design, efficient buffer utilization, etc.
-- Transaction management
+- [`Transaction`](src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L33) management
 	- [Concurrency](http://www.vanilladb.org/slides/core/Transaction_Concurrency.pdf)
 		- Strict Two-Phase Locking (S2PL), deadlock detection/avoidance, lock granularity, phantom, isolation levels, etc.
 	- [Recovery](http://www.vanilladb.org/slides/core/Transaction_Recovery.pdf)
@@ -178,7 +178,7 @@ To contribute to VanillaCore, please see [CONTRIBUTING](CONTRIBUTING.md).
 
 ## Contact Information
 
-If you have any question, you can either open an issue here or contact [vanilladb@datalab.cs.nthu.edu.tw](vanilladb@datalab.cs.nthu.edu.tw) directly.
+If you have any question, you can either open an issue here or contact [vanilladb@datalab.cs.nthu.edu.tw](mailto:vanilladb@datalab.cs.nthu.edu.tw) directly.
 
 ## License
 

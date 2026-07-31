@@ -1,6 +1,6 @@
 # Research Execution
 
-本目录记录 [`../plan.md`](../plan.md) 的实际执行过程。长期设计与结论留在 `research/`，可复用自动化留在 [`../../scripts/research/`](../../scripts/research/)，每周目录只保存当周计划、人工审查结果和小型 manifest。
+本目录记录 [`../plan.md`](../plan.md) 的实际执行过程。长期设计与结论留在 [`research/`](../README.md)，可复用自动化留在 [`../../scripts/research/`](../../scripts/research/)，每周目录只保存当周计划、人工审查结果和小型 manifest。
 
 ## Layout
 
@@ -19,4 +19,4 @@ research/execution/
 ## Weeks
 
 - [`week-01/README.md`](week-01/README.md)：环境、基线、双构建、重复测试、deadlock skeleton 与 PR #95 witness。
-- Week 02 及以后按 [`../plan.md`](../plan.md) 第 17 节继续建立同构目录。
+- Week 02 及以后按 [`第 17 节`](../plan.md#17-立即执行清单) 继续建立同构目录。

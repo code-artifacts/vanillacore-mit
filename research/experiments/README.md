@@ -12,14 +12,14 @@ research/experiments/
 └── work/               # 临时数据库、TLC 导出和重放状态；Git 忽略
 ```
 
-目录按需要创建；[`.gitignore`](../../.gitignore) 还排除 `reports/generated/`。
+目录按需要创建；[`.gitignore`](../../.gitignore) 还排除 [`reports/generated/`](#experiment-layout)。
 
 ## Naming
 
-- 运行：`run-YYYYMMDD-<layer>-<workload>-<seed>`，例如 `run-20260810-l1-sx-0042`。
-- mutation：`VC-MUT-<family>-NNN`，例如 `VC-MUT-COMPAT-001`。
-- 模型：遵循 [`../../tla/README.md`](../../tla/README.md) 的 `VC_<layer>_<scope>` 命名。
-- 最小反例：`<run-id>-min.{json,md}`，同时引用原始 run 和 reducer 版本。
+- 运行：[`run-YYYYMMDD-<layer>-<workload>-<seed>`](#naming)，例如 [`run-20260810-l1-sx-0042`](#naming)。
+- mutation：[`VC-MUT-<family>-NNN`](#naming)，例如 [`VC-MUT-COMPAT-001`](#naming)。
+- 模型：遵循 [`../../tla/README.md`](../../tla/README.md) 的 [`VC_<layer>_<scope>`](#naming) 命名。
+- 最小反例：[`<run-id>-min.{json,md}`](#naming)，同时引用原始 run 和 reducer 版本。
 
 ## Required Manifest
 
@@ -36,4 +36,4 @@ manifest 中的路径使用仓库相对路径。人工报告必须链接 manifes
 
 ## Reproducibility
 
-每个变体使用 fresh JVM 和独立数据库目录。先保存 strict schedule，再尝试 partial-order 与低插桩重放；无法重放的结果标记为 `inconclusive`，不计为实现缺陷。统计、对照组和停止条件见 [`../plan.md`](../plan.md)。
+每个变体使用 fresh JVM 和独立数据库目录。先保存 strict schedule，再尝试 partial-order 与低插桩重放；无法重放的结果标记为 [`inconclusive`](../plan.md#L378)，不计为实现缺陷。统计、对照组和停止条件见 [`../plan.md`](../plan.md)。
