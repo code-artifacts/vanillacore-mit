@@ -11,5 +11,6 @@
 | [`03`](step-03-mapping-ledger.md) | 动作映射、资源/偏序规则与 refinement ledger v0.1 | Complete | [`step-03-mapping-ledger.json`](results/step-03-mapping-ledger.json) |
 | [`04`](step-04-canonical-traces.md) | 从 TLC 状态图确定性导出八类 canonical trace 与 provenance | Complete | [`step-04-canonical-traces.json`](results/step-04-canonical-traces.json) |
 | [`05`](step-05-model-self-tests.md) | 合法/负例模型自测试与 Week 2 四场景归一化回归 | Complete | [`step-05-model-self-tests.json`](results/step-05-model-self-tests.json) |
+| [`06`](step-06-g1-stress.md) | 三变体百万操作压力、残留分类与 PR #95 witness 差分 | Complete | [`step-06-g1-stress.json`](results/step-06-g1-stress.json) |
 
 后续步骤在各自实现、验证并独立推送时加入本索引，避免未完成制品被文档提前声明为存在。

@@ -33,6 +33,7 @@ python -m scripts.research.check_l1_model
 python -m scripts.research.check_l1_mapping
 python -m scripts.research.export_l1_traces
 python -m scripts.research.check_l1_self_tests
+python -m scripts.research.invoke_week03_g1_stress
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -62,6 +63,12 @@ states and full provenance.
 traces, requires TLC to catch injected compatibility, strictness, and cleanup
 faults, and replays the four normalized Week 2 regression fixtures. Model,
 mapping, scenario-source, and summary hashes make stale fixtures fail closed.
+
+[`invoke_week03_g1_stress.py`](research/invoke_week03_g1_stress.py) creates
+isolated pristine, PR #95 reference-fix, and instrumented-pristine worktrees;
+runs compatible/conflict cells at 2/4/8/16 workers with at least one million
+lock operations per variant; classifies every final residue and known patch
+symptom; and reruns both PR #95 differential witnesses.
 
 ## Documentation References
 

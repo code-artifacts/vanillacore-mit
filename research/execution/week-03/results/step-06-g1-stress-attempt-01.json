@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-06-g1-stress-attempt-01",
+  "startedAt": "2026-07-31T23:42:47+08:00",
+  "stoppedAt": "2026-07-31T23:50:31+08:00",
+  "status": "INCONCLUSIVE_HARNESS",
+  "configuration": {
+    "workers": [2, 4, 8, 16],
+    "workloads": ["compatible", "conflict"],
+    "iterationsPerCell": 62500,
+    "compatibleResources": 4096,
+    "conflictResources": "max(1, workers / 2)",
+    "workerTimeoutSeconds": 120,
+    "timeoutPolicy": "sequential Future.get per worker"
+  },
+  "completedVariants": [
+    {
+      "variant": "VC-HEAD-20230430",
+      "totalLockOperations": 1500000,
+      "reentrantWaitLeakObservations": 499284,
+      "nonZeroLockerMapCells": 7,
+      "lockerMapSizeRange": [-45, 323],
+      "terminalOwnerReferenceCells": 1,
+      "terminalOwnerReferences": 3,
+      "rawCsvSha256": "7790FDD2ADE7A992FBF12DB42127D737B0642940C604F71481BCFA2787B274C2"
+    },
+    {
+      "variant": "VC-REF-95",
+      "totalLockOperations": 1500000,
+      "reentrantWaitLeakObservations": 0,
+      "nonZeroLockerMapCells": 0,
+      "terminalOwnerReferenceCells": 0,
+      "terminalOwnerReferences": 0,
+      "rawCsvSha256": "66BA2B612101DDDE08B7E7A2FC716B1CDC0ABF03AA0643660744898E61153A96"
+    }
+  ],
+  "incompleteVariant": {
+    "variant": "VC-INST-PRISTINE",
+    "csvProduced": false,
+    "manualTermination": true,
+    "mavenStdoutSha256": "55C739AB3DAB0E8C3C5562DB14E884A7D7570A8E679DB5FC5E08CE3F18348504",
+    "mavenStderrSha256": "27D9C5A6A4835DCF321902BCCE57FC8AE7F7C9F4A3C3259AD1EE0CA0EFB724B7"
+  },
+  "classification": {
+    "baselineSymptoms": "CONSISTENT_WITH_PR95_TARGETS_BUT_NOT_GATE_EVIDENCE",
+    "referenceFix": "CLEAN_IN_COMPLETED_CELLS",
+    "instrumentedPristine": "INCONCLUSIVE_HARNESS",
+    "reason": "Sequential per-worker waits could multiply the cell timeout and non-daemon workers could keep Surefire alive, so the incomplete process cannot distinguish a SUT stall from a harness termination defect."
+  },
+  "correctiveAction": {
+    "workerThreads": "daemon",
+    "deadline": "one global 120-second deadline per cell",
+    "resources": "one anchor per workload to bound termination; distinct-anchor concurrency remains covered by the two PR #95 witnesses",
+    "retention": "All attempt-01 raw files remain under the ignored week-03 raw directory and are identified here by hashes."
+  },
+  "gateEligible": false
+}
