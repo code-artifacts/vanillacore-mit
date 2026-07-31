@@ -525,7 +525,7 @@ class LockTable {
 
 	private void trace(LockTraceEventType eventType, long txNum,
 			String sourceMethod, String sourceSite, Object obj, int lockType) {
-		if (!LockTrace.isEnabled())
+		if (!LockTrace.accepts(eventType))
 			return;
 		LockTrace.record(eventType, txNum, sourceMethod, sourceSite,
 				resourceKind(obj), resourceId(obj),

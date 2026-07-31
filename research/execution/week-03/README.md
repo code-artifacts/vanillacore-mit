@@ -12,5 +12,6 @@
 | [`04`](step-04-canonical-traces.md) | 从 TLC 状态图确定性导出八类 canonical trace 与 provenance | Complete | [`step-04-canonical-traces.json`](results/step-04-canonical-traces.json) |
 | [`05`](step-05-model-self-tests.md) | 合法/负例模型自测试与 Week 2 四场景归一化回归 | Complete | [`step-05-model-self-tests.json`](results/step-05-model-self-tests.json) |
 | [`06`](step-06-g1-stress.md) | 三变体百万操作压力、残留分类与 PR #95 witness 差分 | Complete | [`step-06-g1-stress.json`](results/step-06-g1-stress.json) |
+| [`07`](step-07-low-sink-gate.md) | 两轮 low sink 优化、完整基准与 Week 3 门控 | Blocked for G3 | [`step-07-week-03-gate.json`](results/step-07-week-03-gate.json) |
 
-后续步骤在各自实现、验证并独立推送时加入本索引，避免未完成制品被文档提前声明为存在。
+七个步骤均已执行；[`G3`](../../plan.md#11-闸门与停止条件) 因 low overhead 超过硬上限而阻断，允许范围与禁止主张以 [`Step 07`](step-07-low-sink-gate.md#week-3-decision) 为准。

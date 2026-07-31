@@ -58,6 +58,20 @@ public class BoundedLockTraceSinkTest {
 	}
 
 	@Test
+	public void lowModeAdvertisesOnlyRetainedEventTypes() {
+		assertFalse(LockTrace.accepts(LockTraceEventType.GRANT));
+
+		BoundedLockTraceSink sink = BoundedLockTraceSink.low("run-accepts", 4);
+		LockTrace.install(sink);
+
+		assertFalse(LockTrace.accepts(LockTraceEventType.LOCK_CALL));
+		assertFalse(LockTrace.accepts(LockTraceEventType.WAIT_BEGIN));
+		assertTrue(LockTrace.accepts(LockTraceEventType.GRANT));
+		assertTrue(LockTrace.accepts(LockTraceEventType.RELEASE));
+		assertTrue(LockTrace.accepts(LockTraceEventType.TX_END));
+	}
+
+	@Test
 	public void lowModeRetainsOnlyLifecycleStateChanges() {
 		BoundedLockTraceSink sink = BoundedLockTraceSink.low("run-low", 4);
 		sink.record(LockTraceEventType.LOCK_CALL, 1, "sLock", "lock.s.call",
@@ -79,14 +93,35 @@ public class BoundedLockTraceSinkTest {
 				snapshot.events().get(1).eventType());
 		assertEquals(LockTraceEventType.TX_END,
 				snapshot.events().get(2).eventType());
+		assertEquals("run-low", snapshot.events().get(0).runId());
+		assertEquals(1, snapshot.events().get(0).eventId());
+		assertEquals(1, snapshot.events().get(0).transactionId());
+		assertEquals("sLock", snapshot.events().get(0).sourceMethod());
+		assertEquals("lock.s.grant", snapshot.events().get(0).sourceSite());
+		assertEquals("STRING", snapshot.events().get(0).resourceKind());
+		assertEquals("resource-1", snapshot.events().get(0).resourceId());
+		assertEquals("S", snapshot.events().get(0).requestedMode());
+		assertTrue(snapshot.events().get(0).nanoTime() > 0);
 	}
 
 	@Test
 	public void recordsConcurrentWritersWithoutDuplicateIds() throws Exception {
+		assertConcurrentWritersWithoutDuplicateIds(
+				new BoundedLockTraceSink("run-concurrent", 400),
+				LockTraceEventType.LOCK_CALL);
+	}
+
+	@Test
+	public void recordsConcurrentLowWritersWithoutDuplicateIds() throws Exception {
+		assertConcurrentWritersWithoutDuplicateIds(
+				BoundedLockTraceSink.low("run-concurrent-low", 400),
+				LockTraceEventType.GRANT);
+	}
+
+	private void assertConcurrentWritersWithoutDuplicateIds(
+			BoundedLockTraceSink sink, LockTraceEventType eventType) throws Exception {
 		int workerCount = 4;
 		int eventsPerWorker = 100;
-		BoundedLockTraceSink sink = new BoundedLockTraceSink("run-concurrent",
-				workerCount * eventsPerWorker);
 		ExecutorService executor = Executors.newFixedThreadPool(workerCount);
 		CountDownLatch start = new CountDownLatch(1);
 
@@ -95,7 +130,7 @@ public class BoundedLockTraceSinkTest {
 			executor.submit(() -> {
 				start.await();
 				for (int event = 0; event < eventsPerWorker; event++) {
-					sink.record(LockTraceEventType.LOCK_CALL, transactionId,
+					sink.record(eventType, transactionId,
 							"sLock", "lock.s.call", "STRING", "resource-1", "S");
 				}
 				return null;

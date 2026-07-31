@@ -15,6 +15,8 @@ CLI_MODULES = (
     "export_l1_traces",
     "check_l1_self_tests",
     "invoke_week03_g1_stress",
+    "measure_week03_low_sink",
+    "new_week03_gate_decision",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

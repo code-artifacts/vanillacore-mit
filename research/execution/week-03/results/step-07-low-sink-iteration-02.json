@@ -1,0 +1,471 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-07",
+  "iteration": 2,
+  "implementation": "deferred-low-event-materialization",
+  "recordedAt": "2026-08-01T01:09:10.249302+08:00",
+  "repositoryCommit": "f207e563d1a6450bf9df4d9b3eedb9d1682e2e48",
+  "worktreeDirty": true,
+  "traceSchemaVersion": "vc-locktrace-0",
+  "protocol": {
+    "matchesWeek2": true,
+    "completenessRepetitionsPerScenario": 20,
+    "processesPerMode": 3,
+    "samplesPerProcess": 5,
+    "operationsPerSample": 100000,
+    "warmupOperationsPerProcess": 20000,
+    "processOrder": [
+      "off-01",
+      "low-01",
+      "low-02",
+      "off-02",
+      "off-03",
+      "low-03"
+    ]
+  },
+  "completeness": {
+    "eventMetrics": [
+      {
+        "eventType": "LOCK_CALL",
+        "expected": 200,
+        "actual": 200,
+        "truePositive": 200,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "WAIT_BEGIN",
+        "expected": 60,
+        "actual": 60,
+        "truePositive": 60,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "GRANT",
+        "expected": 180,
+        "actual": 180,
+        "truePositive": 180,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "RELEASE",
+        "expected": 180,
+        "actual": 180,
+        "truePositive": 180,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      {
+        "eventType": "TX_END",
+        "expected": 160,
+        "actual": 160,
+        "truePositive": 160,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    ],
+    "microPrecision": 1.0,
+    "microRecall": 1.0,
+    "traceLoss": 0,
+    "tests": {
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "overhead": {
+    "workload": "single-thread S acquire/release over 100 resources",
+    "lowEventTypes": [
+      "GRANT",
+      "RELEASE",
+      "TX_END"
+    ],
+    "modes": {
+      "off": {
+        "processes": 3,
+        "samples": 15,
+        "measuredLockOperations": 1500000,
+        "medianDurationNanos": 110369700,
+        "medianThroughputOpsPerSecond": 906045.772,
+        "droppedEvents": 0,
+        "pollutedSamples": 0
+      },
+      "low": {
+        "processes": 3,
+        "samples": 15,
+        "measuredLockOperations": 1500000,
+        "medianDurationNanos": 166393800,
+        "medianThroughputOpsPerSecond": 600983.931,
+        "droppedEvents": 0,
+        "pollutedSamples": 0
+      }
+    },
+    "samples": {
+      "off": [
+        {
+          "process": "off-01",
+          "sample": 1,
+          "operations": 100000,
+          "durationNanos": 160307400,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-01",
+          "sample": 2,
+          "operations": 100000,
+          "durationNanos": 114516900,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-01",
+          "sample": 3,
+          "operations": 100000,
+          "durationNanos": 120727900,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-01",
+          "sample": 4,
+          "operations": 100000,
+          "durationNanos": 150187300,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-01",
+          "sample": 5,
+          "operations": 100000,
+          "durationNanos": 166936700,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-02",
+          "sample": 1,
+          "operations": 100000,
+          "durationNanos": 185453300,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-02",
+          "sample": 2,
+          "operations": 100000,
+          "durationNanos": 110369700,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-02",
+          "sample": 3,
+          "operations": 100000,
+          "durationNanos": 91483900,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-02",
+          "sample": 4,
+          "operations": 100000,
+          "durationNanos": 77787800,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-02",
+          "sample": 5,
+          "operations": 100000,
+          "durationNanos": 78743100,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-03",
+          "sample": 1,
+          "operations": 100000,
+          "durationNanos": 127822400,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-03",
+          "sample": 2,
+          "operations": 100000,
+          "durationNanos": 103126900,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-03",
+          "sample": 3,
+          "operations": 100000,
+          "durationNanos": 68799100,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-03",
+          "sample": 4,
+          "operations": 100000,
+          "durationNanos": 78536400,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "off-03",
+          "sample": 5,
+          "operations": 100000,
+          "durationNanos": 76080500,
+          "events": 0,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        }
+      ],
+      "low": [
+        {
+          "process": "low-01",
+          "sample": 1,
+          "operations": 100000,
+          "durationNanos": 209340900,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-01",
+          "sample": 2,
+          "operations": 100000,
+          "durationNanos": 176064800,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-01",
+          "sample": 3,
+          "operations": 100000,
+          "durationNanos": 107677200,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-01",
+          "sample": 4,
+          "operations": 100000,
+          "durationNanos": 170125700,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-01",
+          "sample": 5,
+          "operations": 100000,
+          "durationNanos": 85927200,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-02",
+          "sample": 1,
+          "operations": 100000,
+          "durationNanos": 198816300,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-02",
+          "sample": 2,
+          "operations": 100000,
+          "durationNanos": 141608200,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-02",
+          "sample": 3,
+          "operations": 100000,
+          "durationNanos": 118779300,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-02",
+          "sample": 4,
+          "operations": 100000,
+          "durationNanos": 166393800,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-02",
+          "sample": 5,
+          "operations": 100000,
+          "durationNanos": 105605700,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-03",
+          "sample": 1,
+          "operations": 100000,
+          "durationNanos": 200117300,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-03",
+          "sample": 2,
+          "operations": 100000,
+          "durationNanos": 170934800,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-03",
+          "sample": 3,
+          "operations": 100000,
+          "durationNanos": 172457500,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-03",
+          "sample": 4,
+          "operations": 100000,
+          "durationNanos": 148563100,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        },
+        {
+          "process": "low-03",
+          "sample": 5,
+          "operations": 100000,
+          "durationNanos": 110054300,
+          "events": 200001,
+          "dropped": 0,
+          "lockerMapSize": 0,
+          "lockByMapSize": 0,
+          "waitMapSize": 0
+        }
+      ]
+    },
+    "lowOverheadPercent": 50.76,
+    "targetPercent": 10,
+    "hardCeilingPercent": 25,
+    "withinTarget": false,
+    "withinHardCeiling": false
+  },
+  "decision": "BLOCK_G3",
+  "baseline": {
+    "resultSha256": "E37B83B02086C3645A8B19ED35C319180628E6290F3853C6EC39D39EF79B88A7",
+    "lowOverheadPercent": 57.966
+  },
+  "sourceSha256": {
+    "lockTable": "1DC0B90215725B513862447A9B27A199BFC4AEB1F023B61DEB0C00E4A852170F",
+    "lockTrace": "F381CEC82C514B3C181C0AC4B624EA5E645810DB887FADABEB23DD58ADDEC017",
+    "lockTraceSink": "A02294952D356535C01FFB30EC5B7F3601C113B61F128F3388E700F77A277F8B",
+    "boundedSink": "39CAE90D482AF6FB636DF4840239035106EBCBC8B9CFE26C3945C52647EC68DF",
+    "benchmark": "7961A40181D82688C7C10A96CE03B22261AE19C6A344ED1D244CAA1F7E6C766D",
+    "automation": "BC928667E95D2A55F4650D4DE255D66BB91999B51270BC495E8D4934019A0F27"
+  }
+}

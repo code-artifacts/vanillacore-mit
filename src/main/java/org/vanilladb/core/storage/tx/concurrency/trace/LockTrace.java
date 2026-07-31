@@ -5,6 +5,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class LockTrace {
 	private static final LockTraceSink OFF = new LockTraceSink() {
 		@Override
+		public boolean accepts(LockTraceEventType eventType) {
+			return false;
+		}
+
+		@Override
 		public void record(LockTraceEventType eventType, long transactionId,
 				String sourceMethod, String sourceSite, String resourceKind,
 				String resourceId, String requestedMode) {
@@ -18,6 +23,10 @@ public final class LockTrace {
 
 	public static boolean isEnabled() {
 		return SINK.get() != OFF;
+	}
+
+	public static boolean accepts(LockTraceEventType eventType) {
+		return SINK.get().accepts(eventType);
 	}
 
 	public static void install(LockTraceSink sink) {

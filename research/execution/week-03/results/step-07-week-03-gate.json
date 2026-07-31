@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-07-gate",
+  "recordedAt": "2026-08-01T01:10:47.605771+08:00",
+  "repositoryCommit": "f207e563d1a6450bf9df4d9b3eedb9d1682e2e48",
+  "worktreeDirty": true,
+  "decision": "BLOCKED_FOR_G3",
+  "gates": [
+    {
+      "id": "L1",
+      "status": "PASS",
+      "evidence": [
+        {
+          "path": "research/execution/week-03/results/step-01-tla-toolchain.json",
+          "sha256": "3B5E71B566C27CE94016AF54071F22FF41056CB74FB0F6BBF7A46BE6A7AEF878"
+        },
+        {
+          "path": "research/execution/week-03/results/step-02-l1-model.json",
+          "sha256": "3DD6F3B92809B3B2A5E04E9292AFF74C75CBFF0E536CE30485E69FD5722280B3"
+        },
+        {
+          "path": "research/execution/week-03/results/step-03-mapping-ledger.json",
+          "sha256": "2D0453B976837BD835AD896F830FBF5F87740A0161BCB1B8111DF9042183D779"
+        },
+        {
+          "path": "research/execution/week-03/results/step-04-canonical-traces.json",
+          "sha256": "629B54B339319DF0B22DEBADEE823F26865865F40A6FAB021DEA62D300BC1C18"
+        },
+        {
+          "path": "research/execution/week-03/results/step-05-model-self-tests.json",
+          "sha256": "3751579A28362D3FBFCE56CC517FA9360E60BF19FD295DF87D15FB25F96A1050"
+        }
+      ]
+    },
+    {
+      "id": "G1",
+      "status": "PASS",
+      "resultSha256": "773CEE9DBF4041824F9BEFBA13A9E3E2DABB113F3C542614B939728EF30DD32B"
+    },
+    {
+      "id": "G2",
+      "status": "PASS",
+      "iterations": [
+        {
+          "iteration": 1,
+          "implementation": "early-event-type-gating",
+          "resultSha256": "DCFC53FDFD8D2AF46798D7A92B1AA615F9CE23E53DBF44CC242BA69BDD77DCC5",
+          "microPrecision": 1.0,
+          "microRecall": 1.0,
+          "traceLoss": 0,
+          "lowOverheadPercent": 124.383,
+          "withinHardCeiling": false,
+          "decision": "OPTIMIZE_AGAIN"
+        },
+        {
+          "iteration": 2,
+          "implementation": "deferred-low-event-materialization",
+          "resultSha256": "67F40139973BA7355321922BEA5B363A57B83A76DA883FABB778612301C5F644",
+          "microPrecision": 1.0,
+          "microRecall": 1.0,
+          "traceLoss": 0,
+          "lowOverheadPercent": 50.76,
+          "withinHardCeiling": false,
+          "decision": "BLOCK_G3"
+        }
+      ]
+    },
+    {
+      "id": "G3_PREREQUISITE",
+      "status": "BLOCK",
+      "hardCeilingPercent": 25,
+      "finalLowOverheadPercent": 50.76
+    }
+  ],
+  "allowedNext": [
+    "offline L1 model refinement",
+    "trace validation without scheduler performance claims",
+    "low-sink profiling and a newly approved optimization plan"
+  ],
+  "blockedUntilResolved": [
+    "G3 replay conclusion",
+    "scheduler performance claim",
+    "scheduler replayability claim"
+  ],
+  "policy": "Two optimization iterations are exhausted. A result above the 25 percent hard ceiling blocks G3 while allowing offline model and trace-validation work."
+}

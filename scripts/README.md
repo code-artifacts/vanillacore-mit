@@ -34,6 +34,8 @@ python -m scripts.research.check_l1_mapping
 python -m scripts.research.export_l1_traces
 python -m scripts.research.check_l1_self_tests
 python -m scripts.research.invoke_week03_g1_stress
+python -m scripts.research.measure_week03_low_sink --iteration 1 --implementation early-event-type-gating
+python -m scripts.research.new_week03_gate_decision
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -69,6 +71,15 @@ isolated pristine, PR #95 reference-fix, and instrumented-pristine worktrees;
 runs compatible/conflict cells at 2/4/8/16 workers with at least one million
 lock operations per variant; classifies every final residue and known patch
 symptom; and reruns both PR #95 differential witnesses.
+
+[`measure_week03_low_sink.py`](research/measure_week03_low_sink.py#L13) executes
+one of at most two low-sink iterations with the unchanged Week 2 completeness
+and 30-sample overhead protocol. [`low_sink.py`](research/low_sink.py#L76)
+retains every sample, source hash, event metric, and stop decision.
+
+[`new_week03_gate_decision.py`](research/new_week03_gate_decision.py#L12)
+combines the retained L1, G1, G2, and low-overhead evidence. The fail-closed
+decision logic is in [`week3_gate.py`](research/week3_gate.py#L19).
 
 ## Documentation References
 
