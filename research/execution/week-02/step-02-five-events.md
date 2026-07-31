@@ -18,8 +18,8 @@ source-site 使用 `locktable.<mode>.<transition>` 稳定 ID，不依赖行号�
 
 ## Validation
 
-```powershell
-.\scripts\research\Invoke-Week02InstrumentationValidation.ps1
+```console
+python -m scripts.research.invoke_week02_instrumentation_validation
 ```
 
 测试验证无冲突 `S` 的四事件序列，以及 `X` holder 与 `S` waiter 的 `WAIT_BEGIN < holder RELEASE < waiter GRANT`。机器结果见 [`results/step-02-five-events.json`](results/step-02-five-events.json)。

@@ -24,8 +24,8 @@
 
 运行：
 
-```powershell
-.\scripts\research\Measure-Week02TraceQuality.ps1
+```console
+python -m scripts.research.measure_week02_trace_quality
 ```
 
 机器结果见 [`results/step-05-trace-quality.json`](results/step-05-trace-quality.json)。

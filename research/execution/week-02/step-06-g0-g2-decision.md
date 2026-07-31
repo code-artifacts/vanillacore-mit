@@ -6,8 +6,8 @@
 
 机器生成的门控结果见 [`results/step-06-g0-g2-decision.json`](results/step-06-g0-g2-decision.json)，生成命令：
 
-```powershell
-.\scripts\research\New-Week02GateDecision.ps1
+```console
+python -m scripts.research.new_week02_gate_decision
 ```
 
 ## Gate Assessment

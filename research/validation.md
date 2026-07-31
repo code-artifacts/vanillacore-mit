@@ -12,16 +12,16 @@
 
 本机同时安装了 JDK 17 与 JDK 25。项目验证必须让 `JAVA_HOME` 和当前进程 `PATH` 明确指向 JDK 17；不要仅依据系统默认 `java`。研究脚本验证 Temurin runtime `17.0.20+8` 并自动启用 `mit-research` Maven profile；该 profile 同时限制 Java 主版本为 17、供应商为 Eclipse Adoptium，不改变普通上游构建的供应商策略。
 
-```powershell
-.\scripts\research\Invoke-MavenJdk17.ps1 --version
-.\scripts\research\Invoke-MavenJdk17.ps1 --batch-mode clean test
+```console
+python -m scripts.research.invoke_maven_jdk17 --version
+python -m scripts.research.invoke_maven_jdk17 --batch-mode clean test
 ```
 
 ## Validation Commands
 
 默认 Surefire 配置只包含 [`FullTestSuite.java`](../src/test/java/org/vanilladb/core/FullTestSuite.java)：
 
-```powershell
+```console
 mvn --batch-mode clean test
 mvn --batch-mode "-Dtest=ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTest,BTreeIndexConcurrentTest" test
 ```
@@ -40,8 +40,8 @@ JDK 25.0.4 可安装并用于兼容性实验，但当前不能作为构建基线
 
 可重复运行兼容性探针：
 
-```powershell
-.\scripts\research\Test-JdkCompatibility.ps1
+```console
+python -m scripts.research.test_jdk_compatibility
 ```
 
 探针、证据来源与当前结果见 [`execution/week-01/step-01-environment.md`](execution/week-01/step-01-environment.md)。

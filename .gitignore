@@ -1,5 +1,6 @@
 ### IntelliJ ###
 .idea/
+*.iml
 
 ### Eclipse ###
 .settings/
@@ -10,15 +11,15 @@
 
 ### Build artifacts ###
 target/
-
-### IntelliJ ###
-.idea/
-*.iml
+__pycache__/
+*.py[cod]
+.coverage
+.pytest_cache/
 
 ### vscode settings directory ###
 .vscode
 
-### macOS specific files  ###
+### macOS specific files ###
 .DS_Store
 
 ### Others ###

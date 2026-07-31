@@ -6,7 +6,7 @@
 
 ## Method
 
-[`Invoke-RepetitionCampaign.ps1`](../../../scripts/research/Invoke-RepetitionCampaign.ps1) 顺序执行两个 campaign：
+[`invoke_repetition_campaign.py`](../../../scripts/research/invoke_repetition_campaign.py) 顺序执行两个 campaign：
 
 | Campaign | Selector | Repetitions | Expected per run |
 | --- | --- | ---: | ---: |
@@ -17,8 +17,8 @@
 
 当前 [`FileMgr.java`](../../../src/main/java/org/vanilladb/core/storage/file/FileMgr.java) 只创建 DB 目录，不单独创建 log 目录；因此同一 repetition 的 `DB_FILES_DIR` 与 `LOG_FILES_DIR` 指向同一个隔离 storage root。不同 repetition 仍完全分离，且不会回退到 `user.home`。
 
-```powershell
-.\scripts\research\Invoke-RepetitionCampaign.ps1 -Repetitions 20
+```console
+python -m scripts.research.invoke_repetition_campaign --repetitions 20
 ```
 
 每次运行后立即读取 Surefire XML；raw log、配置和数据库写入 Git 忽略目录，SHA-256 与测试计数写入跟踪的逐运行 CSV。

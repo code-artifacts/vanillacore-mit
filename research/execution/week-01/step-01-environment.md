@@ -31,12 +31,12 @@
 ## Implementation
 
 1. [`pom.xml`](../../../pom.xml) 的 `mit-research` profile 使用 Maven Enforcer 3.6.3，要求 Java `[17,18)` 且 `java.vendor` 精确为 `Eclipse Adoptium`；普通上游构建不被供应商规则污染。
-2. [`Invoke-MavenJdk17.ps1`](../../../scripts/research/Invoke-MavenJdk17.ps1) 从显式环境变量、注册表或标准安装目录解析 JDK 17，验证 runtime 精确为 `17.0.20+8`，在子进程范围设置 `JAVA_HOME/PATH` 并强制启用研究 profile。
-3. [`Test-JdkCompatibility.ps1`](../../../scripts/research/Test-JdkCompatibility.ps1) 让 JDK 17/25 分别读取同一 JNA 4.0.0 JAR，并让 JDK 25 执行一次跳过 Enforcer 的 compile probe。
+2. [`invoke_maven_jdk17.py`](../../../scripts/research/invoke_maven_jdk17.py) 从显式环境变量、当前 `java` 与各操作系统标准安装目录解析 JDK 17，验证 runtime 精确为 `17.0.20+8`，在子进程范围设置 `JAVA_HOME/PATH` 并强制启用研究 profile。
+3. [`test_jdk_compatibility.py`](../../../scripts/research/test_jdk_compatibility.py) 让 JDK 17/25 分别读取同一 JNA 4.0.0 JAR，并让 JDK 25 执行一次跳过 Enforcer 的 compile probe。
 
-```powershell
-.\scripts\research\Invoke-MavenJdk17.ps1 --version
-.\scripts\research\Test-JdkCompatibility.ps1
+```console
+python -m scripts.research.invoke_maven_jdk17 --version
+python -m scripts.research.test_jdk_compatibility
 ```
 
 ## Evidence

@@ -17,8 +17,8 @@
 
 ## Validation
 
-```powershell
-.\scripts\research\Invoke-Week02EventSinkValidation.ps1
+```console
+python -m scripts.research.invoke_week02_event_sink_validation
 ```
 
 测试覆盖字段与序号、容量 loss、4 个并发 producer 的 400 个唯一事件。结果见 [`results/step-01-event-sink.json`](results/step-01-event-sink.json)。

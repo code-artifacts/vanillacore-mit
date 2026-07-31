@@ -17,8 +17,8 @@
 
 ## Reproduction
 
-```powershell
-.\scripts\research\Invoke-Week02ScenarioReplay.ps1 -Repetitions 20
+```console
+python -m scripts.research.invoke_week02_scenario_replay --repetitions 20
 ```
 
 机器汇总见 [`results/step-04-scenario-replay.json`](results/step-04-scenario-replay.json)。四份 raw JSONL 位于 Git 忽略的 `raw/step-04/`，汇总保存各文件 SHA-256 和五类事件计数。

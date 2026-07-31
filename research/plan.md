@@ -153,7 +153,7 @@ seed
 
 本机在当前仓库对 `VC-HEAD-20230430` 执行默认与补充测试：
 
-```powershell
+```console
 mvn --batch-mode test
 mvn --batch-mode "-Dtest=ParserTest,SpResultSetTest,ConstantRangeTest,ConstantTest,BTreeIndexConcurrentTest" test
 ```

@@ -22,9 +22,9 @@
 
 ## Shared Commands
 
-```powershell
-.\scripts\research\Invoke-MavenJdk17.ps1 --version
-.\scripts\research\Test-JdkCompatibility.ps1
+```console
+python -m scripts.research.invoke_maven_jdk17 --version
+python -m scripts.research.test_jdk_compatibility
 ```
 
 原始运行日志写入 `raw/`，不进入 Git；经过人工核对的小型结果写入 [`results/`](results/)。

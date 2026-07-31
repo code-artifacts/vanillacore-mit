@@ -24,8 +24,8 @@ Java 17 [`HashMap`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base
 
 见证默认通过 JUnit assumption 跳过，避免普通全量测试故意失败。只由矩阵 runner 显式激活：
 
-```powershell
-.\scripts\research\Invoke-Pr95WitnessMatrix.ps1
+```console
+python -m scripts.research.invoke_pr95_witness_matrix
 ```
 
 预期矩阵和实测结果见 [`../../../execution/week-01/results/step-06-pr95-witness-matrix.json`](../../../execution/week-01/results/step-06-pr95-witness-matrix.json)。

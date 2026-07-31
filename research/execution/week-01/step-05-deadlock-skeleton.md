@@ -18,8 +18,8 @@
 
 ## Validation
 
-```powershell
-.\scripts\research\Invoke-MavenJdk17.ps1 --batch-mode "-Dtest=LockTableDeadlockTest,LockTableTest" test
+```console
+python -m scripts.research.invoke_maven_jdk17 --batch-mode "-Dtest=LockTableDeadlockTest,LockTableTest" test
 ```
 
 预期：

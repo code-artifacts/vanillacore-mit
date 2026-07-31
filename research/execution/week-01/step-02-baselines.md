@@ -6,10 +6,10 @@
 
 ## Method
 
-[`New-BaselineManifest.ps1`](../../../scripts/research/New-BaselineManifest.ps1) 使用 Git object ID 与补丁内容哈希生成 [`results/step-02-baselines.json`](results/step-02-baselines.json)：
+[`new_baseline_manifest.py`](../../../scripts/research/new_baseline_manifest.py) 使用 Git object ID 与补丁内容哈希生成 [`results/step-02-baselines.json`](results/step-02-baselines.json)：
 
-```powershell
-.\scripts\research\New-BaselineManifest.ps1
+```console
+python -m scripts.research.new_baseline_manifest
 ```
 
 身份字段遵循以下边界：

@@ -6,17 +6,17 @@
 
 ## Method
 
-[`Invoke-Pr95WitnessMatrix.ps1`](../../../scripts/research/Invoke-Pr95WitnessMatrix.ps1)：
+[`invoke_pr95_witness_matrix.py`](../../../scripts/research/invoke_pr95_witness_matrix.py)：
 
-1. 验证当前 `src/main` tree 仍与固定上游一致；
+1. 验证 manifest 固定的基线 `src/main` tree 仍与固定上游一致；
 2. 从当前 HEAD 创建两个 detached worktree；
 3. 将见证测试复制到两者，只对 reference worktree 应用固定 PR #95 补丁；
 4. 以 `vanillacore.mit.pr95Witnesses=true` 显式激活；
 5. 从 Surefire XML 验证 pristine 恰好 2 failures、reference fix 恰好 0 failures；
 6. 成功后清理 worktree，raw log 保存在 Git 忽略目录。
 
-```powershell
-.\scripts\research\Invoke-Pr95WitnessMatrix.ps1
+```console
+python -m scripts.research.invoke_pr95_witness_matrix
 ```
 
 ## Witnesses

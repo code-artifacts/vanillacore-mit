@@ -18,8 +18,8 @@ Harness A 故意绕过 parent locking、SQL、recovery 和真实 commit/rollback
 
 ## Validation
 
-```powershell
-.\scripts\research\Invoke-Week02DirectHarnessValidation.ps1
+```console
+python -m scripts.research.invoke_week02_direct_harness_validation
 ```
 
 测试覆盖同步 `S` 生命周期和受事件驱动的 `X` holder / `S` waiter。结果见 [`results/step-03-direct-harness.json`](results/step-03-direct-harness.json)。
