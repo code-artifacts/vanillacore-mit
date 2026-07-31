@@ -28,3 +28,29 @@ python -m scripts.research.invoke_week02_event_sink_validation
 - 当前 sink 只提供内存 snapshot；JSONL 写出由 harness 在锁临界区外完成。
 - [`droppedEvents`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/BoundedLockTraceSink.java#L16) 是 run 级 loss 证据，尚未编码为事件流中的 [`TRACE_LOSS`](../../plan.md#L599)。
 - schema v0 不包含 owner/waiter 快照，不能独立支持强 refinement verdict。
+
+## Commit Summary
+
+<a id="primary-commit-7d29383"></a>
+### Primary Commit — [`7d29383`](#primary-commit-7d29383)
+
+**完成任务。** 提交 [`7d29383`](#primary-commit-7d29383) 建立 Week 2 的最小事件边界，使后续 [`LockTable`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 插桩可以依赖稳定事件对象和 sink API，同时保持生产锁表尚未接入、默认关闭。
+
+**生产代码改动。**
+
+- 新增 [`LockTraceEventType`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEventType.java#L3)，冻结当周允许的五类事件。
+- 新增不可变 [`LockTraceEvent`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java#L3) 和 [`LockTraceSnapshot`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceSnapshot.java#L6)，记录 run、全局序号、线程序号、事务、来源、资源、模式和 loss 元数据。
+- 通过 [`LockTraceSink`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceSink.java#L3) 定义 producer 边界；[`LockTrace`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTrace.java#L5) 提供 no-op 默认值、单活动 sink 安装和 reset。
+- 新增 [`BoundedLockTraceSink`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/BoundedLockTraceSink.java#L10)。原始提交使用非阻塞 [`ArrayBlockingQueue.offer`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/ArrayBlockingQueue.html#offer(E))、原子全局序号、线程本地序号和显式丢弃计数；其存储结构后来由 [`Step 05`](step-05-trace-quality.md#primary-commit-b7db685) 调整。
+
+**测试、自动化与证据。**
+
+- [`BoundedLockTraceSinkTest`](../../../src/test/java/org/vanilladb/core/storage/tx/concurrency/trace/BoundedLockTraceSinkTest.java#L17) 验证 schema 与序号、容量耗尽的显式 loss，以及四个并发 producer 不产生重复事件 ID。
+- 原始提交增加步骤专用验证入口并生成 [`step-01-event-sink.json`](results/step-01-event-sink.json)，记录 trace schema、sink 属性和测试统计。
+- 本提交只声明事件和接收器；[`LockTable`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 尚未调用 [`LockTrace.record`](../../../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTrace.java#L36)，因此不会改变锁授予、等待或释放行为。
+
+**注意事项。** 单活动 sink 是进程级测试约束；容量耗尽只增加 loss 计数，不阻塞锁线程。该版本没有 owner/waiter snapshot，也没有磁盘 writer，不能单独作为完整 refinement 证据。
+
+### Cross-Platform Follow-up
+
+共享提交 [`14ade02`](README.md#shared-follow-up-14ade02) 删除原始 PowerShell 入口，以 [`invoke_week02_event_sink_validation.py`](../../../scripts/research/invoke_week02_event_sink_validation.py#L12) 暴露 CLI，并把结果生成迁入 [`invoke_event_sink_validation`](../../../scripts/research/week2.py#L50)。默认结果路径和 [`schemaVersion`](results/step-01-event-sink.json#L2) 保持兼容。
