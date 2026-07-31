@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "releaseTag": "v1.7.4",
+  "releaseName": "The Xenophanes release",
+  "publishedAt": "2024-08-05T20:16:41Z",
+  "releaseUrl": "https://github.com/tlaplus/tlaplus/releases/tag/v1.7.4",
+  "tlcVersion": "2.19 of 08 August 2024",
+  "asset": {
+    "name": "tla2tools.jar",
+    "url": "https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar",
+    "sizeBytes": 2274532,
+    "sha256": "936A262061C914694DFD669A543BE24573C45D5AA0FF20A8B96B23D01E050E88"
+  },
+  "java": {
+    "minimumMajor": 11,
+    "researchMajor": 17,
+    "researchRuntime": "17.0.20+8"
+  },
+  "installation": {
+    "relativeJarPath": ".tools/tla/v1.7.4/tla2tools.jar"
+  },
+  "smokeModels": [
+    {
+      "id": "2x2",
+      "transactions": 2,
+      "resources": 2,
+      "module": "tla/l1/VC_L1_ToolchainSmoke.tla",
+      "config": "tla/l1/VC_L1_ToolchainSmoke_2x2.cfg"
+    },
+    {
+      "id": "3x3",
+      "transactions": 3,
+      "resources": 3,
+      "module": "tla/l1/VC_L1_ToolchainSmoke.tla",
+      "config": "tla/l1/VC_L1_ToolchainSmoke_3x3.cfg"
+    }
+  ]
+}

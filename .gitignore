@@ -26,6 +26,7 @@ __pycache__/
 design
 
 ### TLA+ model checking outputs ###
+.tools/
 tla/.toolbox/
 tla/states/
 tla/*.out
@@ -35,6 +36,15 @@ tla/*.chkpt
 tla/*.fp
 tla/*.queue
 tla/*_TTrace_*.tla
+tla/**/.toolbox/
+tla/**/states/
+tla/**/*.out
+tla/**/*.err
+tla/**/*.st
+tla/**/*.chkpt
+tla/**/*.fp
+tla/**/*.queue
+tla/**/*_TTrace_*.tla
 
 ### Model-based testing experiment outputs ###
 research/experiments/raw/

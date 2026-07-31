@@ -22,6 +22,17 @@
 
 TLC checkpoint、fingerprint、queue、Toolbox 状态和自动生成 trace 由 [`.gitignore`](../.gitignore) 排除，不得作为手工维护源码提交。
 
+## Pinned Toolchain
+
+[`toolchain.json`](toolchain.json) pins the official [TLA+ Tools v1.7.4 release](https://github.com/tlaplus/tlaplus/releases/tag/v1.7.4), the CLI jar size and SHA-256, TLC 2.19, and the required JDK boundary. Install and validate it from the repository root:
+
+```console
+python -m scripts.research.bootstrap_tla_tools
+python -m scripts.research.bootstrap_tla_tools --offline
+```
+
+The cross-platform [`bootstrap_tla_tools.py`](../scripts/research/bootstrap_tla_tools.py) command stores the verified jar below the ignored [`.tools/`](../.gitignore) directory and runs [`VC_L1_ToolchainSmoke.tla`](l1/VC_L1_ToolchainSmoke.tla) with the bounded [`2×2`](l1/VC_L1_ToolchainSmoke_2x2.cfg) and [`3×3`](l1/VC_L1_ToolchainSmoke_3x3.cfg) configurations. These smoke models validate tool/config compatibility only; [`L1`](../research/plan.md#l1单层-sx-strict-2pl) protocol claims require the separate model and checks implemented in the next step.
+
 ## Mapping Discipline
 
 每个模型动作必须记录实现事件、资源抽象、前置条件、允许的 stutter 和不可观测字段。结构锁与逻辑锁使用不同 event kind；无法由 trace 证明的结果为 [`inconclusive`](../research/plan.md#L378)，而不是 violation。映射变更需递增 [`mapping_version`](#mapping-discipline)，并重放旧反例。

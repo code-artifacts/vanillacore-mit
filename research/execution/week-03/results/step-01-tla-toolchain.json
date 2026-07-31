@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-01-tla-toolchain",
+  "generatedAt": "2026-07-31T22:26:29.552055+08:00",
+  "gitCommit": "33fe6018b031042866436e5abe29753192025950",
+  "status": "PASS",
+  "releaseTag": "v1.7.4",
+  "tlcVersion": "2.19 of 08 August 2024",
+  "asset": {
+    "name": "tla2tools.jar",
+    "url": "https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/tla2tools.jar",
+    "sizeBytes": 2274532,
+    "sha256": "936A262061C914694DFD669A543BE24573C45D5AA0FF20A8B96B23D01E050E88",
+    "installationStatus": "downloaded"
+  },
+  "java": {
+    "Home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot",
+    "Major": 17,
+    "Vendor": "Eclipse Adoptium",
+    "Version": "17.0.20",
+    "RuntimeVersion": "17.0.20+8"
+  },
+  "smokeModels": [
+    {
+      "id": "2x2",
+      "module": "tla/l1/VC_L1_ToolchainSmoke.tla",
+      "config": "tla/l1/VC_L1_ToolchainSmoke_2x2.cfg",
+      "transactions": 2,
+      "resources": 2,
+      "exitCode": 0,
+      "durationSeconds": 1.375,
+      "generatedStates": 34,
+      "distinctStates": 16,
+      "depth": 5
+    },
+    {
+      "id": "3x3",
+      "module": "tla/l1/VC_L1_ToolchainSmoke.tla",
+      "config": "tla/l1/VC_L1_ToolchainSmoke_3x3.cfg",
+      "transactions": 3,
+      "resources": 3,
+      "exitCode": 0,
+      "durationSeconds": 1.484,
+      "generatedStates": 2306,
+      "distinctStates": 512,
+      "depth": 10
+    }
+  ],
+  "claimBoundary": "The smoke models validate the pinned toolchain and bounded 2x2/3x3 configurations; they do not validate the L1 lock model."
+}

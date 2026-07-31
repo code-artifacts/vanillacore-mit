@@ -1,6 +1,6 @@
 # Cross-Platform Research Scripts
 
-[`scripts.research`](research/__init__.py#L1) provides the reproducible Week 1 and Week 2 workflows on
+[`scripts.research`](research/__init__.py#L1) provides the reproducible Week 1–3 workflows on
 Windows, Linux, and macOS. The implementation uses only the Python standard
 library and discovers platform-specific [`java`](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html), [`jar`](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jar.html), Maven, temporary
 directories, process groups, paths, and Git worktrees at runtime.
@@ -28,10 +28,17 @@ python -m scripts.research.invoke_week02_direct_harness_validation
 python -m scripts.research.invoke_week02_scenario_replay --repetitions 20
 python -m scripts.research.measure_week02_trace_quality
 python -m scripts.research.new_week02_gate_decision
+python -m scripts.research.bootstrap_tla_tools
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
 schemas and default paths remain compatible with the original workflows.
+
+[`bootstrap_tla_tools.py`](research/bootstrap_tla_tools.py) downloads the pinned
+TLA+ CLI asset declared in [`tla/toolchain.json`](../tla/toolchain.json), verifies
+its size and SHA-256, and runs the 2×2 and 3×3 smoke configurations. The jar is
+stored under the ignored [`.tools/`](../.gitignore) directory; use the offline
+option after the first verified installation.
 
 ## Documentation References
 
