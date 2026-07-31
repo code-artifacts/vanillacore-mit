@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-02-l1-model",
+  "generatedAt": "2026-07-31T22:37:39.331097+08:00",
+  "gitCommit": "f8468565976f4ec8c9c69b15aa9d780a5884674a",
+  "status": "PASS",
+  "releaseTag": "v1.7.4",
+  "tlcVersion": "2.19 of 08 August 2024",
+  "java": {
+    "Home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.20.8-hotspot",
+    "Major": 17,
+    "Vendor": "Eclipse Adoptium",
+    "Version": "17.0.20",
+    "RuntimeVersion": "17.0.20+8"
+  },
+  "invariants": [
+    "TypeOK",
+    "OwnerHeldConsistency",
+    "MutualExclusion",
+    "PendingWellFormed",
+    "WaiterNotOwnerOrUpgrade",
+    "TerminalClean",
+    "StrictXRetention"
+  ],
+  "liveness": {
+    "property": "EventualTermination",
+    "assumptions": [
+      "weak fairness of Resolve(tx)",
+      "weak fairness of Finish(tx)",
+      "weak fairness of ReleaseAll(tx)"
+    ]
+  },
+  "configurations": [
+    {
+      "id": "safety-2x2",
+      "kind": "safety",
+      "module": "tla/l1/VC_L1_SX.tla",
+      "config": "tla/l1/VC_L1_SX_2x2.cfg",
+      "transactions": 2,
+      "resources": 2,
+      "requestBound": 8,
+      "completeWithinBound": true,
+      "exitCode": 0,
+      "durationSeconds": 2.687,
+      "moduleSha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C",
+      "configSha256": "D319B2BE293773B12CEC20FF7A5D84063001F9A5B8C74CF9BB1936922AEE540A",
+      "generatedStates": 8776,
+      "distinctStates": 3386,
+      "depth": 22,
+      "heapMegabytes": 1820,
+      "offHeapMegabytes": 64
+    },
+    {
+      "id": "safety-3x3",
+      "kind": "safety",
+      "module": "tla/l1/VC_L1_SX.tla",
+      "config": "tla/l1/VC_L1_SX_3x3.cfg",
+      "transactions": 3,
+      "resources": 3,
+      "requestBound": 6,
+      "completeWithinBound": false,
+      "exitCode": 0,
+      "durationSeconds": 37.516,
+      "moduleSha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C",
+      "configSha256": "7709421E5DF2E23935A8A05D36009966D3D65956C8D42F46676634B7000A1511",
+      "generatedStates": 1051052,
+      "distinctStates": 233711,
+      "depth": 20,
+      "heapMegabytes": 1820,
+      "offHeapMegabytes": 64
+    },
+    {
+      "id": "liveness-2x2",
+      "kind": "liveness",
+      "module": "tla/l1/VC_L1_SX.tla",
+      "config": "tla/l1/VC_L1_SX_2x2_liveness.cfg",
+      "transactions": 2,
+      "resources": 2,
+      "requestBound": 8,
+      "completeWithinBound": true,
+      "exitCode": 0,
+      "durationSeconds": 9.203,
+      "moduleSha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C",
+      "configSha256": "35BFAAA6CFDBC77EDE4D3BD0B1D8569CF8ACD47234CDA8974C11058D58D2AF8F",
+      "generatedStates": 33635,
+      "distinctStates": 12637,
+      "depth": 22,
+      "heapMegabytes": 1820,
+      "offHeapMegabytes": 64
+    }
+  ],
+  "claimBoundary": "The 2x2 configuration is exhaustive within the protocol's maximum eight requests. The 3x3 configuration checks key invariants only through six requests. Neither result is an unbounded proof."
+}

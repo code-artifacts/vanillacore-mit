@@ -29,6 +29,7 @@ python -m scripts.research.invoke_week02_scenario_replay --repetitions 20
 python -m scripts.research.measure_week02_trace_quality
 python -m scripts.research.new_week02_gate_decision
 python -m scripts.research.bootstrap_tla_tools
+python -m scripts.research.check_l1_model
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -39,6 +40,10 @@ TLA+ CLI asset declared in [`tla/toolchain.json`](../tla/toolchain.json), verifi
 its size and SHA-256, and runs the 2×2 and 3×3 smoke configurations. The jar is
 stored under the ignored [`.tools/`](../.gitignore) directory; use the offline
 option after the first verified installation.
+
+[`check_l1_model.py`](research/check_l1_model.py) runs the pinned TLC against
+the L1 S/X safety and liveness configurations and writes bounded state counts,
+depth, memory boundaries, hashes, fairness assumptions, and claim limits.
 
 ## Documentation References
 

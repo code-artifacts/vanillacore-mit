@@ -33,6 +33,16 @@ python -m scripts.research.bootstrap_tla_tools --offline
 
 The cross-platform [`bootstrap_tla_tools.py`](../scripts/research/bootstrap_tla_tools.py) command stores the verified jar below the ignored [`.tools/`](../.gitignore) directory and runs [`VC_L1_ToolchainSmoke.tla`](l1/VC_L1_ToolchainSmoke.tla) with the bounded [`2×2`](l1/VC_L1_ToolchainSmoke_2x2.cfg) and [`3×3`](l1/VC_L1_ToolchainSmoke_3x3.cfg) configurations. These smoke models validate tool/config compatibility only; [`L1`](../research/plan.md#l1单层-sx-strict-2pl) protocol claims require the separate model and checks implemented in the next step.
 
+## L1 S/X Model
+
+[`VC_L1_SX.tla`](l1/VC_L1_SX.tla) models separate owner and transaction indexes, pending requests, wait/wake, S→X upgrade, commit/rollback stages, release-all cleanup, and X-lock history. Run all bounded checks with [`check_l1_model.py`](../scripts/research/check_l1_model.py):
+
+```console
+python -m scripts.research.check_l1_model
+```
+
+[`VC_L1_SX_2x2.cfg`](l1/VC_L1_SX_2x2.cfg) explores the complete finite protocol for two transactions and two resources with the maximum eight requests. [`VC_L1_SX_3x3.cfg`](l1/VC_L1_SX_3x3.cfg) limits three transactions and three resources to six requests and therefore provides bounded invariant evidence only. [`VC_L1_SX_2x2_liveness.cfg`](l1/VC_L1_SX_2x2_liveness.cfg) checks eventual termination separately under documented weak-fairness assumptions and without symmetry reduction.
+
 ## Mapping Discipline
 
 每个模型动作必须记录实现事件、资源抽象、前置条件、允许的 stutter 和不可观测字段。结构锁与逻辑锁使用不同 event kind；无法由 trace 证明的结果为 [`inconclusive`](../research/plan.md#L378)，而不是 violation。映射变更需递增 [`mapping_version`](#mapping-discipline)，并重放旧反例。

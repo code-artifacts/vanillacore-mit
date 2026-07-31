@@ -34,5 +34,37 @@
       "module": "tla/l1/VC_L1_ToolchainSmoke.tla",
       "config": "tla/l1/VC_L1_ToolchainSmoke_3x3.cfg"
     }
+  ],
+  "l1Models": [
+    {
+      "id": "safety-2x2",
+      "kind": "safety",
+      "transactions": 2,
+      "resources": 2,
+      "requestBound": 8,
+      "completeWithinBound": true,
+      "module": "tla/l1/VC_L1_SX.tla",
+      "config": "tla/l1/VC_L1_SX_2x2.cfg"
+    },
+    {
+      "id": "safety-3x3",
+      "kind": "safety",
+      "transactions": 3,
+      "resources": 3,
+      "requestBound": 6,
+      "completeWithinBound": false,
+      "module": "tla/l1/VC_L1_SX.tla",
+      "config": "tla/l1/VC_L1_SX_3x3.cfg"
+    },
+    {
+      "id": "liveness-2x2",
+      "kind": "liveness",
+      "transactions": 2,
+      "resources": 2,
+      "requestBound": 8,
+      "completeWithinBound": true,
+      "module": "tla/l1/VC_L1_SX.tla",
+      "config": "tla/l1/VC_L1_SX_2x2_liveness.cfg"
+    }
   ]
 }

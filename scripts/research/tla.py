@@ -29,6 +29,9 @@ TOOLCHAIN_MANIFEST = Path("tla/toolchain.json")
 DEFAULT_RESULT = Path(
     "research/execution/week-03/results/step-01-tla-toolchain.json"
 )
+DEFAULT_L1_RESULT = Path(
+    "research/execution/week-03/results/step-02-l1-model.json"
+)
 USER_AGENT = "vanillacore-mit-tla-bootstrap/1"
 
 
@@ -129,6 +132,16 @@ def parse_tlc_metrics(output: str) -> dict[str, int]:
         "generatedStates": int(states.group(1).replace(",", "")),
         "distinctStates": int(states.group(2).replace(",", "")),
         "depth": int(depth.group(1).replace(",", "")),
+    }
+
+
+def parse_tlc_memory(output: str) -> dict[str, int]:
+    match = re.search(r"with ([\d,]+)MB heap and ([\d,]+)MB offheap memory", output)
+    if not match:
+        raise ResearchError("Unable to parse TLC memory boundary.")
+    return {
+        "heapMegabytes": int(match.group(1).replace(",", "")),
+        "offHeapMegabytes": int(match.group(2).replace(",", "")),
     }
 
 
@@ -235,6 +248,110 @@ def bootstrap_tla_tools(
         "claimBoundary": (
             "The smoke models validate the pinned toolchain and bounded "
             "2x2/3x3 configurations; they do not validate the L1 lock model."
+        ),
+    }
+    write_json(destination, evidence)
+    return str(destination.relative_to(root))
+
+
+def run_l1_configuration(
+    root: Path,
+    jar_path: Path,
+    java: Mapping[str, Any],
+    configuration: Mapping[str, Any],
+) -> dict[str, Any]:
+    module_path = root / configuration["module"]
+    config_path = root / configuration["config"]
+    metadir = root / ".tools" / "tla" / "states" / configuration["id"]
+    metadir.mkdir(parents=True, exist_ok=True)
+    result = run_process(
+        [
+            str(executable(Path(java["Home"]), "java")),
+            "-Xmx2048m",
+            "-XX:+UseParallelGC",
+            "-cp",
+            str(jar_path),
+            "tlc2.TLC",
+            "-cleanup",
+            "-workers",
+            "1",
+            "-fp",
+            "0",
+            "-metadir",
+            str(metadir),
+            "-config",
+            config_path.name,
+            module_path.name,
+        ],
+        cwd=module_path.parent,
+        environment=java_environment(java),
+        timeout_seconds=900,
+    )
+    output = result.stdout + result.stderr
+    if result.timed_out or result.exit_code != 0:
+        raise ResearchError(
+            f"L1 model {configuration['id']} failed: {output[-4000:]}"
+        )
+    return {
+        "id": configuration["id"],
+        "kind": configuration["kind"],
+        "module": configuration["module"],
+        "config": configuration["config"],
+        "transactions": configuration["transactions"],
+        "resources": configuration["resources"],
+        "requestBound": configuration["requestBound"],
+        "completeWithinBound": configuration["completeWithinBound"],
+        "exitCode": result.exit_code,
+        "durationSeconds": result.duration_seconds,
+        "moduleSha256": sha256_file(module_path),
+        "configSha256": sha256_file(config_path),
+        **parse_tlc_metrics(output),
+        **parse_tlc_memory(output),
+    }
+
+
+def check_l1_model(output: Path | None = None) -> str:
+    root = repository_root()
+    manifest = load_toolchain_manifest(root)
+    java = require_research_jdk17()
+    jar_path = configured_jar_path(root, manifest)
+    verify_tla_jar(jar_path, manifest)
+    configurations = [
+        run_l1_configuration(root, jar_path, java, configuration)
+        for configuration in manifest["l1Models"]
+    ]
+    destination = (root / (output or DEFAULT_L1_RESULT)).resolve()
+    evidence = {
+        "schemaVersion": 1,
+        "step": "week-03-step-02-l1-model",
+        "generatedAt": iso_now(),
+        "gitCommit": git(root, "rev-parse", "HEAD"),
+        "status": "PASS",
+        "releaseTag": manifest["releaseTag"],
+        "tlcVersion": manifest["tlcVersion"],
+        "java": java,
+        "invariants": [
+            "TypeOK",
+            "OwnerHeldConsistency",
+            "MutualExclusion",
+            "PendingWellFormed",
+            "WaiterNotOwnerOrUpgrade",
+            "TerminalClean",
+            "StrictXRetention",
+        ],
+        "liveness": {
+            "property": "EventualTermination",
+            "assumptions": [
+                "weak fairness of Resolve(tx)",
+                "weak fairness of Finish(tx)",
+                "weak fairness of ReleaseAll(tx)",
+            ],
+        },
+        "configurations": configurations,
+        "claimBoundary": (
+            "The 2x2 configuration is exhaustive within the protocol's maximum "
+            "eight requests. The 3x3 configuration checks key invariants only "
+            "through six requests. Neither result is an unbounded proof."
         ),
     }
     write_json(destination, evidence)

@@ -7,5 +7,6 @@
 | Step | Scope | Status | Evidence |
 | --- | --- | --- | --- |
 | [`01`](step-01-tla-toolchain.md) | 固定 TLA+ CLI、校验下载、JDK 17 与 2×2/3×3 配置 | Complete | [`step-01-tla-toolchain.json`](results/step-01-tla-toolchain.json) |
+| [`02`](step-02-l1-model.md) | L1 S/X、等待、upgrade、事务结束与 safety/liveness | Complete | [`step-02-l1-model.json`](results/step-02-l1-model.json) |
 
 后续步骤在各自实现、验证并独立推送时加入本索引，避免未完成制品被文档提前声明为存在。
