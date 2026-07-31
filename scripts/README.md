@@ -31,6 +31,7 @@ python -m scripts.research.new_week02_gate_decision
 python -m scripts.research.bootstrap_tla_tools
 python -m scripts.research.check_l1_model
 python -m scripts.research.check_l1_mapping
+python -m scripts.research.export_l1_traces
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -50,6 +51,11 @@ depth, memory boundaries, hashes, fairness assumptions, and claim limits.
 and invariant coverage in [`mapping-v0.1.json`](../tla/l1/mapping-v0.1.json),
 checks every source line and trace event type, and enforces strong-contradiction
 eligibility rules.
+
+[`export_l1_traces.py`](research/export_l1_traces.py) reruns the unsymmetrized
+2×2 model with a fixed seed, hashes the ignored raw action-labelled state graph,
+and deterministically extracts the eight canonical L1 trace families with final
+states and full provenance.
 
 ## Documentation References
 

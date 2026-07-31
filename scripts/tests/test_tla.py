@@ -27,6 +27,8 @@ class TlaToolingTest(unittest.TestCase):
         )
         self.assertTrue(manifest["l1Models"][0]["completeWithinBound"])
         self.assertFalse(manifest["l1Models"][1]["completeWithinBound"])
+        self.assertEqual("canonical-traces-2x2", manifest["traceModel"]["id"])
+        self.assertEqual(20260731, manifest["traceModel"]["seed"])
         self.assertTrue(str(configured_jar_path(root, manifest)).endswith("tla2tools.jar"))
 
     def test_parse_tlc_metrics(self) -> None:

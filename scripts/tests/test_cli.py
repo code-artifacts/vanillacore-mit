@@ -12,6 +12,7 @@ CLI_MODULES = (
     "bootstrap_tla_tools",
     "check_l1_model",
     "check_l1_mapping",
+    "export_l1_traces",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

@@ -1,0 +1,1026 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-04-canonical-traces",
+  "generatedAt": "2026-07-31T23:10:20.811043+08:00",
+  "gitCommit": "2e94a2ce7972e75da23cd91405feb910ba1829dd",
+  "status": "PASS",
+  "provenance": {
+    "releaseTag": "v1.7.4",
+    "tlcVersion": "2.19 of 08 August 2024",
+    "toolSha256": "936A262061C914694DFD669A543BE24573C45D5AA0FF20A8B96B23D01E050E88",
+    "manifest": "tla/toolchain.json",
+    "manifestSha256": "D6EAF33B0FC873D32A8A381949A6E7F390CB89ECACAB2EE2E1C11336F7A030B1",
+    "module": "tla/l1/VC_L1_SX.tla",
+    "moduleSha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C",
+    "config": "tla/l1/VC_L1_SX_2x2_trace.cfg",
+    "configSha256": "0E57A01F1FE6AF4A810B2E5D5C0D460EB24A8F0523722BB803DF7316867AD9D2",
+    "mapping": "tla/l1/mapping-v0.1.json",
+    "mappingSha256": "AA56EE99565B958ACC04A3DB63944C7CAFBB2365F3FB8CC345D79DB54F3E5BCD",
+    "mappingStatus": "PROVISIONAL",
+    "rawGraph": {
+      "path": ".tools/tla/traces/VC_L1_SX_2x2_trace.dot",
+      "tracked": false,
+      "sizeBytes": 10500638,
+      "sha256": "6E87C1DD1548C3854E9FF616A9EDD01A865424F204EB0B56BF5C6110CCAEC6A3"
+    }
+  },
+  "configuration": {
+    "transactions": [
+      "t1",
+      "t2"
+    ],
+    "resources": [
+      "r1",
+      "r2"
+    ],
+    "maxRequests": 8,
+    "symmetryReduction": false,
+    "fingerprintIndex": 0,
+    "seed": 20260731,
+    "workers": 1
+  },
+  "tlc": {
+    "durationSeconds": 7.657,
+    "generatedStates": 33635,
+    "distinctStates": 12637,
+    "depth": 22,
+    "heapMegabytes": 1820,
+    "offHeapMegabytes": 64,
+    "graphNodes": 12637,
+    "graphEdges": 33634
+  },
+  "traceCount": 8,
+  "traces": [
+    {
+      "id": "shared-shared-compatible",
+      "family": "S/S",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 4,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-8099526302290546324",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-8099526302290546324",
+          "targetStateId": "534276056897783831",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "534276056897783831",
+          "targetStateId": "-6668464664486396417",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "-6668464664486396417",
+          "targetStateId": "-1321895134772733012",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        }
+      ],
+      "finalStateId": "-1321895134772733012",
+      "finalState": {
+        "txState": {
+          "t1": "ACTIVE",
+          "t2": "ACTIVE"
+        },
+        "held": {
+          "t1": {
+            "r1": "S",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "S",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "S",
+            "t2": "S"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "NO_RESOURCE"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "NONE"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "GRANT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "S"
+        }
+      }
+    },
+    {
+      "id": "shared-exclusive-conflict",
+      "family": "S/X",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 4,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-8099526302290546324",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-8099526302290546324",
+          "targetStateId": "534276056897783831",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "534276056897783831",
+          "targetStateId": "7071466718688414946",
+          "tlaAction": "RequestX",
+          "event": {
+            "action": "REQUEST_X",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "7071466718688414946",
+          "targetStateId": "7152396867838897141",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "X"
+          }
+        }
+      ],
+      "finalStateId": "7152396867838897141",
+      "finalState": {
+        "txState": {
+          "t1": "ACTIVE",
+          "t2": "WAITING"
+        },
+        "held": {
+          "t1": {
+            "r1": "S",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "NONE",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "S",
+            "t2": "NONE"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "r1"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "X"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "WAIT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "X"
+        }
+      }
+    },
+    {
+      "id": "exclusive-shared-conflict",
+      "family": "X/S",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 4,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-9008226458485923845",
+          "tlaAction": "RequestX",
+          "event": {
+            "action": "REQUEST_X",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-9008226458485923845",
+          "targetStateId": "324393790939404698",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "324393790939404698",
+          "targetStateId": "1104849011089562890",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "1104849011089562890",
+          "targetStateId": "-5146784150217606757",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        }
+      ],
+      "finalStateId": "-5146784150217606757",
+      "finalState": {
+        "txState": {
+          "t1": "ACTIVE",
+          "t2": "WAITING"
+        },
+        "held": {
+          "t1": {
+            "r1": "X",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "NONE",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "X",
+            "t2": "NONE"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "r1"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "S"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [
+            "r1"
+          ],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "WAIT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "S"
+        }
+      }
+    },
+    {
+      "id": "exclusive-exclusive-conflict",
+      "family": "X/X",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 4,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-9008226458485923845",
+          "tlaAction": "RequestX",
+          "event": {
+            "action": "REQUEST_X",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-9008226458485923845",
+          "targetStateId": "324393790939404698",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "324393790939404698",
+          "targetStateId": "-3602024942602818537",
+          "tlaAction": "RequestX",
+          "event": {
+            "action": "REQUEST_X",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "-3602024942602818537",
+          "targetStateId": "5668919300435246568",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "X"
+          }
+        }
+      ],
+      "finalStateId": "5668919300435246568",
+      "finalState": {
+        "txState": {
+          "t1": "ACTIVE",
+          "t2": "WAITING"
+        },
+        "held": {
+          "t1": {
+            "r1": "X",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "NONE",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "X",
+            "t2": "NONE"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "r1"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "X"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [
+            "r1"
+          ],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "WAIT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "X"
+        }
+      }
+    },
+    {
+      "id": "single-upgrader",
+      "family": "single upgrader",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 4,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-8099526302290546324",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-8099526302290546324",
+          "targetStateId": "534276056897783831",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "534276056897783831",
+          "targetStateId": "985721533585629454",
+          "tlaAction": "RequestUpgrade",
+          "event": {
+            "action": "UPGRADE_REQUEST",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "985721533585629454",
+          "targetStateId": "-3088950267941338007",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        }
+      ],
+      "finalStateId": "-3088950267941338007",
+      "finalState": {
+        "txState": {
+          "t1": "ACTIVE",
+          "t2": "ACTIVE"
+        },
+        "held": {
+          "t1": {
+            "r1": "X",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "NONE",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "X",
+            "t2": "NONE"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "NO_RESOURCE"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "NONE"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [
+            "r1"
+          ],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "GRANT",
+          "tx": "t1",
+          "resource": "r1",
+          "mode": "X"
+        }
+      }
+    },
+    {
+      "id": "double-upgrader",
+      "family": "double upgrader",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 8,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-8099526302290546324",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-8099526302290546324",
+          "targetStateId": "534276056897783831",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "534276056897783831",
+          "targetStateId": "-6668464664486396417",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "-6668464664486396417",
+          "targetStateId": "-1321895134772733012",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 5,
+          "sourceStateId": "-1321895134772733012",
+          "targetStateId": "2207586452853493815",
+          "tlaAction": "RequestUpgrade",
+          "event": {
+            "action": "UPGRADE_REQUEST",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 6,
+          "sourceStateId": "2207586452853493815",
+          "targetStateId": "-1615394362593654459",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 7,
+          "sourceStateId": "-1615394362593654459",
+          "targetStateId": "3049041174352526357",
+          "tlaAction": "RequestUpgrade",
+          "event": {
+            "action": "UPGRADE_REQUEST",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 8,
+          "sourceStateId": "3049041174352526357",
+          "targetStateId": "-7057421187242843712",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "X"
+          }
+        }
+      ],
+      "finalStateId": "-7057421187242843712",
+      "finalState": {
+        "txState": {
+          "t1": "WAITING",
+          "t2": "WAITING"
+        },
+        "held": {
+          "t1": {
+            "r1": "S",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "S",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "S",
+            "t2": "S"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "r1",
+          "t2": "r1"
+        },
+        "pendingMode": {
+          "t1": "X",
+          "t2": "X"
+        },
+        "requestCount": 4,
+        "xGranted": {
+          "t1": [],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "WAIT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "X"
+        }
+      }
+    },
+    {
+      "id": "writer-commit-reader-grant",
+      "family": "writer commit then reader grant",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 8,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-9008226458485923845",
+          "tlaAction": "RequestX",
+          "event": {
+            "action": "REQUEST_X",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-9008226458485923845",
+          "targetStateId": "324393790939404698",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "324393790939404698",
+          "targetStateId": "1104849011089562890",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "1104849011089562890",
+          "targetStateId": "-5146784150217606757",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 5,
+          "sourceStateId": "-5146784150217606757",
+          "targetStateId": "-5841698106307231996",
+          "tlaAction": "Commit",
+          "event": {
+            "action": "COMMIT",
+            "tx": "t1",
+            "resource": "NO_RESOURCE",
+            "mode": "NONE"
+          }
+        },
+        {
+          "ordinal": 6,
+          "sourceStateId": "-5841698106307231996",
+          "targetStateId": "2520896617983652102",
+          "tlaAction": "ReleaseAll",
+          "event": {
+            "action": "RELEASE_ALL",
+            "tx": "t1",
+            "resource": "NO_RESOURCE",
+            "mode": "NONE"
+          }
+        },
+        {
+          "ordinal": 7,
+          "sourceStateId": "2520896617983652102",
+          "targetStateId": "3429027935230742262",
+          "tlaAction": "Wake",
+          "event": {
+            "action": "WAKE",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 8,
+          "sourceStateId": "3429027935230742262",
+          "targetStateId": "4504579155489709163",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        }
+      ],
+      "finalStateId": "4504579155489709163",
+      "finalState": {
+        "txState": {
+          "t1": "COMMITTED",
+          "t2": "ACTIVE"
+        },
+        "held": {
+          "t1": {
+            "r1": "NONE",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "S",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "NONE",
+            "t2": "S"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "NO_RESOURCE"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "NONE"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [
+            "r1"
+          ],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "GRANT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "S"
+        }
+      }
+    },
+    {
+      "id": "writer-rollback-reader-grant",
+      "family": "writer rollback then reader grant",
+      "selection": "exact event pattern; smallest numeric state-id tie break",
+      "actionCount": 8,
+      "actionSequence": [
+        {
+          "ordinal": 1,
+          "sourceStateId": "-6173910299375698162",
+          "targetStateId": "-9008226458485923845",
+          "tlaAction": "RequestX",
+          "event": {
+            "action": "REQUEST_X",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 2,
+          "sourceStateId": "-9008226458485923845",
+          "targetStateId": "324393790939404698",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t1",
+            "resource": "r1",
+            "mode": "X"
+          }
+        },
+        {
+          "ordinal": 3,
+          "sourceStateId": "324393790939404698",
+          "targetStateId": "1104849011089562890",
+          "tlaAction": "RequestS",
+          "event": {
+            "action": "REQUEST_S",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 4,
+          "sourceStateId": "1104849011089562890",
+          "targetStateId": "-5146784150217606757",
+          "tlaAction": "Wait",
+          "event": {
+            "action": "WAIT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 5,
+          "sourceStateId": "-5146784150217606757",
+          "targetStateId": "-5691222051486261599",
+          "tlaAction": "Rollback",
+          "event": {
+            "action": "ROLLBACK",
+            "tx": "t1",
+            "resource": "NO_RESOURCE",
+            "mode": "NONE"
+          }
+        },
+        {
+          "ordinal": 6,
+          "sourceStateId": "-5691222051486261599",
+          "targetStateId": "-8194466743021214519",
+          "tlaAction": "ReleaseAll",
+          "event": {
+            "action": "RELEASE_ALL",
+            "tx": "t1",
+            "resource": "NO_RESOURCE",
+            "mode": "NONE"
+          }
+        },
+        {
+          "ordinal": 7,
+          "sourceStateId": "-8194466743021214519",
+          "targetStateId": "4129038306643278133",
+          "tlaAction": "Wake",
+          "event": {
+            "action": "WAKE",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        },
+        {
+          "ordinal": 8,
+          "sourceStateId": "4129038306643278133",
+          "targetStateId": "905972048400066967",
+          "tlaAction": "Grant",
+          "event": {
+            "action": "GRANT",
+            "tx": "t2",
+            "resource": "r1",
+            "mode": "S"
+          }
+        }
+      ],
+      "finalStateId": "905972048400066967",
+      "finalState": {
+        "txState": {
+          "t1": "ABORTED",
+          "t2": "ACTIVE"
+        },
+        "held": {
+          "t1": {
+            "r1": "NONE",
+            "r2": "NONE"
+          },
+          "t2": {
+            "r1": "S",
+            "r2": "NONE"
+          }
+        },
+        "owners": {
+          "r1": {
+            "t1": "NONE",
+            "t2": "S"
+          },
+          "r2": {
+            "t1": "NONE",
+            "t2": "NONE"
+          }
+        },
+        "pendingResource": {
+          "t1": "NO_RESOURCE",
+          "t2": "NO_RESOURCE"
+        },
+        "pendingMode": {
+          "t1": "NONE",
+          "t2": "NONE"
+        },
+        "requestCount": 2,
+        "xGranted": {
+          "t1": [
+            "r1"
+          ],
+          "t2": []
+        },
+        "lastEvent": {
+          "action": "GRANT",
+          "tx": "t2",
+          "resource": "r1",
+          "mode": "S"
+        }
+      }
+    }
+  ],
+  "claimBoundary": "These are deterministic shortest exact-pattern witnesses from the complete bounded 2x2 TLC graph. They are not unbounded proofs, and the provisional mapping does not make them implementation traces."
+}

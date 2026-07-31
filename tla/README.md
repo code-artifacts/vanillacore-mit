@@ -45,6 +45,16 @@ python -m scripts.research.check_l1_model
 
 The provisional [`L1 mapping/refinement ledger`](l1/MAPPING.md) links every model action and invariant to current Java events and source locations. Its machine source is [`mapping-v0.1.json`](l1/mapping-v0.1.json); unresolved or unknown evidence cannot produce a strong contradiction.
 
+## Canonical L1 Traces
+
+[`VC_L1_SX_2x2_trace.cfg`](l1/VC_L1_SX_2x2_trace.cfg) disables symmetry reduction so transaction and resource identities remain stable in exported evidence. Run the deterministic action-labelled graph export through [`export_l1_traces.py`](../scripts/research/export_l1_traces.py):
+
+```console
+python -m scripts.research.export_l1_traces
+```
+
+The tracked [`canonical trace result`](../research/execution/week-03/results/step-04-canonical-traces.json) stores all eight families, final states, hashes, constants, and the fixed seed. The large raw DOT graph remains under the ignored [`.tools/`](../.gitignore) directory and is identified by its recorded SHA-256.
+
 ## Mapping Discipline
 
 每个模型动作必须记录实现事件、资源抽象、前置条件、允许的 stutter 和不可观测字段。结构锁与逻辑锁使用不同 event kind；无法由 trace 证明的结果为 [`inconclusive`](../research/plan.md#L378)，而不是 violation。映射变更需递增 [`mapping_version`](#mapping-discipline)，并重放旧反例。

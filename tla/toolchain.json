@@ -66,5 +66,15 @@
       "module": "tla/l1/VC_L1_SX.tla",
       "config": "tla/l1/VC_L1_SX_2x2_liveness.cfg"
     }
-  ]
+  ],
+  "traceModel": {
+    "id": "canonical-traces-2x2",
+    "transactions": ["t1", "t2"],
+    "resources": ["r1", "r2"],
+    "requestBound": 8,
+    "seed": 20260731,
+    "module": "tla/l1/VC_L1_SX.tla",
+    "config": "tla/l1/VC_L1_SX_2x2_trace.cfg",
+    "rawDotPath": ".tools/tla/traces/VC_L1_SX_2x2_trace.dot"
+  }
 }
