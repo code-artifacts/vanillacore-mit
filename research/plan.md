@@ -1335,16 +1335,84 @@ PR #95 只用于：
 5. 计算事件完整性与 overhead；
 6. 作 G0–G2 决策。
 
-### 第三至四周
+第三至第五周构成一个有依赖顺序的三周 spike：先冻结 L1 模型、映射和可生成轨迹，再建立低扰动重放与 Native 路径，最后用三值判定、visible mutation 和 reducer 检验闭环。该顺序吸收了 [TLC 状态/轨迹导出能力](https://lamport.azurewebsites.net/tla/current-tools.pdf)、[Java 实现轨迹约束到 TLA+ 的方法](https://arxiv.org/abs/2404.16075)、[MongoDB 模型测试的正反经验](https://www.vldb.org/pvldb/vol13/p1346-davis.pdf)和 [CHESS 的最小调度控制原则](https://www.usenix.org/legacy/event/osdi08/tech/full_papers/musuvathi/musuvathi_html/index.html)。任何周的退出门槛失败时，下一周先偿还阻断项，不按日历自动扩展范围。
 
-1. L1 TLA+；
-2. 导出模型 trace；
-3. strict/partial-order scheduler；
-4. Native [`Transaction`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L33) harness；
-5. 三值 verdict；
-6. 8 类 visible mutation；
-7. reducer v0；
-8. 决定是否投入完整 6 个月路线。
+### 第三周：L1 模型、映射与阻断债务
+
+**周目标：** 形成可穷举、可生成测试轨迹、可与当前事件 schema 对齐的 [`L1`](#l1单层-sx-strict-2pl)，并关闭进入重放前必须解决的 [`G1/G3 前置风险`](execution/week-02/step-06-g0-g2-decision.md#mandatory-next-actions)。模型只覆盖单层 S/X、等待、upgrade、commit/rollback 与 strict release；不提前加入 age-based abort、timeout、层次锁或索引结构。
+
+**输入与并行轨道：**
+
+- 模型轨以已完成的 [`DirectLockTableHarness`](../src/test/java/org/vanilladb/core/storage/tx/concurrency/DirectLockTableHarness.java#L20)、五类 [`LockTraceEventType`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEventType.java#L3) 和 [`L1 invariant`](#l1单层-sx-strict-2pl) 为事实边界；
+- 工程轨独立激活 [PR #95 参考修复](evidence/patches/pr-95-fix-locktable.patch)，保持原始、参考修复、插桩和后续 mutation 四类基线可区分，并继续优化 [`BoundedLockTraceSink.low`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/BoundedLockTraceSink.java#L28)；
+- 两轨可并行，但只有模型检查、G1 压力和 low overhead 都达到门槛后，第四周才可进入 G3 结论。
+
+**执行顺序：**
+
+1. 固定 TLA+ tools 版本、下载来源、SHA-256、Java 运行时和命令行；在 [`tla/`](../tla/README.md) 记录 2 事务×2 资源与 3 事务×3 资源两档 TLC 配置，禁止把 bounded no-counterexample 写成证明；
+2. 实现 Init/Next、S/X 请求、等待、授予、唤醒、upgrade、commit、rollback 与 release-all，并逐条编码 [`L1 核心 invariant`](#l1单层-sx-strict-2pl)；先检查 safety/deadlock，再把 fairness/liveness 放入独立配置，避免一个超大配置掩盖状态爆炸；
+3. 建立 refinement ledger v0.1：每个模型动作关联实现来源、所需事件、资源抽象、允许 stutter、观测置信度和 [`mapping_version`](../tla/README.md#mapping-discipline)；[`UNKNOWN`](#52-抽象函数)、loss 或未解析资源角色不得产生强 contradiction；
+4. 从 TLC action-labeled 状态图或带 seed simulation 导出至少八个 canonical trace family：S/S、S/X、X/S、X/X、单 upgrader、双 upgrader、writer commit 后 reader grant、writer rollback 后 reader grant；每条记录工具版本、模型/config hash、常量、seed、动作序列和最终状态；
+5. 写模型级自测试：至少包含合法轨迹、故意破坏 compatibility/strictness/cleanup 的负例，以及从 [`Week 2 四场景`](execution/week-02/step-04-scenario-replay.md#schedules) 归一化得到的回归 fixture；模型或 mapping 修改后必须重放全部 fixture；
+6. 在参考修复与 instrumented-pristine 上完成 [`E0.4`](#71-l0-构建与稳定性实验) 的 2/4/8/16 worker、兼容/冲突混合和累计百万锁操作，分类所有 owner/waiter/map 残留；
+7. 对 low sink 最多做两轮独立优化，每轮保留完整样本与失败结果；不得删除五类事件语义、静默丢事件或以减少测试工作量换取开销数字。
+
+**交付物：** L1 模块与分离配置、模型检查 manifest、canonical trace corpus、mapping/refinement ledger v0.1、PR #95 压力差分报告、low sink 两轮以内的完整基准记录，以及第三周门控结论。
+
+**退出与停止条件：**
+
+- 2×2 状态空间完整穷举；3×3 至少完成有边界的关键 invariant 检查，并报告 distinct states、深度、耗时、内存和未检查范围；
+- 八类 canonical trace 均可由模型动作完整解释，且 [`Week 2`](execution/week-02/README.md) 回归 fixture 不因无依据的模型收紧而失配；
+- 参考修复基线累计百万操作无不可解释污染，PR #95 两个 witness 的原始/修复差异可重复；
+- full 事件 P/R 与 loss 不低于 [`G2`](#11-闸门与停止条件)，low overhead 必须降至 [`≤25%`](#11-闸门与停止条件) 才允许下一周给出 G3 结论；若两轮后仍超线，只能继续离线模型/trace-validation，暂停 scheduler 性能与可重放性主张。
+
+### 第四周：确定性重放与 Native 事务路径
+
+**周目标：** 把第三周 canonical trace 转换为 executable schedule，在 Direct 与 Native 两层验证 strict/partial-order replay，并以重复率和扰动数据作 [`G3`](#11-闸门与停止条件) 决策。方法上采用 [CHESS](https://www.usenix.org/legacy/event/osdi08/tech/full_papers/musuvathi/musuvathi_html/index.html) 的最小 hook/可复现原则和 [DPOR](https://doi.org/10.1145/1040305.1040315) 的因果等价思想；[PCT](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/asplos277-pct.pdf) 只预留接口，不在本周混入验收。
+
+**执行顺序：**
+
+1. 冻结 schedule DSL v0.1：事务操作、事务内顺序、必要跨线程 happens-before、观察点、超时、期望 outcome、模型/mapping 版本和 seed 均进入 manifest；wall-clock 与 nano-time 只作诊断，不建立跨线程真序；
+2. 对 [`LockTable`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L48) 和事务生命周期做 gate-safe 审计，逐点记录是否持有 monitor、是否可能阻塞、允许的事件前/后位置及死锁风险；scheduler 必须拒绝未经审计的 gate，尤其不得在持有 anchor monitor 时等待外部控制器；
+3. 实现 strict replay：逐步匹配预期动作和稳定 source site，只放行当前 enabled gate；把事件缺失、额外事件、错误事务/资源、超时和 harness 异常分开报告，并保存预期/实际最短分歧前缀；
+4. 实现 partial-order replay：以同线程顺序、scheduler edge、owner/grant/release 因果和 harness barrier 构建 DAG；任一前驱满足前不得放行，独立动作允许不同 linearization，实际 linearization 和 seed 必须写回结果；
+5. 扩展 Native [`Transaction`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L33) harness：通过 [`TransactionMgr.newTransaction`](../src/main/java/org/vanilladb/core/storage/tx/TransactionMgr.java#L163) 和 [`ConcurrencyMgr`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/ConcurrencyMgr.java#L30) 驱动 file/block/record 资源，覆盖 [`commit`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L103)、[`rollback`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L116) 与 [`endStatement`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L129)；所有 worker exception 必须回传主测试线程；
+6. 对同一模型 trace 运行 Direct/Native 差分，显式记录 Native 增加的父子锁、生命周期和 recovery 事件；不能把 Direct 与 Native 事件逐条相等作为正确性条件，而应比较其投影到 L1 后的允许执行集合；
+7. 在 high 与 low 模式对每个最小 schedule 各 fresh JVM 重放 30 次；同时运行 off/low 开销、event loss、遗留线程和 owner/waiter/map 污染检查，完整保留失败 outcome 分布。
+
+**交付物：** schedule DSL 与 schema、gate-safe 审计表、strict/partial-order scheduler v0、Native harness v0、Direct/Native 投影映射、重放 corpus 与 G3 机器可读决策。
+
+**退出与停止条件：**
+
+- 八类 canonical trace 的 strict replay 在 high 模式 30/30 完成；low 模式成功率 [`≥90%`](#11-闸门与停止条件)，总开销 [`≤25%`](#11-闸门与停止条件)，无静默 loss 或状态残留；
+- 对含独立动作的 fixture，partial-order 模式至少实现两个合法 linearization，且所有运行都满足 DAG 约束；对同一违反不得只保留最有利顺序；
+- Native harness 至少覆盖 S/S、S/X、X/X、commit release、rollback/undo 后 grant 和 terminal cleanup，重复运行中异常与事务 outcome 全部可观察；
+- 低插桩重放率 [`<80%`](#11-闸门与停止条件)、失败仅在 high gate 出现，或两轮 gate 修订后仍有 instrumentation deadlock 时，G3 判失败并阻止第五周把 mutation detection 写成方法有效性证据。
+
+### 第五周：三值判定、Visible Mutation 与 Reducer
+
+**周目标：** 在通过 G3 的可重复执行上实现 [`confirmed/contradicted/inconclusive`](#52-抽象函数)，用八类公开 fault 检查整个检测流水线，再对可重复 failure 实现 reducer v0。有限观测采用 [LTL3 的三值原则](https://pspace.org/a/publications/fsttcs06.pdf)；mutation 分母遵循 [PIT 对 equivalent/non-viable/timeout 的区分](https://pitest.org/quickstart/basic_concepts/)；缩减保持谓词遵循 [delta debugging](https://www.st.cs.uni-saarland.de/papers/tse2002/) 的可重复失败前提。
+
+**执行顺序：**
+
+1. 实现 verdict schema 与 reason taxonomy：完整证据存在至少一个合法抽象执行为 confirmed；完整、高置信证据下不存在合法抽象执行为 contradicted；loss、未知角色、歧义偏序、schema/mapping 不兼容或 replay divergence 为 inconclusive；同时输出支持规则、最短分歧前缀和最小证据切片；
+2. 建立人工裁决 fixture corpus：合法完整、非法完整、事件 loss、未知资源角色、两种偏序解释、schema 版本不匹配和 harness failure 均有正反样例；裁决者不读取 checker 输出后再修改标签；
+3. 逐一建立八个独立 visible mutation patch：错误允许 S/X、grant 不登记 owner、遗漏 [`lockByMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L103)、遗留 [`txWaitMap`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L105) 或 request set、release 后漏 [`notifyAll`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L91)、S→X conversion 过早释放旧锁、[`releaseAll`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java#L433) 后残留状态、[`commit/rollback`](../src/main/java/org/vanilladb/core/storage/tx/Transaction.java#L103) 完成前释放 X；每个 patch 只含一个语义 fault，不修改插桩、scheduler 或 checker；
+4. 每个 mutation 在独立 worktree/fresh JVM 中完成编译、受影响测试、相同 schedule budget 与 off/low/high 差分；先以状态覆盖和人工复核标记 equivalent、non-viable、timeout 与 harness error，再计算 detected/survived，禁止把无效项并入分母；
+5. 对八个 mutation 同时运行 model schedule + O1/O2/O3、相同 schedule 的 history-only、现有手写场景和等预算随机调度，记录“谁发现、谁确认”；visible set 只用于校准管线，不能替代后续 hidden mutation 的独立增益证据；
+6. reducer v0 仅接收可重复 contradicted failure，按事务、操作、资源、锁模式、调度 edge、超时和证据字段分层缩减；候选必须保持相同 mutation、verdict reason、违反规则和最短分歧前缀，缩减过程中至少 5/5 重放，最终候选按 G3 的 high/low 30 次协议复核；
+7. 汇总 G1–G4、八类 mutation 流水线、baseline 差分、缩减质量、人工复核成本和剩余风险，形成第三至第五周 Go/Conditional Go/No-Go。
+
+**交付物：** 三值 checker v0 与 schema、人工裁决 corpus、八个独立 visible mutation 及 manifest、方法组对比表、reducer v0、最小 witness bundle、G4 报告和三周决策记录。
+
+**退出与决策条件：**
+
+- 在完整人工裁决 corpus 上 [`inconclusive ≤10%`](#11-闸门与停止条件)、误报 [`≤5%`](#11-闸门与停止条件)；故意缺失/歧义 fixture 必须稳定为 inconclusive，不计入完整证据误报分母；
+- 八个 patch 均有明确有效性状态；所有 non-equivalent mutation 均保留 detected/survived 结果，任何 survivor 都作为 mapping/model/schedule 缺口而非选择性删除；
+- 每个可重复 contradicted failure 都输出 1-minimal（相对于已实现变换集）的 workload/partial-order/model-assumption/evidence，并通过最终 30 次 high/low 复核；
+- **Go：** G1–G4 全部通过、Direct/Native 均有可重放 witness、三值判定达到门槛、visible mutation 管线和 reducer 端到端可运行；批准后续路线仍按阶段拨付，hidden mutation 未解盲前不得宣称独立增益；
+- **Conditional Go：** 仅有一个可在第六周一周内关闭的量化缺口，且不触发硬停止条件；第六周只偿还该缺口并冻结 schema/mapping，不增加 L2/PCT/SQL 范围；
+- **No-Go：** 任一 [`硬停止条件`](#11-闸门与停止条件) 成立，或仍需重写 VanillaCore 核心才能控制/观察；停止投入完整六个月路线，保留 L1 模型、mapping、trace 和 reducer 接口作为 Derby/MySQL transfer 输入。
 
 ## 18. 预期产物
 
