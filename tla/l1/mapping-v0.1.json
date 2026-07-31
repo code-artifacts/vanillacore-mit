@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "mappingVersion": "vc-l1-mapping-0.1",
+  "status": "PROVISIONAL",
+  "model": {
+    "path": "tla/l1/VC_L1_SX.tla",
+    "sha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C"
+  },
+  "traceSchema": {
+    "version": "vc-locktrace-0",
+    "eventEnumPath": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEventType.java",
+    "eventPath": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java"
+  },
+  "actions": [
+    {
+      "ruleId": "L1-ACT-INIT",
+      "action": "Init",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 86, "symbol": "Init"},
+      "implementationLocations": [],
+      "requiredEvents": [],
+      "observation": "UNOBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": false,
+      "mapping": "Harness creation establishes the initial abstract state; no production event denotes Init.",
+      "ambiguity": "Pre-existing process state must be excluded by fresh-process isolation."
+    },
+    {
+      "ruleId": "L1-ACT-REQUEST-S",
+      "action": "RequestS",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 110, "symbol": "RequestS"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 177, "symbol": "sLock"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 178, "symbol": "LOCK_CALL"}
+      ],
+      "requiredEvents": ["LOCK_CALL"],
+      "observation": "OBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": true,
+      "strongConditions": ["zero trace loss", "source site is locktable.s.call"],
+      "mapping": "LOCK_CALL with source site locktable.s.call and requested mode S maps to RequestS.",
+      "ambiguity": "A repeated S request is implementation-idempotent and is outside the current model action set."
+    },
+    {
+      "ruleId": "L1-ACT-REQUEST-X",
+      "action": "RequestX",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 119, "symbol": "RequestX"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 222, "symbol": "xLock"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 223, "symbol": "LOCK_CALL"}
+      ],
+      "requiredEvents": ["LOCK_CALL"],
+      "observation": "OBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": true,
+      "strongConditions": ["zero trace loss", "prior reconstructed state proves no S owner"],
+      "mapping": "LOCK_CALL with source site locktable.x.call and requested mode X maps to RequestX when no S owner is known.",
+      "ambiguity": "Without a held-before snapshot the same event may be an upgrade request."
+    },
+    {
+      "ruleId": "L1-ACT-UPGRADE",
+      "action": "RequestUpgrade",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 128, "symbol": "RequestUpgrade"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 222, "symbol": "xLock"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 223, "symbol": "LOCK_CALL"}
+      ],
+      "requiredEvents": ["LOCK_CALL"],
+      "observation": "OBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": false,
+      "mapping": "An X LOCK_CALL following an S grant to the same transaction/resource is an upgrade candidate.",
+      "ambiguity": "The current event lacks held-before state, so standalone classification is not strong evidence."
+    },
+    {
+      "ruleId": "L1-ACT-GRANT",
+      "action": "Grant",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 137, "symbol": "Grant"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 203, "symbol": "GRANT"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 248, "symbol": "GRANT"}
+      ],
+      "requiredEvents": ["GRANT"],
+      "observation": "OBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": true,
+      "strongConditions": ["zero trace loss", "request transaction/resource/mode is known"],
+      "mapping": "GRANT is emitted after owner and reverse-index updates for S and X.",
+      "ambiguity": "The event does not contain a complete owner snapshot."
+    },
+    {
+      "ruleId": "L1-ACT-WAIT",
+      "action": "Wait",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 153, "symbol": "Wait"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 193, "symbol": "WAIT_BEGIN"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 238, "symbol": "WAIT_BEGIN"}
+      ],
+      "requiredEvents": ["WAIT_BEGIN"],
+      "observation": "OBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": true,
+      "strongConditions": ["zero trace loss", "request transaction/resource/mode is known"],
+      "mapping": "WAIT_BEGIN is emitted after request-set insertion and immediately before Object.wait.",
+      "ambiguity": "Repeated wait-loop iterations produce repeated abstract Wait candidates."
+    },
+    {
+      "ruleId": "L1-ACT-WAKE",
+      "action": "Wake",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 164, "symbol": "Wake"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 196, "symbol": "wait"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 241, "symbol": "wait"}
+      ],
+      "requiredEvents": ["RELEASE", "GRANT"],
+      "observation": "DERIVED",
+      "stutter": true,
+      "strongContradictionEligible": false,
+      "mapping": "Wake is admitted between a prior WAIT_BEGIN and a later GRANT after a causally relevant RELEASE.",
+      "ambiguity": "No WAKE_RETURN event exists; spurious wakeups and repeated waits remain possible."
+    },
+    {
+      "ruleId": "L1-ACT-COMMIT",
+      "action": "Commit",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 174, "symbol": "Commit"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/Transaction.java", "line": 103, "symbol": "commit"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/SerializableConcurrencyMgr.java", "line": 29, "symbol": "onTxCommit"}
+      ],
+      "requiredEvents": ["TX_END"],
+      "observation": "INFERRED",
+      "stutter": false,
+      "strongContradictionEligible": false,
+      "mapping": "Harness outcome may label a TX_END path as commit.",
+      "ambiguity": "The production trace has no commit-begin/end event and TX_END does not encode outcome."
+    },
+    {
+      "ruleId": "L1-ACT-ROLLBACK",
+      "action": "Rollback",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 182, "symbol": "Rollback"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/Transaction.java", "line": 116, "symbol": "rollback"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/SerializableConcurrencyMgr.java", "line": 34, "symbol": "onTxRollback"}
+      ],
+      "requiredEvents": ["TX_END"],
+      "observation": "INFERRED",
+      "stutter": false,
+      "strongContradictionEligible": false,
+      "mapping": "Harness outcome may label a TX_END path as rollback.",
+      "ambiguity": "The production trace has no rollback/undo event and TX_END does not encode outcome."
+    },
+    {
+      "ruleId": "L1-ACT-RELEASE-ALL",
+      "action": "ReleaseAll",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 190, "symbol": "ReleaseAll"},
+      "implementationLocations": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 433, "symbol": "releaseAll"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 468, "symbol": "TX_END"}
+      ],
+      "requiredEvents": ["RELEASE", "TX_END"],
+      "observation": "OBSERVED",
+      "stutter": false,
+      "strongContradictionEligible": true,
+      "strongConditions": ["zero trace loss", "all prior grants and releases are reconstructable"],
+      "mapping": "Zero or more actual RELEASE events followed by TX_END map to ReleaseAll.",
+      "ambiguity": "Without owner snapshots, completeness also depends on zero trace loss and known prior grants."
+    },
+    {
+      "ruleId": "L1-ACT-DONE",
+      "action": "DoneStutter",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 206, "symbol": "DoneStutter"},
+      "implementationLocations": [],
+      "requiredEvents": [],
+      "observation": "UNOBSERVED",
+      "stutter": true,
+      "strongContradictionEligible": false,
+      "mapping": "Terminal implementation silence is admitted as model stutter.",
+      "ambiguity": "None after all observed transactions are terminal."
+    }
+  ],
+  "resourceMapping": {
+    "transaction": {"eventField": "transactionId", "location": {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 57, "symbol": "transactionId"}},
+    "resourceKey": {"eventFields": ["resourceKind", "resourceId"], "locations": [
+      {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 77, "symbol": "resourceKind"},
+      {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 81, "symbol": "resourceId"}
+    ]},
+    "mode": {"eventField": "requestedMode", "location": {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 97, "symbol": "requestedMode"}},
+    "role": {"eventField": "resourceRole", "currentValue": "UNKNOWN", "location": {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 85, "symbol": "resourceRole"}},
+    "parent": {"eventField": "parentResourceId", "currentValue": "UNKNOWN", "location": {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 89, "symbol": "parentResourceId"}},
+    "purpose": {"eventField": "lockPurpose", "currentValue": "UNKNOWN", "location": {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 93, "symbol": "lockPurpose"}}
+  },
+  "ordering": {
+    "strong": ["same-thread threadSequence", "scheduler edge", "observed RELEASE before dependent GRANT"],
+    "weak": ["eventId across producers", "nanoTime across threads"],
+    "locations": [
+      {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 45, "symbol": "eventId"},
+      {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 53, "symbol": "threadSequence"},
+      {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/trace/LockTraceEvent.java", "line": 105, "symbol": "nanoTime"}
+    ]
+  },
+  "invariants": [
+    {
+      "ruleId": "L1-INV-TYPE",
+      "name": "TypeOK",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 30, "symbol": "TypeOK"},
+      "sources": [],
+      "mappingAssumption": "Finite model values and field domains are configuration constraints.",
+      "confidence": "HIGH",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    },
+    {
+      "ruleId": "L1-INV-OWNER-INDEX",
+      "name": "OwnerHeldConsistency",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 43, "symbol": "OwnerHeldConsistency"},
+      "sources": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 102, "symbol": "lockerMap"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 103, "symbol": "lockByMap"}
+      ],
+      "mappingAssumption": "GRANT and RELEASE are complete and prior state can reconstruct both indexes.",
+      "confidence": "MEDIUM",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    },
+    {
+      "ruleId": "L1-INV-COMPAT",
+      "name": "MutualExclusion",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 47, "symbol": "MutualExclusion"},
+      "sources": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 652, "symbol": "sLockable"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 657, "symbol": "xLockable"}
+      ],
+      "mappingAssumption": "L1 projection ignores IS/IX/SIX and evaluates only S/X owners.",
+      "confidence": "MEDIUM",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    },
+    {
+      "ruleId": "L1-INV-PENDING",
+      "name": "PendingWellFormed",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 56, "symbol": "PendingWellFormed"},
+      "sources": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 105, "symbol": "txWaitMap"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 192, "symbol": "requestSet"}
+      ],
+      "mappingAssumption": "WAIT_BEGIN denotes request-set membership at the wait boundary.",
+      "confidence": "MEDIUM",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    },
+    {
+      "ruleId": "L1-INV-WAITER",
+      "name": "WaiterNotOwnerOrUpgrade",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 67, "symbol": "WaiterNotOwnerOrUpgrade"},
+      "sources": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 193, "symbol": "WAIT_BEGIN"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 238, "symbol": "WAIT_BEGIN"}
+      ],
+      "mappingAssumption": "An X waiter may retain its own S lock only when classified as an upgrade.",
+      "confidence": "LOW",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    },
+    {
+      "ruleId": "L1-INV-CLEAN",
+      "name": "TerminalClean",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 74, "symbol": "TerminalClean"},
+      "sources": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 433, "symbol": "releaseAll"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 465, "symbol": "txWaitMap"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 467, "symbol": "lockByMap"}
+      ],
+      "mappingAssumption": "TX_END is accepted only after all reconstructed grants have matching releases and trace loss is zero.",
+      "confidence": "MEDIUM",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    },
+    {
+      "ruleId": "L1-INV-STRICT-X",
+      "name": "StrictXRetention",
+      "modelLocation": {"path": "tla/l1/VC_L1_SX.tla", "line": 80, "symbol": "StrictXRetention"},
+      "sources": [
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/Transaction.java", "line": 103, "symbol": "commit"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/Transaction.java", "line": 116, "symbol": "rollback"},
+        {"path": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 433, "symbol": "releaseAll"}
+      ],
+      "mappingAssumption": "Harness outcome supplies commit/rollback; no X RELEASE may precede that outcome.",
+      "confidence": "MEDIUM",
+      "counterexamples": [],
+      "reviewer": "UNASSIGNED"
+    }
+  ],
+  "unknownPolicy": "Any UNKNOWN field, trace loss, unresolved upgrade, absent lifecycle outcome, or ambiguous partial order prevents strong contradiction.",
+  "unresolved": [
+    "Owner and waiter snapshots are absent.",
+    "Wake has no direct event.",
+    "Commit and rollback are not distinguished by TX_END.",
+    "Upgrade lacks held-before state.",
+    "Resource role, parent, and purpose remain UNKNOWN."
+  ]
+}

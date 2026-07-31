@@ -30,6 +30,7 @@ python -m scripts.research.measure_week02_trace_quality
 python -m scripts.research.new_week02_gate_decision
 python -m scripts.research.bootstrap_tla_tools
 python -m scripts.research.check_l1_model
+python -m scripts.research.check_l1_mapping
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -44,6 +45,11 @@ option after the first verified installation.
 [`check_l1_model.py`](research/check_l1_model.py) runs the pinned TLC against
 the L1 S/X safety and liveness configurations and writes bounded state counts,
 depth, memory boundaries, hashes, fairness assumptions, and claim limits.
+
+[`check_l1_mapping.py`](research/check_l1_mapping.py) validates complete action
+and invariant coverage in [`mapping-v0.1.json`](../tla/l1/mapping-v0.1.json),
+checks every source line and trace event type, and enforces strong-contradiction
+eligibility rules.
 
 ## Documentation References
 

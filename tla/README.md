@@ -43,6 +43,8 @@ python -m scripts.research.check_l1_model
 
 [`VC_L1_SX_2x2.cfg`](l1/VC_L1_SX_2x2.cfg) explores the complete finite protocol for two transactions and two resources with the maximum eight requests. [`VC_L1_SX_3x3.cfg`](l1/VC_L1_SX_3x3.cfg) limits three transactions and three resources to six requests and therefore provides bounded invariant evidence only. [`VC_L1_SX_2x2_liveness.cfg`](l1/VC_L1_SX_2x2_liveness.cfg) checks eventual termination separately under documented weak-fairness assumptions and without symmetry reduction.
 
+The provisional [`L1 mapping/refinement ledger`](l1/MAPPING.md) links every model action and invariant to current Java events and source locations. Its machine source is [`mapping-v0.1.json`](l1/mapping-v0.1.json); unresolved or unknown evidence cannot produce a strong contradiction.
+
 ## Mapping Discipline
 
 每个模型动作必须记录实现事件、资源抽象、前置条件、允许的 stutter 和不可观测字段。结构锁与逻辑锁使用不同 event kind；无法由 trace 证明的结果为 [`inconclusive`](../research/plan.md#L378)，而不是 violation。映射变更需递增 [`mapping_version`](#mapping-discipline)，并重放旧反例。

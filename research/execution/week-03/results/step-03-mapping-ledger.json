@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "step": "week-03-step-03-mapping-ledger",
+  "generatedAt": "2026-07-31T22:52:45.062774+08:00",
+  "gitCommit": "274a55f49dd451da76c400ae7c6f839b0441062c",
+  "status": "PASS",
+  "mappingPath": "tla/l1/mapping-v0.1.json",
+  "mappingSha256": "AA56EE99565B958ACC04A3DB63944C7CAFBB2365F3FB8CC345D79DB54F3E5BCD",
+  "mappingVersion": "vc-l1-mapping-0.1",
+  "mappingStatus": "PROVISIONAL",
+  "actionCount": 11,
+  "invariantCount": 7,
+  "strongActionCount": 5,
+  "observationCounts": {
+    "DERIVED": 1,
+    "INFERRED": 2,
+    "OBSERVED": 6,
+    "UNOBSERVED": 2
+  },
+  "eventTypes": [
+    "GRANT",
+    "LOCK_CALL",
+    "RELEASE",
+    "TX_END",
+    "WAIT_BEGIN"
+  ],
+  "unresolvedCount": 5,
+  "unassignedReviewers": 7,
+  "claimBoundary": "PASS validates coverage and source-location integrity. The mapping remains PROVISIONAL until independent review and stronger snapshots."
+}
