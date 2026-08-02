@@ -40,6 +40,7 @@ python -m scripts.research.freeze_week04_schedules
 python -m scripts.research.check_week04_gate_audit
 python -m scripts.research.check_week04_strict_replay
 python -m scripts.research.check_week04_partial_order
+python -m scripts.research.check_week04_native_harness
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -104,6 +105,12 @@ divergence and retains both prefixes through
 validates every frozen schedule DAG and runs the Java controller fixture with
 two legal independent-action linearizations. The Python edge checker is
 [`validate_dag`](research/partial_order.py#L7).
+
+[`check_week04_native_harness.py`](research/check_week04_native_harness.py#L1)
+runs real [`TransactionMgr`](../src/main/java/org/vanilladb/core/storage/tx/TransactionMgr.java#L42)
+tests across file, block, record, commit, rollback, and statement boundaries.
+Worker exceptions are returned through
+[`NativeTransactionHarness.WorkerOutcome`](../src/test/java/org/vanilladb/core/storage/tx/concurrency/NativeTransactionHarness.java#L35).
 
 ## Documentation References
 

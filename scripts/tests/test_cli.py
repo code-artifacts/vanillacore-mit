@@ -21,6 +21,7 @@ CLI_MODULES = (
     "check_week04_gate_audit",
     "check_week04_strict_replay",
     "check_week04_partial_order",
+    "check_week04_native_harness",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

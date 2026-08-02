@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "step": "week-04-step-05-native-harness",
+  "status": "PASS",
+  "tests": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "durationSeconds": 28.078,
+  "coverage": [
+    "FILE_BLOCK_RECORD",
+    "S_S",
+    "S_X",
+    "X_X",
+    "COMMIT_RELEASE_GRANT",
+    "ROLLBACK_UNDO_THEN_GRANT",
+    "END_STATEMENT",
+    "TERMINAL_CLEANUP",
+    "WORKER_EXCEPTION_RETURN"
+  ]
+}
