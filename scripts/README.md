@@ -36,6 +36,7 @@ python -m scripts.research.check_l1_self_tests
 python -m scripts.research.invoke_week03_g1_stress
 python -m scripts.research.measure_week03_low_sink --iteration 1 --implementation early-event-type-gating
 python -m scripts.research.new_week03_gate_decision
+python -m scripts.research.freeze_week04_schedules
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -80,6 +81,11 @@ retains every sample, source hash, event metric, and stop decision.
 [`new_week03_gate_decision.py`](research/new_week03_gate_decision.py#L12)
 combines the retained L1, G1, G2, and low-overhead evidence. The fail-closed
 decision logic is in [`week3_gate.py`](research/week3_gate.py#L19).
+
+[`freeze_week04_schedules.py`](research/freeze_week04_schedules.py#L1) freezes
+schedule DSL v0.1 manifests for all eight canonical L1 trace families. The
+validator in [`week4_schedule.py`](research/week4_schedule.py#L157) rejects
+implicit time-based cross-thread order and stale node references.
 
 ## Documentation References
 

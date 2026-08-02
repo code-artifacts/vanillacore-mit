@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "step": "week-04-step-01-schedule-dsl",
+  "status": "PASS",
+  "scheduleSchema": "vc-schedule-0.1",
+  "scheduleCount": 8,
+  "schedules": [
+    {
+      "path": "research/execution/week-04/schedules/shared-shared-compatible.json",
+      "sha256": "231863E99746312AEA6BA4BEC0C27DA96F628C20D80B43A3FBD9EC83A63AC196"
+    },
+    {
+      "path": "research/execution/week-04/schedules/shared-exclusive-conflict.json",
+      "sha256": "C83C27C025E744B0A0FE2E7831862A281DB0B5BB68C0F0E41E5F65C0B0C1C854"
+    },
+    {
+      "path": "research/execution/week-04/schedules/exclusive-shared-conflict.json",
+      "sha256": "9D5D9DFB135DE120FD04C6D5AF68B4A813CCFB9FE9682D52DFB812610E88B2E0"
+    },
+    {
+      "path": "research/execution/week-04/schedules/exclusive-exclusive-conflict.json",
+      "sha256": "A8C290B79B4E0C2D32C61CB94F034B17E4969A0AF45BCD20280DDC3C48875D9A"
+    },
+    {
+      "path": "research/execution/week-04/schedules/single-upgrader.json",
+      "sha256": "C2F0C1D3A2AE1D23B7DFB66B8B56D8BFC12F69B978C8CBFA3A76E7AEE64AE6E2"
+    },
+    {
+      "path": "research/execution/week-04/schedules/double-upgrader.json",
+      "sha256": "28AF2A639324CFDD17D83B75E9539135EE382811851005C961C3ECA4BFDB6028"
+    },
+    {
+      "path": "research/execution/week-04/schedules/writer-commit-reader-grant.json",
+      "sha256": "DBA671532C7601DF6845343C7925928B4D91779E298F59AA8931DE2F70C23D66"
+    },
+    {
+      "path": "research/execution/week-04/schedules/writer-rollback-reader-grant.json",
+      "sha256": "4F24799ECED333915DB0498A99BF9B9FC4F72535543160A6BA795CF3BF7D9412"
+    }
+  ],
+  "orderingPolicy": {
+    "wallClock": "DIAGNOSTIC_ONLY",
+    "nanoTime": "DIAGNOSTIC_ONLY",
+    "crossThread": "EXPLICIT_EDGES_ONLY"
+  }
+}

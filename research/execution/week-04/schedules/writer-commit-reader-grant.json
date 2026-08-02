@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "vc-schedule-0.1",
+  "scheduleId": "writer-commit-reader-grant",
+  "family": "writer commit then reader grant",
+  "source": {
+    "canonicalTrace": "research/execution/week-03/results/step-04-canonical-traces.json",
+    "canonicalTraceId": "writer-commit-reader-grant",
+    "canonicalTraceSha256": "629B54B339319DF0B22DEBADEE823F26865865F40A6FAB021DEA62D300BC1C18"
+  },
+  "versions": {
+    "model": "VC_L1_SX@week-03-step-04",
+    "modelSha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C",
+    "mapping": "mapping-v0.1",
+    "mappingSha256": "AA56EE99565B958ACC04A3DB63944C7CAFBB2365F3FB8CC345D79DB54F3E5BCD"
+  },
+  "seed": 20260737,
+  "timeoutMillis": 5000,
+  "policy": {
+    "kind": "STRICT_OR_PARTIAL_ORDER",
+    "pctReserved": true
+  },
+  "operations": [
+    {
+      "id": "op-01",
+      "thread": "t1",
+      "tx": "t1",
+      "kind": "LOCK",
+      "resource": "r1",
+      "mode": "X",
+      "triggerObservation": "obs-01"
+    },
+    {
+      "id": "op-02",
+      "thread": "t2",
+      "tx": "t2",
+      "kind": "LOCK",
+      "resource": "r1",
+      "mode": "S",
+      "triggerObservation": "obs-03"
+    },
+    {
+      "id": "op-03",
+      "thread": "t1",
+      "tx": "t1",
+      "kind": "COMMIT",
+      "resource": "NO_RESOURCE",
+      "mode": "NONE",
+      "triggerObservation": "obs-05"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-01",
+      "ordinal": 1,
+      "modelAction": "REQUEST_X",
+      "tx": "t1",
+      "resource": "r1",
+      "mode": "X",
+      "eventType": "LOCK_CALL",
+      "sourceSite": "locktable.x.call",
+      "gateRequested": true
+    },
+    {
+      "id": "obs-02",
+      "ordinal": 2,
+      "modelAction": "GRANT",
+      "tx": "t1",
+      "resource": "r1",
+      "mode": "X",
+      "eventType": "GRANT",
+      "sourceSite": "locktable.x.grant",
+      "gateRequested": false
+    },
+    {
+      "id": "obs-03",
+      "ordinal": 3,
+      "modelAction": "REQUEST_S",
+      "tx": "t2",
+      "resource": "r1",
+      "mode": "S",
+      "eventType": "LOCK_CALL",
+      "sourceSite": "locktable.s.call",
+      "gateRequested": true
+    },
+    {
+      "id": "obs-04",
+      "ordinal": 4,
+      "modelAction": "WAIT",
+      "tx": "t2",
+      "resource": "r1",
+      "mode": "S",
+      "eventType": "WAIT_BEGIN",
+      "sourceSite": "locktable.s.wait",
+      "gateRequested": false
+    },
+    {
+      "id": "obs-05",
+      "ordinal": 5,
+      "modelAction": "COMMIT",
+      "tx": "t1",
+      "resource": "NO_RESOURCE",
+      "mode": "NONE",
+      "eventType": "HARNESS_OPERATION",
+      "sourceSite": "harness.transaction.commit",
+      "gateRequested": true
+    },
+    {
+      "id": "obs-06",
+      "ordinal": 6,
+      "modelAction": "RELEASE_ALL",
+      "tx": "t1",
+      "resource": "NO_RESOURCE",
+      "mode": "NONE",
+      "eventType": "TX_END",
+      "sourceSite": "locktable.releaseAll.txEnd",
+      "gateRequested": false
+    },
+    {
+      "id": "obs-07",
+      "ordinal": 7,
+      "modelAction": "WAKE",
+      "tx": "t2",
+      "resource": "r1",
+      "mode": "S",
+      "eventType": "HARNESS_OBSERVATION",
+      "sourceSite": "harness.waiter.wake",
+      "gateRequested": false
+    },
+    {
+      "id": "obs-08",
+      "ordinal": 8,
+      "modelAction": "GRANT",
+      "tx": "t2",
+      "resource": "r1",
+      "mode": "S",
+      "eventType": "GRANT",
+      "sourceSite": "locktable.s.grant",
+      "gateRequested": false
+    }
+  ],
+  "strictOrder": [
+    "obs-01",
+    "obs-02",
+    "obs-03",
+    "obs-04",
+    "obs-05",
+    "obs-06",
+    "obs-07",
+    "obs-08"
+  ],
+  "happensBefore": [
+    {
+      "before": "op-01",
+      "after": "op-03",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-01",
+      "after": "obs-02",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-03",
+      "after": "obs-04",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-05",
+      "after": "obs-06",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-06",
+      "after": "obs-07",
+      "kind": "RELEASE_WAKE_CAUSALITY"
+    },
+    {
+      "before": "obs-07",
+      "after": "obs-08",
+      "kind": "THREAD_ORDER"
+    }
+  ],
+  "expectedOutcome": {
+    "kind": "MODEL_PREFIX_REPLAYED",
+    "finalTransactionState": {
+      "t1": "COMMITTED",
+      "t2": "ACTIVE"
+    },
+    "cleanupRequired": true
+  },
+  "diagnostics": {
+    "wallClock": "DIAGNOSTIC_ONLY",
+    "nanoTime": "DIAGNOSTIC_ONLY",
+    "crossThreadOrder": "EXPLICIT_EDGES_ONLY"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "vc-schedule-0.1",
+  "scheduleId": "single-upgrader",
+  "family": "single upgrader",
+  "source": {
+    "canonicalTrace": "research/execution/week-03/results/step-04-canonical-traces.json",
+    "canonicalTraceId": "single-upgrader",
+    "canonicalTraceSha256": "629B54B339319DF0B22DEBADEE823F26865865F40A6FAB021DEA62D300BC1C18"
+  },
+  "versions": {
+    "model": "VC_L1_SX@week-03-step-04",
+    "modelSha256": "F1A3C0019030F238F5939FAA47B2F340117AA6F24E7931586E32DEC8F595560C",
+    "mapping": "mapping-v0.1",
+    "mappingSha256": "AA56EE99565B958ACC04A3DB63944C7CAFBB2365F3FB8CC345D79DB54F3E5BCD"
+  },
+  "seed": 20260735,
+  "timeoutMillis": 5000,
+  "policy": {
+    "kind": "STRICT_OR_PARTIAL_ORDER",
+    "pctReserved": true
+  },
+  "operations": [
+    {
+      "id": "op-01",
+      "thread": "t1",
+      "tx": "t1",
+      "kind": "LOCK",
+      "resource": "r1",
+      "mode": "S",
+      "triggerObservation": "obs-01"
+    },
+    {
+      "id": "op-02",
+      "thread": "t1",
+      "tx": "t1",
+      "kind": "LOCK",
+      "resource": "r1",
+      "mode": "X",
+      "triggerObservation": "obs-03"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-01",
+      "ordinal": 1,
+      "modelAction": "REQUEST_S",
+      "tx": "t1",
+      "resource": "r1",
+      "mode": "S",
+      "eventType": "LOCK_CALL",
+      "sourceSite": "locktable.s.call",
+      "gateRequested": true
+    },
+    {
+      "id": "obs-02",
+      "ordinal": 2,
+      "modelAction": "GRANT",
+      "tx": "t1",
+      "resource": "r1",
+      "mode": "S",
+      "eventType": "GRANT",
+      "sourceSite": "locktable.s.grant",
+      "gateRequested": false
+    },
+    {
+      "id": "obs-03",
+      "ordinal": 3,
+      "modelAction": "UPGRADE_REQUEST",
+      "tx": "t1",
+      "resource": "r1",
+      "mode": "X",
+      "eventType": "LOCK_CALL",
+      "sourceSite": "locktable.x.call",
+      "gateRequested": true
+    },
+    {
+      "id": "obs-04",
+      "ordinal": 4,
+      "modelAction": "GRANT",
+      "tx": "t1",
+      "resource": "r1",
+      "mode": "X",
+      "eventType": "GRANT",
+      "sourceSite": "locktable.x.grant",
+      "gateRequested": false
+    }
+  ],
+  "strictOrder": [
+    "obs-01",
+    "obs-02",
+    "obs-03",
+    "obs-04"
+  ],
+  "happensBefore": [
+    {
+      "before": "op-01",
+      "after": "op-02",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-01",
+      "after": "obs-02",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-02",
+      "after": "obs-03",
+      "kind": "THREAD_ORDER"
+    },
+    {
+      "before": "obs-03",
+      "after": "obs-04",
+      "kind": "THREAD_ORDER"
+    }
+  ],
+  "expectedOutcome": {
+    "kind": "MODEL_PREFIX_REPLAYED",
+    "finalTransactionState": {
+      "t1": "ACTIVE",
+      "t2": "ACTIVE"
+    },
+    "cleanupRequired": true
+  },
+  "diagnostics": {
+    "wallClock": "DIAGNOSTIC_ONLY",
+    "nanoTime": "DIAGNOSTIC_ONLY",
+    "crossThreadOrder": "EXPLICIT_EDGES_ONLY"
+  }
+}
