@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "vc-direct-native-projection-0.1",
+  "targetModel": "VC_L1_SX",
+  "focusResourcePolicy": "PROJECT_ONLY_SELECTED_LOGICAL_RESOURCE",
+  "rules": [
+    {"eventType": "LOCK_CALL", "condition": "mode=S", "l1Action": "REQUEST_S", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 178},
+    {"eventType": "LOCK_CALL", "condition": "mode=X and prior focus grant is not S", "l1Action": "REQUEST_X", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 223},
+    {"eventType": "LOCK_CALL", "condition": "mode=X and prior focus grant is S", "l1Action": "UPGRADE_REQUEST", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 223},
+    {"eventType": "WAIT_BEGIN", "condition": "focus resource", "l1Action": "WAIT", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 193},
+    {"eventType": "GRANT", "condition": "focus resource", "l1Action": "GRANT", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 203},
+    {"eventType": "RELEASE_OR_TX_END", "condition": "terminal action supplied by harness; anchor at first release and use TX_END only when no release is observed", "l1Action": "COMMIT_OR_ROLLBACK_THEN_RELEASE_ALL", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 407},
+    {"eventType": "GRANT", "condition": "same tx previously waited and a terminal release occurred", "l1Action": "WAKE_THEN_GRANT", "source": "src/main/java/org/vanilladb/core/storage/tx/concurrency/LockTable.java", "line": 203}
+  ],
+  "ignoredFromL1ButRetainedAsContext": [
+    "Native parent FILE/BLOCK intention locks outside the selected resource",
+    "raw RELEASE order within releaseAll",
+    "wall-clock and nano-time",
+    "recovery implementation events below the transaction lifecycle boundary"
+  ],
+  "lifecycleContext": {
+    "transactionSource": "src/main/java/org/vanilladb/core/storage/tx/Transaction.java",
+    "listenerOrderLines": [83, 89, 90, 91],
+    "rollbackMeaning": "Recovery listener completes undo before ConcurrencyMgr releases locks",
+    "commitMeaning": "Recovery listener persists commit before ConcurrencyMgr releases locks"
+  },
+  "requiredFamilies": [
+    "S/S",
+    "S/X",
+    "X/X",
+    "writer commit then reader grant",
+    "writer rollback then reader grant"
+  ]
+}

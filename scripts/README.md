@@ -41,6 +41,7 @@ python -m scripts.research.check_week04_gate_audit
 python -m scripts.research.check_week04_strict_replay
 python -m scripts.research.check_week04_partial_order
 python -m scripts.research.check_week04_native_harness
+python -m scripts.research.check_week04_direct_native_projection
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -111,6 +112,12 @@ runs real [`TransactionMgr`](../src/main/java/org/vanilladb/core/storage/tx/Tran
 tests across file, block, record, commit, rollback, and statement boundaries.
 Worker exceptions are returned through
 [`NativeTransactionHarness.WorkerOutcome`](../src/test/java/org/vanilladb/core/storage/tx/concurrency/NativeTransactionHarness.java#L35).
+
+[`check_week04_direct_native_projection.py`](research/check_week04_direct_native_projection.py#L1)
+validates the versioned projection ledger and compares Direct/Native L1 actions
+for five fixture families. Native parent locks and lifecycle/recovery boundaries
+remain available as context in
+[`direct-native-projection-v0.1.json`](../research/execution/week-04/direct-native-projection-v0.1.json).
 
 ## Documentation References
 

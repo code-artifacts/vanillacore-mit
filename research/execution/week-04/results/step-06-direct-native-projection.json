@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "step": "week-04-step-06-direct-native-projection",
+  "status": "PASS",
+  "projection": "research/execution/week-04/direct-native-projection-v0.1.json",
+  "projectionSha256": "609B33A9122D9DFDE57913E3D04B0E2F39F121AF3C3F6738F86392AA9750E510",
+  "rules": 7,
+  "families": 5,
+  "contextClasses": 4,
+  "tests": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "durationSeconds": 19.172,
+  "comparedFamilies": [
+    "S/S",
+    "S/X",
+    "X/X",
+    "COMMIT_GRANT",
+    "ROLLBACK_GRANT"
+  ],
+  "comparison": "EQUAL_L1_ACTIONS_WITH_NATIVE_CONTEXT_RETAINED"
+}
