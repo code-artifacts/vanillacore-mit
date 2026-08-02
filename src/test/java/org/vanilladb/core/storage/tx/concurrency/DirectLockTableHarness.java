@@ -1,14 +1,17 @@
 package org.vanilladb.core.storage.tx.concurrency;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.vanilladb.core.storage.tx.concurrency.trace.BoundedLockTraceSink;
 import org.vanilladb.core.storage.tx.concurrency.trace.LockTrace;
@@ -32,15 +35,28 @@ public final class DirectLockTableHarness implements AutoCloseable {
 	private final ExecutorService workers;
 	private final Set<Long> activeTransactions =
 			ConcurrentHashMap.newKeySet();
+	private final Set<String> workerNames = ConcurrentHashMap.newKeySet();
 	private volatile boolean closed;
 
 	public DirectLockTableHarness(String runId, int traceCapacity,
 			int workerCount) {
+		this(runId, traceCapacity, workerCount, false);
+	}
+
+	public DirectLockTableHarness(String runId, int traceCapacity,
+			int workerCount, boolean lowMode) {
 		if (workerCount <= 0)
 			throw new IllegalArgumentException("workerCount must be positive");
 		lockTable = new LockTable();
-		sink = new AwaitableSink(runId, traceCapacity);
-		workers = Executors.newFixedThreadPool(workerCount);
+		sink = new AwaitableSink(runId, traceCapacity, lowMode);
+		AtomicInteger sequence = new AtomicInteger();
+		ThreadFactory threadFactory = task -> {
+			Thread thread = new Thread(task,
+					"vc-mit-direct-" + sequence.incrementAndGet());
+			workerNames.add(thread.getName());
+			return thread;
+		};
+		workers = Executors.newFixedThreadPool(workerCount, threadFactory);
 		LockTrace.install(sink);
 	}
 
@@ -104,6 +120,19 @@ public final class DirectLockTableHarness implements AutoCloseable {
 		return sink.snapshot();
 	}
 
+	public LockTableTestProbe.ResidueSnapshot residueSnapshot() {
+		return LockTableTestProbe.residueSnapshot(lockTable);
+	}
+
+	public List<String> liveWorkerNames() {
+		List<String> live = new ArrayList<String>();
+		for (Thread thread : Thread.getAllStackTraces().keySet())
+			if (thread.isAlive() && workerNames.contains(thread.getName()))
+				live.add(thread.getName());
+		Collections.sort(live);
+		return live;
+	}
+
 	@Override
 	public void close() {
 		if (closed)
@@ -152,8 +181,9 @@ public final class DirectLockTableHarness implements AutoCloseable {
 		private final BoundedLockTraceSink delegate;
 		private final Object eventMonitor = new Object();
 
-		private AwaitableSink(String runId, int capacity) {
-			delegate = new BoundedLockTraceSink(runId, capacity);
+		private AwaitableSink(String runId, int capacity, boolean lowMode) {
+			delegate = lowMode ? BoundedLockTraceSink.low(runId, capacity)
+					: new BoundedLockTraceSink(runId, capacity);
 		}
 
 		@Override

@@ -23,6 +23,7 @@ CLI_MODULES = (
     "check_week04_partial_order",
     "check_week04_native_harness",
     "check_week04_direct_native_projection",
+    "run_week04_campaign",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

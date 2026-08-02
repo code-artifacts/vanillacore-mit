@@ -12,6 +12,10 @@
 | [`04`](step-04-partial-order-replay.md) | partial-order replay | Complete | [`step-04-partial-order.json`](results/step-04-partial-order.json) |
 | [`05`](step-05-native-harness.md) | Native transaction harness | Complete | [`step-05-native-harness.json`](results/step-05-native-harness.json) |
 | [`06`](step-06-direct-native-projection.md) | Direct/Native L1 投影差分 | Complete | [`step-06-direct-native-projection.json`](results/step-06-direct-native-projection.json) |
-| [07](#steps) | 30 次重放、扰动与 G3 决策 | Pending | Pending |
+| [`07`](step-07-g3-decision.md) | 30 次重放、扰动与 G3 决策 | Complete / G3 Fail | [`step-07-g3-decision.json`](results/step-07-g3-decision.json) |
 
 版本化 schema 位于 [`schedule-v0.1.schema.json`](schedule-v0.1.schema.json)，生成后的 manifest 位于 [`schedules/`](schedules/)。
+
+## Week Decision
+
+七个步骤均已执行。机器决策为 [`G3_FAIL`](step-07-g3-decision.md#decision-boundary)：七类 schedule 稳定重放，但 double-upgrader 暴露模型缺少 wound-wait abort 的 refinement 缺口，且 low overhead 仍高于硬上限。该结论阻止第五周的方法有效性主张，不影响保留本周 DSL、scheduler、Native harness 与 projection artifact。

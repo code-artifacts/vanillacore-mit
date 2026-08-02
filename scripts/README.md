@@ -42,6 +42,7 @@ python -m scripts.research.check_week04_strict_replay
 python -m scripts.research.check_week04_partial_order
 python -m scripts.research.check_week04_native_harness
 python -m scripts.research.check_week04_direct_native_projection
+python -m scripts.research.run_week04_campaign --repetitions 30
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -118,6 +119,12 @@ validates the versioned projection ledger and compares Direct/Native L1 actions
 for five fixture families. Native parent locks and lifecycle/recovery boundaries
 remain available as context in
 [`direct-native-projection-v0.1.json`](../research/execution/week-04/direct-native-projection-v0.1.json).
+
+[`run_week04_campaign.py`](research/run_week04_campaign.py#L1) compiles once,
+then launches a fresh JDK 17 JVM for each high/low schedule repetition. It also
+runs fresh-process off/low benchmarks and combines replay, loss, residue,
+partial-order, Native, and inherited Week 3 gates through
+[`classify_g3`](research/week4_gate.py#L4).
 
 ## Documentation References
 

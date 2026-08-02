@@ -2,14 +2,17 @@ package org.vanilladb.core.storage.tx.concurrency.schedule;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.vanilladb.core.storage.tx.concurrency.schedule.ScheduleDivergence.Kind;
 
 public final class StrictScheduleController implements ScheduleObserver {
 	private final List<ScheduleEvent> expected;
+	private final Set<String> ignoredSourceSites;
 	private final long timeoutNanos;
 	private final List<ScheduleEvent> actual = new ArrayList<ScheduleEvent>();
 	private int nextIndex;
@@ -17,18 +20,27 @@ public final class StrictScheduleController implements ScheduleObserver {
 
 	public StrictScheduleController(List<ScheduleEvent> expected, long timeout,
 			TimeUnit unit) {
+		this(expected, Collections.emptySet(), timeout, unit);
+	}
+
+	public StrictScheduleController(List<ScheduleEvent> expected,
+			Set<String> ignoredSourceSites, long timeout, TimeUnit unit) {
 		if (expected == null || expected.isEmpty())
 			throw new IllegalArgumentException("expected schedule must not be empty");
 		if (timeout <= 0)
 			throw new IllegalArgumentException("timeout must be positive");
 		this.expected = Collections.unmodifiableList(
 				new ArrayList<ScheduleEvent>(expected));
+		this.ignoredSourceSites = Collections.unmodifiableSet(
+				new HashSet<String>(ignoredSourceSites));
 		this.timeoutNanos = unit.toNanos(timeout);
 	}
 
 	@Override
 	public synchronized void observe(ScheduleEvent event) {
 		Objects.requireNonNull(event, "event");
+		if (ignoredSourceSites.contains(event.sourceSite()))
+			return;
 		throwIfDiverged();
 		long deadline = System.nanoTime() + timeoutNanos;
 		while (true) {
@@ -78,6 +90,20 @@ public final class StrictScheduleController implements ScheduleObserver {
 	public synchronized List<ScheduleEvent> actualLinearization() {
 		return Collections.unmodifiableList(
 				new ArrayList<ScheduleEvent>(actual));
+	}
+
+	public synchronized void awaitObserved(ScheduleEvent event, long timeout,
+			TimeUnit unit) throws InterruptedException {
+		long deadline = System.nanoTime() + unit.toNanos(timeout);
+		while (!actual.contains(event)) {
+			throwIfDiverged();
+			long remaining = deadline - System.nanoTime();
+			if (remaining <= 0)
+				throw new ScheduleDivergence(Kind.TIMEOUT,
+						"event was not observed before harness timeout: " + event,
+						expectedPrefix(nextIndex), actual, null);
+			TimeUnit.NANOSECONDS.timedWait(this, remaining);
+		}
 	}
 
 	private Kind classify(ScheduleEvent expectedEvent, ScheduleEvent actualEvent) {
