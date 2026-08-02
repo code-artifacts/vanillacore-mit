@@ -525,13 +525,13 @@ class LockTable {
 
 	private void trace(LockTraceEventType eventType, long txNum,
 			String sourceMethod, String sourceSite, Object obj, int lockType) {
+		if (org.vanilladb.core.storage.tx.concurrency.schedule.ScheduleControl.isEnabled()) observeSchedule(eventType, txNum, sourceSite, obj, lockType);
 		if (!LockTrace.accepts(eventType))
 			return;
 		LockTrace.record(eventType, txNum, sourceMethod, sourceSite,
 				resourceKind(obj), resourceId(obj),
 				lockType < 0 ? null : lockMode(lockType).toUpperCase());
 	}
-
 	private String resourceKind(Object obj) {
 		if (obj instanceof String)
 			return "FILE";
@@ -672,5 +672,13 @@ class LockTable {
 
 	private boolean isLockable(Lockers lks, long txNum) {
 		return (!xLocked(lks) || hasXLock(lks, txNum));
+	}
+
+	private void observeSchedule(LockTraceEventType eventType, long txNum,
+			String sourceSite, Object obj, int lockType) {
+		org.vanilladb.core.storage.tx.concurrency.schedule.ScheduleControl
+				.observeLock(eventType, txNum, sourceSite, resourceKind(obj),
+						resourceId(obj), lockType < 0 ? null
+								: lockMode(lockType).toUpperCase());
 	}
 }

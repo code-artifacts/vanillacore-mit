@@ -19,6 +19,7 @@ CLI_MODULES = (
     "new_week03_gate_decision",
     "freeze_week04_schedules",
     "check_week04_gate_audit",
+    "check_week04_strict_replay",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

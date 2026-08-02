@@ -38,6 +38,7 @@ python -m scripts.research.measure_week03_low_sink --iteration 1 --implementatio
 python -m scripts.research.new_week03_gate_decision
 python -m scripts.research.freeze_week04_schedules
 python -m scripts.research.check_week04_gate_audit
+python -m scripts.research.check_week04_strict_replay
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -92,6 +93,11 @@ implicit time-based cross-thread order and stale node references.
 the machine-readable [`gate-audit-v0.1.json`](../research/execution/week-04/gate-audit-v0.1.json).
 The corresponding Java registry rejects unknown and monitor-held blocking gates
 through [`ScheduleGateAudit.requireBlockingSafe`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/schedule/ScheduleGateAudit.java#L45).
+
+[`check_week04_strict_replay.py`](research/check_week04_strict_replay.py#L1)
+runs the real-lock strict controller tests. The controller classifies the first
+divergence and retains both prefixes through
+[`ScheduleDivergence`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/schedule/ScheduleDivergence.java#L7).
 
 ## Documentation References
 

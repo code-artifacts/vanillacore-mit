@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "step": "week-04-step-03-strict-replay",
+  "recordedAt": "2026-08-02T13:06:48.991752+08:00",
+  "gitCommit": "f067b831a127fc9013e19d0199666d626c1dd7e6",
+  "status": "PASS",
+  "jdk": {
+    "vendor": "Eclipse Adoptium",
+    "runtimeVersion": "17.0.20+8"
+  },
+  "durationSeconds": 40.625,
+  "tests": {
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "divergenceKinds": [
+    "MISSING_EVENT",
+    "EXTRA_EVENT",
+    "WRONG_TRANSACTION",
+    "WRONG_RESOURCE",
+    "TIMEOUT",
+    "HARNESS_EXCEPTION"
+  ],
+  "prefixPolicy": "SHORTEST_EXPECTED_AND_ACTUAL_PREFIX_AT_FIRST_DIVERGENCE"
+}
