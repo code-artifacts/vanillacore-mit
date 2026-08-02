@@ -20,6 +20,7 @@ CLI_MODULES = (
     "freeze_week04_schedules",
     "check_week04_gate_audit",
     "check_week04_strict_replay",
+    "check_week04_partial_order",
     "test_jdk_compatibility",
     "new_baseline_manifest",
     "invoke_dual_baseline_build",

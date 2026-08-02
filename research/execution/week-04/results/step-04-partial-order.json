@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "step": "week-04-step-04-partial-order",
+  "status": "PASS",
+  "seed": 20260802,
+  "validatedSchedules": {
+    "double-upgrader": 12,
+    "exclusive-exclusive-conflict": 6,
+    "exclusive-shared-conflict": 6,
+    "shared-exclusive-conflict": 6,
+    "shared-shared-compatible": 6,
+    "single-upgrader": 6,
+    "writer-commit-reader-grant": 11,
+    "writer-rollback-reader-grant": 11
+  },
+  "fixture": {
+    "nodes": [
+      "a",
+      "b",
+      "c"
+    ],
+    "edges": [
+      {
+        "before": "a",
+        "after": "c",
+        "kind": "HARNESS_BARRIER"
+      },
+      {
+        "before": "b",
+        "after": "c",
+        "kind": "HARNESS_BARRIER"
+      }
+    ],
+    "legalLinearizations": [
+      [
+        "a",
+        "b",
+        "c"
+      ],
+      [
+        "b",
+        "a",
+        "c"
+      ]
+    ]
+  },
+  "javaTests": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "durationSeconds": 38.688,
+  "claimBoundary": "Validates supplied DAGs and two legal linearizations; it is not DPOR search."
+}

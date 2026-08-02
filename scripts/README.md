@@ -39,6 +39,7 @@ python -m scripts.research.new_week03_gate_decision
 python -m scripts.research.freeze_week04_schedules
 python -m scripts.research.check_week04_gate_audit
 python -m scripts.research.check_week04_strict_replay
+python -m scripts.research.check_week04_partial_order
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -98,6 +99,11 @@ through [`ScheduleGateAudit.requireBlockingSafe`](../src/main/java/org/vanilladb
 runs the real-lock strict controller tests. The controller classifies the first
 divergence and retains both prefixes through
 [`ScheduleDivergence`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/schedule/ScheduleDivergence.java#L7).
+
+[`check_week04_partial_order.py`](research/check_week04_partial_order.py#L1)
+validates every frozen schedule DAG and runs the Java controller fixture with
+two legal independent-action linearizations. The Python edge checker is
+[`validate_dag`](research/partial_order.py#L7).
 
 ## Documentation References
 

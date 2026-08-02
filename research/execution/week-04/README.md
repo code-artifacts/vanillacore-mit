@@ -9,7 +9,7 @@
 | [`01`](step-01-schedule-dsl.md) | 冻结 schedule DSL v0.1 与八类 corpus | Complete | [`step-01-schedule-dsl.json`](results/step-01-schedule-dsl.json) |
 | [`02`](step-02-gate-safe-audit.md) | gate-safe 审计 | Complete | [`step-02-gate-audit.json`](results/step-02-gate-audit.json) |
 | [`03`](step-03-strict-replay.md) | strict replay | Complete | [`step-03-strict-replay.json`](results/step-03-strict-replay.json) |
-| [04](#steps) | partial-order replay | Pending | Pending |
+| [`04`](step-04-partial-order-replay.md) | partial-order replay | Complete | [`step-04-partial-order.json`](results/step-04-partial-order.json) |
 | [05](#steps) | Native transaction harness | Pending | Pending |
 | [06](#steps) | Direct/Native L1 投影差分 | Pending | Pending |
 | [07](#steps) | 30 次重放、扰动与 G3 决策 | Pending | Pending |
