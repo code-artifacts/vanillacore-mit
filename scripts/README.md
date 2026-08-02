@@ -37,6 +37,7 @@ python -m scripts.research.invoke_week03_g1_stress
 python -m scripts.research.measure_week03_low_sink --iteration 1 --implementation early-event-type-gating
 python -m scripts.research.new_week03_gate_decision
 python -m scripts.research.freeze_week04_schedules
+python -m scripts.research.check_week04_gate_audit
 ```
 
 Use [`--help`](#requirements) on an evidence command for output and workload overrides. Evidence
@@ -86,6 +87,11 @@ decision logic is in [`week3_gate.py`](research/week3_gate.py#L19).
 schedule DSL v0.1 manifests for all eight canonical L1 trace families. The
 validator in [`week4_schedule.py`](research/week4_schedule.py#L157) rejects
 implicit time-based cross-thread order and stale node references.
+
+[`check_week04_gate_audit.py`](research/check_week04_gate_audit.py#L1) verifies
+the machine-readable [`gate-audit-v0.1.json`](../research/execution/week-04/gate-audit-v0.1.json).
+The corresponding Java registry rejects unknown and monitor-held blocking gates
+through [`ScheduleGateAudit.requireBlockingSafe`](../src/main/java/org/vanilladb/core/storage/tx/concurrency/schedule/ScheduleGateAudit.java#L45).
 
 ## Documentation References
 

@@ -7,7 +7,7 @@
 | Step | Scope | Status | Evidence |
 | --- | --- | --- | --- |
 | [`01`](step-01-schedule-dsl.md) | 冻结 schedule DSL v0.1 与八类 corpus | Complete | [`step-01-schedule-dsl.json`](results/step-01-schedule-dsl.json) |
-| [02](#steps) | gate-safe 审计 | Pending | Pending |
+| [`02`](step-02-gate-safe-audit.md) | gate-safe 审计 | Complete | [`step-02-gate-audit.json`](results/step-02-gate-audit.json) |
 | [03](#steps) | strict replay | Pending | Pending |
 | [04](#steps) | partial-order replay | Pending | Pending |
 | [05](#steps) | Native transaction harness | Pending | Pending |

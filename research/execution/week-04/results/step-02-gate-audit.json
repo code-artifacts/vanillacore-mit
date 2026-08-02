@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "step": "week-04-step-02-gate-audit",
+  "status": "PASS",
+  "audit": "research/execution/week-04/gate-audit-v0.1.json",
+  "auditSha256": "CFBEEDCAD244BA56A8B4F8CCCE4666BE120AB52900E152CC200119B20B29CEC3",
+  "points": 30,
+  "blockingAllowed": 10,
+  "observeOnly": 20,
+  "decision": "REJECT_UNAUDITED_OR_MONITOR_HELD_BLOCKING_GATES"
+}
